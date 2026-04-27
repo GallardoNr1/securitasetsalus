@@ -38,11 +38,91 @@ Estado de las 18 decisiones que se plantearon al cerrar la documentación inicia
 
 ## ⏳ Pendientes residuales
 
-Solo quedan datos administrativos no técnicos:
-
 | # | Decisión | Estado |
 |---|---|---|
 | **A3 detalle** | Capital social inicial de la SpA y reparto societario entre los cofundadores. | Trámite con notario, no afecta al código. |
+| **G19** | **Evaluaciones cruzadas requeridas por la normatividad de calidad OTEC SENCE.** Afecta a Fase 5 (cierre de curso + emisión de diploma). El hermano lo planteó el 2026-04-28 pero aún tiene que profundizar en la normatividad antes de poder definir el detalle exacto. Ver bloque abajo. | Pendiente clarificación normativa |
+
+---
+
+## G19 — Evaluaciones cruzadas (detalle)
+
+### Lo que sabemos hasta ahora
+
+La normatividad de calidad OTEC SENCE obliga a SES a recoger **tres evaluaciones por cada curso impartido**:
+
+1. **Examen del alumno** — el alumno realiza el examen final del curso (ya lo cubre `Course.hasEvaluation` + `Enrollment.finalGrade` en el schema actual de Fase 0).
+2. **Evaluación del alumno al profesor + al curso** — el alumno responde un cuestionario donde valora la actuación del instructor y la calidad/utilidad del curso.
+3. **Evaluación del profesor a cada alumno** — el instructor evalúa el desempeño de cada alumno en función de los resultados escritos (más allá de la nota numérica del examen).
+
+### Regla bloqueante para emitir el diploma
+
+El diploma **no se emite** si falta cualquiera de las tres:
+
+- ❌ Sin examen aprobado → sin diploma.
+- ❌ Sin evaluación del alumno al instructor + al curso → sin diploma.
+- ❌ Sin evaluación del instructor al alumno → sin diploma.
+
+Esto extiende la regla de cierre de curso definida en B4/B5: hoy era "asistencia 100% + nota mínima". Pasa a ser "asistencia 100% + nota mínima + evaluación cruzada completa".
+
+### Lo que falta clarificar
+
+El hermano necesita revisar la normatividad SENCE antes de poder definir:
+
+- **Formato exacto del cuestionario alumno → instructor/curso**: preguntas, escala (Likert 1-5? sí/no? texto libre?), si es anónimo o nominativo, si hay preguntas obligatorias y opcionales.
+- **Formato de la evaluación instructor → alumno**: qué dimensiones evalúa (participación, actitud, comprensión, etc.), escala, comentarios libres.
+- **Plazos**: ¿el alumno tiene que completar la evaluación antes de irse del aula el último día, o tiene una ventana de X días? Si hay ventana, ¿qué pasa con el diploma mientras tanto (PENDIENTE_EVALUATION)?
+- **Anonimato**: si las evaluaciones del alumno al instructor son anónimas, ¿cómo se comprueba que cada alumno la completó sin trazar la respuesta a la persona?
+- **Auditoría SENCE**: qué formato/archivo espera SENCE recibir con los resultados agregados.
+
+### Impacto técnico previsto (cuando se confirme)
+
+Probablemente añade al schema:
+
+```prisma
+// Cuestionario que el alumno rellena al final del curso
+model CourseEvaluation {
+  id           String   @id @default(cuid())
+  enrollmentId String   @unique
+  enrollment   Enrollment @relation(...)
+  // Anonimización: guardamos solo si está completa (true/false) sin
+  // vincular respuestas al userId si la normativa exige anonimato.
+  completedAt  DateTime?
+  // Los datos detallados van en una tabla separada sin FK al alumno
+  // (CourseEvaluationResponse) para preservar anonimato.
+}
+
+model CourseEvaluationResponse {
+  id           String   @id @default(cuid())
+  courseId     String   // FK al curso pero NO al enrollment
+  course       Course   @relation(...)
+  // Respuestas serializadas (JSON) o columnas explícitas según el formato definitivo
+  answersJson  Json
+  submittedAt  DateTime @default(now())
+}
+
+// Evaluación del instructor al alumno
+model StudentEvaluation {
+  id           String   @id @default(cuid())
+  enrollmentId String   @unique
+  enrollment   Enrollment @relation(...)
+  evaluatedById String  // userId del instructor
+  evaluatedBy  User     @relation(...)
+  scoresJson   Json     // dimensiones evaluadas
+  notes        String?  // comentarios libres
+  submittedAt  DateTime @default(now())
+}
+```
+
+Y añade un nuevo `EnrollmentStatus.PENDING_EVALUATION` o ajusta la lógica de cierre de curso para no marcar `COMPLETED` hasta que las tres evaluaciones estén.
+
+### Lo que NO se hace todavía
+
+- No se modifica el schema de Fase 0.
+- No se añade lógica al cierre de curso de Fase 5.
+- No se diseñan los formularios de evaluación.
+
+Todo esto se hace cuando el hermano confirme el detalle normativo. Mientras tanto, queda anotado en project-brief.md y phases.md como tarea pendiente de Fase 5.
 
 ---
 

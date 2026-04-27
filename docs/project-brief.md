@@ -26,9 +26,12 @@ Esta separación protege a ambas marcas: SES gana o pierde según la calidad de 
 - Tras pagar, el alumno queda inscrito automáticamente en el curso y recibe un email de confirmación con los datos prácticos (sede, fechas, qué llevar).
 - Los cursos son **100% presenciales**. El sistema no aloja contenido en vídeo ni LMS — solo gestiona inscripción, asistencia, evaluación y emisión de diploma.
 - Un curso puede tener **una o varias sesiones** (un curso de 3 días = 3 sesiones). El instructor marca asistencia **por sesión**.
-- Para emitir el diploma se requieren **dos condiciones**:
+- Para emitir el diploma se requieren **cuatro condiciones** (cualquiera que falle bloquea la emisión):
   - **100% de asistencia** a las sesiones (criterio estricto — el alumno que falta a una sesión no obtiene diploma).
-  - Aprobar la **evaluación final** si el curso la lleva. La evaluación es **configurable por curso**: el admin marca al crear el curso si lleva evaluación o no, con `true` por defecto. Cursos sin evaluación se diploman solo con asistencia.
+  - Aprobar la **evaluación final** si el curso la lleva. La evaluación es **configurable por curso**: el admin marca al crear el curso si lleva evaluación o no, con `true` por defecto. Cursos sin evaluación se diploman solo con asistencia (+ las dos siguientes).
+  - El alumno ha completado el **cuestionario de evaluación del curso y del instructor** (alumno → curso/instructor) — requisito de la normatividad de calidad OTEC SENCE.
+  - El instructor ha completado la **evaluación del alumno** (instructor → alumno) en función de los resultados escritos — requisito SENCE.
+  - *[PENDIENTE G19: el formato exacto de los cuestionarios, anonimato, plazos y modelo de datos están sin definir hasta que el cofundador profundice en la normatividad SENCE. Ver [decisions-pending.md](decisions-pending.md#g19--evaluaciones-cruzadas-detalle).]*
 - Cuando el instructor marca el curso como cerrado y registra los resultados, el sistema **emite automáticamente el diploma** a los alumnos que cumplen los requisitos: PDF con QR único, almacenado en R2, enviado por email y descargable desde el área del alumno.
 - El diploma **no caduca** y no aparece en ningún directorio público — es un documento privado que el alumno usa donde le convenga (CV, requisito de Clavero, requisito de cliente final, etc.).
 - SES expone un **endpoint público de verificación** `/api/diplomas/[code]/verify` (similar al de Clavero) que cualquiera (incluido el sistema de Clavero) puede consultar para validar si un código de diploma es legítimo.
@@ -82,6 +85,11 @@ Diploma
 
 Payment
   id, userId, enrollmentId, stripePaymentId, amount, currency, paidAt
+
+// PENDIENTE G19 — pendiente de definir formato exacto:
+// CourseEvaluation       → marca si el alumno completó el cuestionario obligatorio
+// CourseEvaluationResponse → respuestas anónimas (alumno valora curso e instructor)
+// StudentEvaluation      → evaluación cualitativa del instructor a cada alumno
 ```
 
 **Diferencias clave frente al modelo de Clavero:**
@@ -110,11 +118,15 @@ El diploma **no caduca** porque acredita un hecho histórico: "esta persona apro
 
 ```ts
 enum EnrollmentStatus {
-  PENDING_PAYMENT  // Creada pero el pago aún no se ha confirmado
-  CONFIRMED        // Pagada — el alumno ya está inscrito al curso
-  CANCELLED        // Cancelada por el alumno o por SES (con/sin reembolso)
-  COMPLETED        // El curso terminó y el alumno aprobó (genera diploma)
-  FAILED           // El curso terminó y el alumno no cumple requisitos (sin diploma)
+  PENDING_PAYMENT     // Creada pero el pago aún no se ha confirmado
+  CONFIRMED           // Pagada — el alumno ya está inscrito al curso
+  CANCELLED           // Cancelada por el alumno o por SES (con/sin reembolso)
+  PENDING_EVALUATION  // Curso terminado, asistencia OK, examen OK, pero falta
+                      //   alguna evaluación (G19) — el diploma se emite cuando
+                      //   las cuatro condiciones estén cumplidas
+  COMPLETED           // Todas las condiciones cumplidas → diploma emitido
+  FAILED              // El curso terminó y el alumno no cumple requisitos
+                      //   irrecuperables (asistencia < 100% o examen suspendido)
 }
 ```
 
@@ -200,14 +212,26 @@ Alumno entra en /cursos → ve catálogo
 Llega el día del curso
 → Instructor entra en /instructor/cursos/[id]/asistencia
 → Marca asistencia de cada alumno por sesión
-→ Última sesión: instructor entra en /instructor/cursos/[id]/evaluacion
-→ Registra nota final de cada alumno
-→ Pulsa "Cerrar curso"
+→ Última sesión:
+   - Alumno completa cuestionario "evaluación del curso + instructor" (requisito SENCE)
+   - Instructor entra en /instructor/cursos/[id]/evaluacion
+     - Registra nota final del examen de cada alumno
+     - Completa la evaluación cualitativa de cada alumno (requisito SENCE)
+→ Instructor pulsa "Cerrar curso"
 → Sistema evalúa cada Enrollment:
-  - Si asistencia >= 80% Y nota_final >= aprobado → status=COMPLETED + emite Diploma
-  - En caso contrario → status=FAILED, sin diploma
-→ Emails automáticos: "Tu diploma está listo" / "No has alcanzado los requisitos para el diploma"
+  - asistencia 100%
+  - Y (no hasEvaluation O nota_final >= aprobado)
+  - Y evaluación alumno → curso/instructor completada
+  - Y evaluación instructor → alumno completada
+  → status=COMPLETED + emite Diploma
+  En caso contrario → status=FAILED (con failedReason indicando qué faltó)
+→ Emails automáticos:
+  - "Tu diploma está listo" / "No has alcanzado los requisitos: <motivo>"
+  - Si falta evaluación del alumno: "Tienes pendiente completar el cuestionario para
+    recibir el diploma" (con link al formulario)
 ```
+
+*[PENDIENTE G19: el plazo y el formato exacto de los cuestionarios están sin definir. Mientras tanto el flujo lo mantenemos descrito como aspiracional — la implementación final puede ajustar tiempos según la normatividad SENCE.]*
 
 ### Verificación pública de un diploma
 ```

@@ -161,14 +161,23 @@ Alumno paga un curso desde el catálogo público y queda inscrito automáticamen
 - [ ] Modelos `Attendance`, `Diploma`.
 - [ ] `/instructor/cursos/[id]/asistencia` — interfaz por sesión, lista de inscritos, toggle asistencia.
 - [ ] `/instructor/cursos/[id]/evaluacion` — registrar nota final por alumno + cierre del curso.
+- [ ] **Evaluaciones cruzadas (G19, OTEC SENCE)** — *[PENDIENTE: definir formato exacto antes de empezar esta tarea]*:
+  - Modelos `CourseEvaluation`, `CourseEvaluationResponse` (anonimato), `StudentEvaluation`.
+  - Formulario alumno → curso/instructor disponible al cerrar la última sesión (link en email + en `/mis-cursos/[id]`).
+  - Formulario instructor → alumno integrado en `/instructor/cursos/[id]/evaluacion`.
+  - Estado `EnrollmentStatus.PENDING_EVALUATION` para cuando faltan evaluaciones pero el resto está completo.
+  - Recordatorios automáticos a alumnos con cuestionario pendiente.
+  - Reportes agregados anónimos por curso para auditoría SENCE.
 - [ ] Lógica `closeCourseAndIssueDiplomas`:
   - Para cada Enrollment del curso:
     - Calcula % asistencia (sesiones marcadas como asistidas / total sesiones).
-    - Si **asistencia 100%** Y (`!course.hasEvaluation` O `nota >= aprobado`) → COMPLETED + emite Diploma.
-    - Si no → FAILED, con motivo registrado (`failedReason: 'attendance' | 'evaluation' | 'both'`).
+    - Si asistencia < 100% O (`hasEvaluation` Y nota < aprobado) → `FAILED` (irrecuperable).
+    - Si todo lo anterior está OK pero falta alguna evaluación cruzada → `PENDING_EVALUATION`.
+    - Si todo está OK + evaluaciones cruzadas completas → `COMPLETED` + emite Diploma.
+  - Cuando todas las evaluaciones cruzadas se completan después del cierre del curso, recalcular y emitir diplomas pendientes (idempotente).
 - [ ] Cuando `senceEligible=true` y el alumno usó franquicia, además del diploma normal se emite el **Certificado SENCE** en formato oficial (otra plantilla PDF separada).
 - [ ] Generación PDF del diploma con QR + código único, almacenamiento en R2.
-- [ ] `/mis-diplomas` — alumno descarga el PDF.
+- [ ] `/mis-diplomas` — alumno descarga el PDF. Si tiene `PENDING_EVALUATION`, mostrar el cuestionario con CTA "Completa para recibir tu diploma".
 - [ ] `/admin/diplomas` — listado, revocación manual.
 - [ ] Idempotencia en cierre del curso (no se puede cerrar dos veces, no se duplican diplomas).
 
