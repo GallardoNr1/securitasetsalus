@@ -1,0 +1,12 @@
+// ============================================================
+// index.scss — SecuritasEtSalus Design System
+// ============================================================
+// Importar este archivo UNA VEZ en el layout raíz de Next.js
+// (app/layout.tsx). Los componentes importan sus propios
+// .module.scss directamente.
+// ============================================================
+
+@use './tokens/colors'           as *;
+@use './tokens/typography'        as *;
+@use './tokens/spacing-shadows'   as *;
+@use './base/globals';

@@ -1,0 +1,82 @@
+// ============================================================
+// Tokens de color — SecuritasEtSalus Design System
+// ============================================================
+// Paleta derivada del logo: escala de verdes del águila
+// (cuerpo, plumas, menta) + crema del sello (papel envejecido).
+// Educativa, técnica, accesible.
+// ============================================================
+
+// --- Primarios (verdes del águila — formación, crecimiento) ---
+$color-primary-50:  #ecf3ee;
+$color-primary-100: #cce0d3;
+$color-primary-200: #aed1bc;
+$color-primary-300: #8fc4a8;  // verde menta (highlights)
+$color-primary-400: #74af90;
+$color-primary-500: #5a9b7b;  // verde claro (plumas exteriores)
+$color-primary-600: #3d7a5e;  // verde medio (cuello, plumas centrales)
+$color-primary-700: #2c5f4a;  // verde profundo (cuerpo del águila) — color principal
+$color-primary-800: #1f4836;  // bordes, sombras
+$color-primary-900: #143828;
+$color-primary-950: #0b2218;
+
+// --- Acento (crema del sello — papel envejecido, sello oficial) ---
+$color-accent-50:  #faf6e9;
+$color-accent-100: #f0e9d4;  // fondo del sello
+$color-accent-200: #e5d9b3;
+$color-accent-300: #d8c897;
+$color-accent-400: #c9b87a;  // crema principal (CTAs especiales)
+$color-accent-500: #b3a067;
+$color-accent-600: #9a8a52;  // texto destacado sobre crema
+$color-accent-700: #7c6f3f;
+$color-accent-800: #5b522d;
+$color-accent-900: #3a341c;
+
+// --- Neutros (papel cálido, tinta verde-oscura) ---
+$color-neutral-0:   #ffffff;
+$color-neutral-50:  #fafaf7;  // fondo cálido (papel sutil)
+$color-neutral-100: #f5f3ed;  // mismo crema del sello
+$color-neutral-200: #e8e5dc;
+$color-neutral-300: #d6d2c5;  // bordes normales
+$color-neutral-400: #b3afa0;
+$color-neutral-500: #7d8480;  // muted text
+$color-neutral-600: #4a5450;  // secondary text
+$color-neutral-700: #2f3833;
+$color-neutral-800: #1f2622;
+$color-neutral-900: #1a2622;  // text-primary (verde casi negro)
+
+// --- Semánticos ---
+$color-success-light: #d6e9dd;
+$color-success:       #2c5f4a;  // reusa el verde marca (coherencia)
+$color-success-dark:  #1f4836;
+
+$color-warning-light: #f6e9d0;
+$color-warning:       #c9893a;
+$color-warning-dark:  #966627;
+
+$color-danger-light:  #f0d4d4;
+$color-danger:        #a64242;
+$color-danger-dark:   #7a3030;
+
+$color-info-light:    #d4dde6;
+$color-info:          #4a6b8a;
+$color-info-dark:     #34506b;
+
+// --- Aliases semánticos de UI ---
+$color-bg-page:         $color-neutral-50;
+$color-bg-surface:      $color-neutral-0;
+$color-bg-subtle:       $color-neutral-100;
+$color-bg-muted:        $color-neutral-200;
+
+$color-text-primary:    $color-neutral-900;
+$color-text-secondary:  $color-neutral-600;
+$color-text-muted:      $color-neutral-500;
+$color-text-inverse:    $color-neutral-0;
+$color-text-brand:      $color-primary-700;
+$color-text-accent:     $color-accent-600;
+
+$color-border-default:  $color-neutral-300;
+$color-border-strong:   $color-neutral-400;
+$color-border-focus:    $color-primary-700;
+
+$color-brand:           $color-primary-700;
+$color-brand-accent:    $color-accent-400;

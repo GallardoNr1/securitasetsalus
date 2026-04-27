@@ -1,0 +1,47 @@
+@use '../../design-system/tokens/colors' as *;
+@use '../../design-system/tokens/spacing-shadows' as *;
+
+.section {
+  width: 100%;
+}
+
+.sm {
+  padding-block: $space-section-sm;
+}
+
+.md {
+  padding-block: $space-section-sm;
+
+  @include responsive-md {
+    padding-block: $space-section-md;
+  }
+}
+
+.lg {
+  padding-block: $space-section-md;
+
+  @include responsive-md {
+    padding-block: $space-section-lg;
+  }
+}
+
+.page {
+  background-color: $color-bg-page;
+}
+
+.surface {
+  background-color: $color-bg-surface;
+}
+
+.subtle {
+  background-color: $color-bg-subtle;
+}
+
+.brand {
+  background-color: $color-primary-800;
+  color: $color-text-inverse;
+
+  p {
+    color: rgba($color-text-inverse, 0.8);
+  }
+}

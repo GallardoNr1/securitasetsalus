@@ -1,0 +1,93 @@
+// ============================================================
+// Card.module.scss — Clavero Design System
+// ============================================================
+
+@use '../tokens/colors' as *;
+@use '../tokens/typography' as *;
+@use '../tokens/spacing-shadows' as *;
+
+.card {
+  background-color: $color-bg-surface;
+  border: $border-width-thin solid $color-border-default;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+}
+
+// --- Padding ---
+.padded {
+  padding: $space-6;
+}
+
+.paddedSm {
+  padding: $space-4;
+}
+
+.paddedLg {
+  padding: $space-8;
+}
+
+// --- Variantes ---
+.elevated {
+  box-shadow: $shadow-md;
+  border-color: transparent;
+}
+
+.flat {
+  box-shadow: none;
+  border-color: $color-border-default;
+}
+
+// Card de diploma activo (borde verde sutil)
+.diplomaActive {
+  box-shadow: $shadow-card-active;
+  border-color: rgba($color-success, 0.3);
+}
+
+// Card de diploma por vencer (borde dorado)
+.diplomaExpiring {
+  border-color: rgba($color-accent-500, 0.4);
+  box-shadow: 0 0 0 1px rgba($color-accent-500, 0.15), $shadow-sm;
+}
+
+// --- Card interactiva (hover) ---
+.interactive {
+  cursor: pointer;
+  transition:
+    transform   $duration-normal $ease-spring,
+    box-shadow  $duration-normal $ease-default;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: $shadow-sm;
+  }
+}
+
+// --- Subcomponentes ---
+.header {
+  padding: $space-5 $space-6;
+  border-bottom: $border-width-thin solid $color-border-default;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-4;
+}
+
+.body {
+  padding: $space-6;
+}
+
+.footer {
+  padding: $space-4 $space-6;
+  border-top: $border-width-thin solid $color-border-default;
+  background-color: $color-bg-subtle;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $space-3;
+}

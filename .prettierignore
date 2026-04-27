@@ -1,0 +1,17 @@
+node_modules/
+.next/
+dist/
+build/
+coverage/
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+prisma/generated/
+.env*
+
+# Preservar el formato artesanal de los tokens SCSS (alineación manual)
+design-system/
+
+# Preservar el estilo de la documentación escrita a mano
+docs/
+README.md

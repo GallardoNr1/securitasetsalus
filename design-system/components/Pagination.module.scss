@@ -1,0 +1,60 @@
+// ============================================================
+// Pagination.module.scss — Clavero Design System
+// ============================================================
+
+@use '../tokens/colors' as *;
+@use '../tokens/typography' as *;
+@use '../tokens/spacing-shadows' as *;
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  margin-top: $space-6;
+  align-items: center;
+
+  @include responsive-md {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.info {
+  @include text-body-sm;
+  color: $color-text-secondary;
+}
+
+.actions {
+  display: flex;
+  gap: $space-2;
+}
+
+.link {
+  @include text-body-sm;
+  color: $color-text-brand;
+  padding: $space-2 $space-3;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-md;
+  text-decoration: none;
+  background-color: $color-bg-surface;
+  font-weight: $font-weight-medium;
+  transition:
+    border-color $duration-fast $ease-default,
+    color $duration-fast $ease-default;
+
+  &:hover {
+    border-color: $color-primary-600;
+    color: $color-primary-600;
+  }
+}
+
+.linkDisabled {
+  @include text-body-sm;
+  color: $color-text-muted;
+  padding: $space-2 $space-3;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-md;
+  background-color: $color-bg-subtle;
+  cursor: not-allowed;
+  font-weight: $font-weight-medium;
+}

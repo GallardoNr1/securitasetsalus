@@ -1,0 +1,155 @@
+// ============================================================
+// Tokens de tipografía — SecuritasEtSalus Design System
+// ============================================================
+// Display: Fraunces (serif cálida, editorial, didáctica)
+// Body: Inter (legibilidad excelente en formularios y tablas)
+// Mono: JetBrains Mono (códigos de diploma, IDs)
+// ============================================================
+
+// --- Familias ---
+// Las variables CSS --font-* las inyecta next/font desde app/layout.tsx.
+$font-display: var(--font-display, 'Fraunces'), Georgia, serif;
+$font-body:    var(--font-body, 'Inter'), 'Helvetica Neue', Arial, sans-serif;
+$font-mono:    var(--font-mono, 'JetBrains Mono'), 'Courier New', monospace;
+
+// --- Escala de tamaños (base 16px) ---
+$font-size-xs:   0.75rem;   // 12px
+$font-size-sm:   0.875rem;  // 14px
+$font-size-md:   1rem;      // 16px — base
+$font-size-lg:   1.125rem;  // 18px
+$font-size-xl:   1.25rem;   // 20px
+$font-size-2xl:  1.5rem;    // 24px
+$font-size-3xl:  1.875rem;  // 30px
+$font-size-4xl:  2.25rem;   // 36px
+$font-size-5xl:  3rem;      // 48px
+$font-size-6xl:  3.75rem;   // 60px
+
+// --- Pesos ---
+$font-weight-light:    300;
+$font-weight-regular:  400;
+$font-weight-medium:   500;
+$font-weight-semibold: 600;
+$font-weight-bold:     700;
+$font-weight-black:    900;
+
+// --- Interlineado ---
+$line-height-tight:   1.2;
+$line-height-snug:    1.375;
+$line-height-normal:  1.5;
+$line-height-relaxed: 1.625;
+$line-height-loose:   2;
+
+// --- Espaciado entre letras ---
+$letter-spacing-tight:  -0.025em;
+$letter-spacing-normal:  0;
+$letter-spacing-wide:    0.025em;
+$letter-spacing-wider:   0.05em;
+$letter-spacing-widest:  0.1em;
+
+// --- Mixins de texto listos para usar ---
+
+@mixin text-display-xl {
+  font-family: $font-display;
+  font-size: $font-size-6xl;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  letter-spacing: $letter-spacing-tight;
+}
+
+@mixin text-display-lg {
+  font-family: $font-display;
+  font-size: $font-size-5xl;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  letter-spacing: $letter-spacing-tight;
+}
+
+@mixin text-display-md {
+  font-family: $font-display;
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-snug;
+}
+
+@mixin text-heading-lg {
+  font-family: $font-body;
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-snug;
+}
+
+@mixin text-heading-md {
+  font-family: $font-body;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-snug;
+}
+
+@mixin text-heading-sm {
+  font-family: $font-body;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-normal;
+}
+
+@mixin text-body-lg {
+  font-family: $font-body;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-relaxed;
+}
+
+@mixin text-body-md {
+  font-family: $font-body;
+  font-size: $font-size-md;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-normal;
+}
+
+@mixin text-body-sm {
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-normal;
+}
+
+@mixin text-label {
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-normal;
+  letter-spacing: $letter-spacing-wide;
+}
+
+@mixin text-caption {
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-normal;
+  letter-spacing: $letter-spacing-wide;
+}
+
+@mixin text-mono {
+  font-family: $font-mono;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-normal;
+  letter-spacing: $letter-spacing-wider;
+}
+
+// --- Mixin especial para diplomas ---
+@mixin text-diploma-title {
+  font-family: $font-display;
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  letter-spacing: $letter-spacing-tight;
+}
+
+@mixin text-diploma-name {
+  font-family: $font-display;
+  font-size: $font-size-5xl;
+  font-weight: $font-weight-black;
+  line-height: $line-height-tight;
+  font-style: italic;
+}

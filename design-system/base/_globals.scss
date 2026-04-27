@@ -1,0 +1,130 @@
+// ============================================================
+// Reset y estilos globales — SecuritasEtSalus Design System
+// ============================================================
+
+@use '../tokens/colors' as *;
+@use '../tokens/typography' as *;
+@use '../tokens/spacing-shadows' as *;
+
+// --- Reset moderno ---
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  font-family: $font-body;
+  font-size: $font-size-md;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-normal;
+  color: $color-text-primary;
+  background-color: $color-bg-page;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// --- Tipografía base ---
+h1 { @include text-display-lg; }
+h2 { @include text-display-md; }
+h3 { @include text-heading-lg; }
+h4 { @include text-heading-md; }
+h5 { @include text-heading-sm; }
+h6 {
+  font-family: $font-body;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-normal;
+}
+
+p {
+  @include text-body-md;
+  color: $color-text-secondary;
+}
+
+a {
+  color: $color-brand;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color $duration-fast $ease-default;
+
+  &:hover {
+    color: $color-primary-600;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-border-focus;
+    outline-offset: 3px;
+    border-radius: $radius-sm;
+  }
+}
+
+// --- Imágenes ---
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+// --- Formularios ---
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+// --- Listas ---
+ul,
+ol {
+  list-style: none;
+}
+
+// --- Tablas ---
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+// --- Focus accesible global ---
+:focus-visible {
+  outline: 2px solid $color-border-focus;
+  outline-offset: 2px;
+}
+
+// --- Scrollbar personalizada (Webkit) ---
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: $color-neutral-100;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $color-neutral-300;
+  border-radius: $radius-full;
+
+  &:hover {
+    background: $color-neutral-400;
+  }
+}
+
+// --- Selección de texto ---
+::selection {
+  background-color: $color-primary-200;
+  color: $color-primary-900;
+}

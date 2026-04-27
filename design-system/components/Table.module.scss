@@ -1,0 +1,93 @@
+// ============================================================
+// Table.module.scss — Clavero Design System
+// ============================================================
+// Tabla con wrapper scrollable (mobile) + cabecera en bg subtle.
+
+@use '../tokens/colors' as *;
+@use '../tokens/typography' as *;
+@use '../tokens/spacing-shadows' as *;
+
+.wrapper {
+  overflow-x: auto;
+  background-color: $color-bg-surface;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-md;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.head {
+  background-color: $color-bg-subtle;
+  border-bottom: 1px solid $color-border-default;
+}
+
+.headerCell {
+  @include text-caption;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-wider;
+  color: $color-text-muted;
+  font-weight: $font-weight-semibold;
+  padding: $space-3 $space-4;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.headerCellRight {
+  text-align: right;
+}
+
+.row {
+  border-bottom: 1px solid $color-border-default;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background-color: $color-bg-subtle;
+  }
+}
+
+.rowFlat {
+  border-bottom: 1px solid $color-border-default;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.cell {
+  padding: $space-3 $space-4;
+  @include text-body-sm;
+  color: $color-text-primary;
+  vertical-align: middle;
+}
+
+.cellMuted {
+  color: $color-text-secondary;
+}
+
+.cellRight {
+  text-align: right;
+}
+
+.empty {
+  padding: $space-12;
+  text-align: center;
+  background-color: $color-bg-surface;
+  border: 1px dashed $color-border-default;
+  border-radius: $radius-md;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  align-items: center;
+
+  p {
+    @include text-body-md;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+}

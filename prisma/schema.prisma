@@ -1,0 +1,263 @@
+// ============================================================
+// Prisma schema — SecuritasEtSalus
+// ============================================================
+// Docs: https://pris.ly/d/prisma-schema
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ------------------------------------------------------------
+// Enums
+// ------------------------------------------------------------
+
+enum Role {
+  SUPER_ADMIN
+  INSTRUCTOR
+  STUDENT
+  // REGION_ADMIN se introduce cuando SES escale fuera de Chile.
+  // Por ahora SUPER_ADMIN gestiona todo.
+}
+
+enum CourseStatus {
+  DRAFT       // No visible en el catálogo público
+  PUBLISHED   // Visible y abierto a inscripciones
+  CLOSED      // Curso ya impartido y cerrado por el instructor
+  CANCELLED   // Cancelado por SES (con/sin reembolsos)
+}
+
+enum EnrollmentStatus {
+  PENDING_PAYMENT  // Creada pero el pago aún no se confirmó
+  CONFIRMED        // Pagada — el alumno ya está inscrito al curso
+  CANCELLED        // Cancelada por el alumno o por SES
+  COMPLETED        // El curso terminó y el alumno aprobó (genera diploma)
+  FAILED           // El curso terminó y el alumno no cumple requisitos
+}
+
+enum DiplomaStatus {
+  ACTIVE
+  REVOKED
+  // SES no caducan: el diploma acredita un hecho histórico (formación recibida).
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  REFUNDED_FULL
+  REFUNDED_PARTIAL
+  FAILED
+}
+
+// ------------------------------------------------------------
+// Usuarios y autenticación
+// ------------------------------------------------------------
+
+model User {
+  id              String    @id @default(cuid())
+  name            String
+  email           String    @unique
+  passwordHash    String?   // Null si solo usa Magic Link
+  role            Role      @default(STUDENT)
+  region          String?   // ISO 3166-1 alpha-2 del país (CL, AR, ...)
+  subdivision     String?   // ISO 3166-2 (CL-RM, ...)
+  phone           String?
+  rut             String?   // RUT chileno cuando se usa franquicia SENCE
+  emailVerifiedAt DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relaciones
+  enrollments              Enrollment[]
+  diplomas                 Diploma[]
+  payments                 Payment[]
+  passwordResetTokens      PasswordResetToken[]
+  emailVerificationTokens  EmailVerificationToken[]
+  coursesAsInstructor      Course[]                  @relation("CourseInstructor")
+  attendancesMarked        Attendance[]              @relation("AttendanceMarker")
+
+  @@index([email])
+  @@index([role])
+}
+
+model PasswordResetToken {
+  id         String    @id @default(cuid())
+  tokenHash  String    @unique
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
+  @@index([tokenHash])
+}
+
+model EmailVerificationToken {
+  id         String    @id @default(cuid())
+  tokenHash  String    @unique
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
+  @@index([tokenHash])
+}
+
+// ------------------------------------------------------------
+// Cursos y sesiones
+// ------------------------------------------------------------
+
+model Course {
+  id                                  String       @id @default(cuid())
+  title                               String
+  slug                                String       @unique
+  shortDescription                    String       // Para cards del catálogo
+  fullSyllabus                        String       // Markdown — temario completo
+  durationHours                       Int          // Total de horas lectivas
+  price                               Int          // En la unidad mínima (CLP es zero-decimal)
+  currency                            String       @default("CLP")  // ISO 4217
+  capacity                            Int
+  region                              String       @default("CL")
+  subdivision                         String?
+  venueName                           String?
+  venueAddress                        String?
+  status                              CourseStatus @default(DRAFT)
+
+  // Flags de comportamiento
+  hasEvaluation                       Boolean      @default(true)
+  senceEligible                       Boolean      @default(false)  // Apto franquicia SENCE
+  eligibleForClaveroProfessionalCert  Boolean      @default(false)  // Input válido para Clavero
+
+  instructorId                        String
+  instructor                          User         @relation("CourseInstructor", fields: [instructorId], references: [id])
+
+  publishedAt                         DateTime?
+  closedAt                            DateTime?
+  createdAt                           DateTime     @default(now())
+  updatedAt                           DateTime     @updatedAt
+
+  sessions                            CourseSession[]
+  enrollments                         Enrollment[]
+  diplomas                            Diploma[]
+
+  @@index([status])
+  @@index([slug])
+  @@index([region])
+  @@index([instructorId])
+}
+
+model CourseSession {
+  id            String       @id @default(cuid())
+  courseId      String
+  course        Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  sessionNumber Int          // 1, 2, 3...
+  startsAt      DateTime
+  endsAt        DateTime
+  location      String?      // Si es distinta de la sede principal del curso
+
+  attendances   Attendance[]
+
+  @@unique([courseId, sessionNumber])
+  @@index([courseId])
+  @@index([startsAt])
+}
+
+// ------------------------------------------------------------
+// Inscripciones, asistencia, pagos
+// ------------------------------------------------------------
+
+model Enrollment {
+  id               String           @id @default(cuid())
+  userId           String
+  user             User             @relation(fields: [userId], references: [id])
+  courseId         String
+  course           Course           @relation(fields: [courseId], references: [id])
+  status           EnrollmentStatus @default(PENDING_PAYMENT)
+  enrolledAt       DateTime         @default(now())
+  paidAt           DateTime?
+  finalGrade       Float?           // Nota final si el curso tiene evaluación
+  failedReason     String?          // 'attendance' | 'evaluation' | 'both' (si status=FAILED)
+
+  // SENCE
+  senceUsed        Boolean          @default(false)
+  employerRut      String?          // RUT del empleador si se aplicó franquicia
+  employerName     String?
+  employerHrEmail  String?
+
+  attendances      Attendance[]
+  payments         Payment[]
+  diploma          Diploma?
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+  @@index([status])
+}
+
+model Attendance {
+  id           String        @id @default(cuid())
+  enrollmentId String
+  enrollment   Enrollment    @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  sessionId    String
+  session      CourseSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  attended     Boolean       @default(false)
+  markedById   String        // userId del instructor que marcó
+  markedBy     User          @relation("AttendanceMarker", fields: [markedById], references: [id])
+  markedAt     DateTime      @default(now())
+
+  @@unique([enrollmentId, sessionId])
+  @@index([sessionId])
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  userId            String
+  user              User          @relation(fields: [userId], references: [id])
+  enrollmentId      String
+  enrollment        Enrollment    @relation(fields: [enrollmentId], references: [id])
+  stripePaymentId   String        @unique  // cs_xxx — idempotencia
+  amount            Int                    // En la unidad mínima
+  currency          String        @default("CLP")
+  status            PaymentStatus @default(PENDING)
+  paidAt            DateTime?
+  refundedAt        DateTime?
+  refundedAmount    Int?                   // En caso de reembolso parcial
+  receiptKey        String?                // Key en R2 del recibo PDF
+  createdAt         DateTime      @default(now())
+
+  @@index([userId])
+  @@index([enrollmentId])
+  @@index([status])
+}
+
+// ------------------------------------------------------------
+// Diplomas
+// ------------------------------------------------------------
+
+model Diploma {
+  id           String        @id @default(cuid())
+  code         String        @unique  // Código corto público (verificable por QR)
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+  courseId     String
+  course       Course        @relation(fields: [courseId], references: [id])
+  enrollmentId String        @unique
+  enrollment   Enrollment    @relation(fields: [enrollmentId], references: [id])
+  status       DiplomaStatus @default(ACTIVE)
+  issuedAt     DateTime      @default(now())
+  pdfKey       String?       // Key en R2 del PDF generado
+  revokedAt    DateTime?
+  revocationReason String?
+
+  @@index([userId])
+  @@index([courseId])
+  @@index([code])
+  @@index([status])
+}

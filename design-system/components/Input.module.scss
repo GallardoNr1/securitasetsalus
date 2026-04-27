@@ -1,0 +1,171 @@
+// ============================================================
+// Input.module.scss — Clavero Design System
+// ============================================================
+
+@use '../tokens/colors' as *;
+@use '../tokens/typography' as *;
+@use '../tokens/spacing-shadows' as *;
+
+// --- Wrapper del campo (label + input + error) ---
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.label {
+  @include text-label;
+  color: $color-text-primary;
+}
+
+.required {
+  color: $color-danger;
+  margin-left: $space-1;
+}
+
+// --- Input base ---
+.input {
+  width: 100%;
+  height: 2.75rem;
+  padding: 0 $space-4;
+  font-family: $font-body;
+  font-size: $font-size-md;
+  font-weight: $font-weight-regular;
+  color: $color-text-primary;
+  background-color: $color-bg-surface;
+  border: $border-width-normal solid $color-border-default;
+  border-radius: $radius-md;
+  outline: none;
+  transition:
+    border-color $duration-fast $ease-default,
+    box-shadow   $duration-fast $ease-default;
+
+  &::placeholder {
+    color: $color-text-muted;
+  }
+
+  &:hover:not(:disabled):not(.inputError) {
+    border-color: $color-border-strong;
+  }
+
+  &:focus:not(.inputError) {
+    border-color: $color-border-focus;
+    box-shadow: 0 0 0 3px rgba($color-primary-600, 0.15);
+  }
+
+  &:disabled {
+    background-color: $color-bg-subtle;
+    color: $color-text-muted;
+    cursor: not-allowed;
+    border-color: $color-border-default;
+  }
+}
+
+// --- Estado error ---
+.inputError {
+  border-color: $color-danger;
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba($color-danger, 0.15);
+  }
+}
+
+// --- Textarea ---
+.textarea {
+  height: auto;
+  min-height: 6rem;
+  padding: $space-3 $space-4;
+  resize: vertical;
+  line-height: $line-height-relaxed;
+}
+
+// --- Input con icono ---
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.iconLeft {
+  position: absolute;
+  left: $space-3;
+  color: $color-text-muted;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.iconRight {
+  position: absolute;
+  right: $space-3;
+  color: $color-text-muted;
+  display: flex;
+  align-items: center;
+}
+
+.hasIconLeft .input {
+  padding-left: $space-10;
+}
+
+.hasIconRight .input {
+  padding-right: $space-10;
+}
+
+// Botón de toggle de visibilidad para PasswordInput. Posicionado dentro
+// del .inputWrapper.hasIconRight; el padding-right del input deja espacio
+// para que no se solape con el texto al escribir.
+.passwordToggle {
+  position: absolute;
+  right: $space-3;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: $radius-sm;
+  color: $color-text-muted;
+  cursor: pointer;
+  transition:
+    color $duration-fast $ease-default,
+    background-color $duration-fast $ease-default;
+
+  &:hover {
+    color: $color-text-primary;
+    background-color: $color-bg-subtle;
+  }
+
+  &:focus-visible {
+    outline: none;
+    color: $color-text-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary-600, 0.3);
+  }
+}
+
+// --- Hint y error message ---
+.hint {
+  @include text-caption;
+  color: $color-text-muted;
+}
+
+.errorMessage {
+  @include text-caption;
+  color: $color-danger;
+  display: flex;
+  align-items: center;
+  gap: $space-1;
+}
+
+// --- Select ---
+.select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237d7268' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right $space-4 center;
+  padding-right: $space-10;
+  cursor: pointer;
+}

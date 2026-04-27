@@ -1,0 +1,31 @@
+@use '../../design-system/tokens/spacing-shadows' as *;
+
+.container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: $space-page-gutter;
+}
+
+.sm {
+  max-width: 48rem; // 768px
+}
+
+.md {
+  max-width: 64rem; // 1024px
+}
+
+.lg {
+  max-width: $space-page-max; // 1280px
+}
+
+@include responsive-md {
+  .container {
+    padding-inline: $space-8;
+  }
+}
+
+@include responsive-lg {
+  .container {
+    padding-inline: $space-10;
+  }
+}

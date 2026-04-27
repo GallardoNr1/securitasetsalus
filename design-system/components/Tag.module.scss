@@ -1,0 +1,43 @@
+// ============================================================
+// Tag.module.scss — Clavero Design System
+// ============================================================
+// Usado para región, especialidad y metadatos ligeros.
+
+@use '../tokens/colors' as *;
+@use '../tokens/typography' as *;
+@use '../tokens/spacing-shadows' as *;
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  padding: $space-1 $space-3;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  letter-spacing: $letter-spacing-wide;
+  line-height: 1.2;
+  white-space: nowrap;
+  background-color: $color-bg-subtle;
+  color: $color-text-secondary;
+  border: 1px solid $color-border-default;
+}
+
+.neutral {
+  background-color: $color-bg-subtle;
+  color: $color-text-secondary;
+  border-color: $color-border-default;
+}
+
+.brand {
+  background-color: $color-primary-50;
+  color: $color-primary-800;
+  border-color: $color-primary-200;
+}
+
+.gold {
+  background-color: $color-accent-50;
+  color: $color-accent-700;
+  border-color: $color-accent-200;
+}

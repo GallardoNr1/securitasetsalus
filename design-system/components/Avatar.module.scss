@@ -1,0 +1,57 @@
+// ============================================================
+// Avatar.module.scss — Clavero Design System
+// ============================================================
+// Avatar redondo con foto o fallback de iniciales.
+// El tamaño se controla con clases (xs/sm/md/lg/xl) que ajustan
+// la tipografía de las iniciales — el ancho/alto vienen del style
+// inline en el componente para tener un solo punto de verdad.
+
+@use '../tokens/colors' as *;
+@use '../tokens/typography' as *;
+@use '../tokens/spacing-shadows' as *;
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background-color: $color-primary-100;
+  color: $color-primary-800;
+  overflow: hidden;
+  flex-shrink: 0;
+  font-family: $font-body;
+  font-weight: $font-weight-bold;
+  letter-spacing: -0.02em;
+  user-select: none;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.initials {
+  line-height: 1;
+}
+
+.xs .initials {
+  font-size: 0.625rem; // 10px
+}
+
+.sm .initials {
+  font-size: 0.75rem; // 12px
+}
+
+.md .initials {
+  font-size: 0.875rem; // 14px
+}
+
+.lg .initials {
+  font-size: 1.25rem; // 20px
+}
+
+.xl .initials {
+  font-size: 2.25rem; // 36px
+}

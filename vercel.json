@@ -1,0 +1,4 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run typecheck && NODE_ENV=test npm test && npm run build"
+}

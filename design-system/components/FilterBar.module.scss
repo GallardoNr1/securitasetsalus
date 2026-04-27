@@ -1,0 +1,26 @@
+// ============================================================
+// FilterBar.module.scss — Clavero Design System
+// ============================================================
+// Barra horizontal de filtros: form wrapper con campos en wrap
+// y zona de acciones alineada a la derecha en desktop.
+
+@use '../tokens/colors' as *;
+@use '../tokens/spacing-shadows' as *;
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+  align-items: flex-end;
+  margin-bottom: $space-6;
+  padding: $space-4;
+  background-color: $color-bg-surface;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-md;
+}
+
+.actions {
+  display: flex;
+  gap: $space-2;
+  margin-left: auto;
+}
