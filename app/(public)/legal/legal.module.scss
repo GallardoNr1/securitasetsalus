@@ -1,0 +1,79 @@
+@use '../../../design-system/tokens/colors' as *;
+@use '../../../design-system/tokens/typography' as *;
+@use '../../../design-system/tokens/spacing-shadows' as *;
+
+.page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: $space-section-sm $space-page-gutter;
+
+  @include responsive-md {
+    padding: $space-section-md $space-8;
+  }
+}
+
+.article {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+    padding-bottom: $space-6;
+    border-bottom: 1px solid $color-border-default;
+
+    h1 {
+      @include text-display-md;
+      color: $color-text-primary;
+      margin: 0;
+    }
+  }
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+
+    h2 {
+      @include text-heading-md;
+      color: $color-text-primary;
+      margin: 0;
+    }
+
+    p,
+    li {
+      @include text-body-md;
+      color: $color-text-secondary;
+      margin: 0;
+    }
+
+    ul {
+      list-style: disc;
+      padding-left: $space-6;
+      display: flex;
+      flex-direction: column;
+      gap: $space-2;
+    }
+
+    a {
+      color: $color-text-brand;
+      font-weight: $font-weight-semibold;
+    }
+  }
+}
+
+.eyebrow {
+  @include text-label;
+  color: $color-text-brand;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
+}
+
+.lead {
+  @include text-body-md;
+  color: $color-text-muted;
+  font-style: italic;
+  margin: 0;
+}

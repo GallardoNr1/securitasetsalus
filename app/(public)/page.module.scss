@@ -1,0 +1,285 @@
+@use '../../design-system/tokens/colors' as *;
+@use '../../design-system/tokens/typography' as *;
+@use '../../design-system/tokens/spacing-shadows' as *;
+
+// ============================================================
+// Hero
+// ============================================================
+.hero {
+  background:
+    linear-gradient(180deg, $color-primary-50 0%, $color-bg-page 100%);
+  padding: $space-section-sm $space-page-gutter $space-section-md;
+
+  @include responsive-md {
+    padding: $space-section-md $space-8 $space-section-lg;
+  }
+}
+
+.heroInner {
+  display: grid;
+  gap: $space-12;
+  grid-template-columns: 1fr;
+  max-width: $space-page-max;
+  margin: 0 auto;
+  align-items: center;
+
+  @include responsive-lg {
+    grid-template-columns: 1.4fr 1fr;
+  }
+}
+
+.heroContent {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+}
+
+.eyebrow {
+  @include text-label;
+  color: $color-text-brand;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
+}
+
+.heroTitle {
+  @include text-display-lg;
+  color: $color-text-primary;
+  max-width: 18ch;
+  margin: 0;
+
+  em {
+    font-style: italic;
+    color: $color-text-brand;
+  }
+
+  @include responsive-md {
+    @include text-display-xl;
+  }
+}
+
+.heroLead {
+  @include text-body-lg;
+  color: $color-text-secondary;
+  max-width: 50ch;
+  margin: 0;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+  margin-top: $space-3;
+}
+
+.heroVisual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.heroSeal {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  filter: drop-shadow(0 12px 32px rgba(26, 38, 34, 0.18));
+}
+
+// ============================================================
+// Secciones
+// ============================================================
+.section,
+.sectionAlt {
+  padding: $space-section-sm $space-page-gutter;
+
+  @include responsive-md {
+    padding: $space-section-md $space-8;
+  }
+}
+
+.sectionAlt {
+  background-color: $color-bg-subtle;
+}
+
+.sectionInner {
+  max-width: $space-page-max;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $space-10;
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  max-width: 60ch;
+
+  h2 {
+    @include text-display-md;
+    color: $color-text-primary;
+    margin: 0;
+  }
+
+  p {
+    @include text-body-lg;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+}
+
+.sectionFooter {
+  display: flex;
+  justify-content: center;
+  margin-top: $space-4;
+}
+
+// ============================================================
+// Pasos (cómo funciona)
+// ============================================================
+.steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: $space-6;
+  grid-template-columns: 1fr;
+
+  @include responsive-md {
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-8;
+  }
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+    padding: $space-6;
+    background-color: $color-bg-surface;
+    border: 1px solid $color-border-default;
+    border-radius: $radius-xl;
+    box-shadow: $shadow-sm;
+  }
+
+  h3 {
+    @include text-heading-md;
+    color: $color-text-primary;
+    margin: 0;
+  }
+
+  p {
+    @include text-body-md;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+}
+
+.stepNumber {
+  @include text-display-md;
+  font-family: $font-display;
+  color: $color-brand-accent;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+}
+
+// ============================================================
+// Cursos destacados
+// ============================================================
+.coursesGrid {
+  display: grid;
+  gap: $space-6;
+  grid-template-columns: 1fr;
+
+  @include responsive-md {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include responsive-lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// ============================================================
+// Features (por qué SES)
+// ============================================================
+.featuresGrid {
+  display: grid;
+  gap: $space-6;
+  grid-template-columns: 1fr;
+
+  @include responsive-md {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $space-8;
+  }
+}
+
+.feature {
+  padding: $space-6;
+  border-left: 3px solid $color-brand;
+
+  h3 {
+    @include text-heading-md;
+    color: $color-text-primary;
+    margin: 0 0 $space-2;
+  }
+
+  p {
+    @include text-body-md;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+}
+
+// ============================================================
+// CTA final
+// ============================================================
+.cta {
+  background-color: $color-primary-700;
+  color: $color-neutral-0;
+  padding: $space-section-sm $space-page-gutter;
+
+  @include responsive-md {
+    padding: $space-section-md $space-8;
+  }
+}
+
+.ctaInner {
+  max-width: 60ch;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  align-items: center;
+
+  h2 {
+    @include text-display-md;
+    color: $color-neutral-0;
+    margin: 0;
+  }
+
+  p {
+    @include text-body-lg;
+    color: $color-primary-100;
+    margin: 0;
+  }
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $color-brand-accent;
+  color: $color-text-primary;
+  padding: $space-3 $space-8;
+  border-radius: $radius-md;
+  font-family: $font-body;
+  font-weight: $font-weight-semibold;
+  text-decoration: none;
+  font-size: $font-size-lg;
+  transition: background-color $duration-fast $ease-default;
+  margin-top: $space-3;
+
+  &:hover {
+    background-color: $color-accent-500;
+  }
+}

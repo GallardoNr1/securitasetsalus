@@ -5,7 +5,7 @@
 | Fase | Nombre | Estado |
 |---|---|---|
 | 0 | Setup y configuración inicial | ✅ [Cerrada 2026-04-28](phases/phase-0-done.md) |
-| 1 | Landing page y catálogo público | ⬜ Pendiente |
+| 1 | Landing page y catálogo público | ✅ [Cerrada 2026-04-28](phases/phase-1-done.md) |
 | 2 | Autenticación y roles | ⬜ Pendiente |
 | 3 | Gestión de cursos con sesiones múltiples | ⬜ Pendiente |
 | 4 | Inscripción pagada con Stripe | ⬜ Pendiente |

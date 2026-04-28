@@ -1,0 +1,237 @@
+@use '../../../../design-system/tokens/colors' as *;
+@use '../../../../design-system/tokens/typography' as *;
+@use '../../../../design-system/tokens/spacing-shadows' as *;
+
+.page {
+  max-width: $space-page-max;
+  margin: 0 auto;
+  padding: $space-section-sm $space-page-gutter;
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+
+  @include responsive-md {
+    padding: $space-section-md $space-8;
+  }
+}
+
+.breadcrumb {
+  a {
+    @include text-body-sm;
+    color: $color-text-secondary;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-text-brand;
+    }
+  }
+}
+
+.layout {
+  display: grid;
+  gap: $space-10;
+  grid-template-columns: 1fr;
+
+  @include responsive-lg {
+    grid-template-columns: 1.7fr 1fr;
+    gap: $space-12;
+  }
+}
+
+// ============================================================
+// Columna principal
+// ============================================================
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: $space-10;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  h1 {
+    @include text-display-lg;
+    color: $color-text-primary;
+    margin: 0;
+  }
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+.lead {
+  @include text-body-lg;
+  color: $color-text-secondary;
+  max-width: 60ch;
+  margin: 0;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  h2 {
+    @include text-heading-lg;
+    color: $color-text-primary;
+    margin: 0;
+  }
+}
+
+.syllabus {
+  @include text-body-md;
+  font-family: $font-body;
+  white-space: pre-wrap;
+  background-color: $color-bg-subtle;
+  border-radius: $radius-lg;
+  padding: $space-6;
+  color: $color-text-primary;
+  margin: 0;
+  overflow-x: auto;
+}
+
+.sessions {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+    padding: $space-4;
+    background-color: $color-bg-surface;
+    border: 1px solid $color-border-default;
+    border-radius: $radius-md;
+
+    @include responsive-sm {
+      flex-direction: row;
+      align-items: center;
+      gap: $space-4;
+    }
+  }
+}
+
+.sessionNumber {
+  @include text-label;
+  color: $color-text-brand;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
+  flex-shrink: 0;
+
+  @include responsive-sm {
+    width: 100px;
+  }
+}
+
+.sessionDate {
+  @include text-body-md;
+  color: $color-text-primary;
+}
+
+.instructor {
+  padding: $space-6;
+  background-color: $color-bg-subtle;
+  border-radius: $radius-lg;
+  border-left: 3px solid $color-brand-accent;
+
+  h3 {
+    @include text-heading-md;
+    color: $color-text-primary;
+    margin: 0 0 $space-2;
+  }
+
+  p {
+    @include text-body-md;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+}
+
+// ============================================================
+// Sidebar / CTA
+// ============================================================
+.sidebar {
+  position: relative;
+
+  @include responsive-lg {
+    position: sticky;
+    top: calc(72px + #{$space-6});
+    align-self: start;
+  }
+}
+
+.card {
+  background-color: $color-bg-surface;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-md;
+  padding: $space-6;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.price {
+  @include text-display-md;
+  color: $color-text-brand;
+  font-weight: $font-weight-bold;
+  margin: 0;
+}
+
+.priceSubtext {
+  @include text-body-sm;
+  color: $color-text-muted;
+  margin: 0;
+}
+
+.cardMeta {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding-top: $space-4;
+  border-top: 1px solid $color-border-default;
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+    @include text-body-sm;
+    color: $color-text-primary;
+  }
+}
+
+.cardMetaLabel {
+  @include text-caption;
+  color: $color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-wider;
+}
+
+.seatsLow {
+  color: $color-warning-dark;
+  font-weight: $font-weight-semibold;
+}
+
+.seatsFull {
+  color: $color-danger-dark;
+  font-weight: $font-weight-semibold;
+}
+
+.cardNote {
+  @include text-caption;
+  color: $color-text-muted;
+  margin: 0;
+}

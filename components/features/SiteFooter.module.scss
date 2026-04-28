@@ -1,0 +1,118 @@
+@use '../../design-system/tokens/colors' as *;
+@use '../../design-system/tokens/typography' as *;
+@use '../../design-system/tokens/spacing-shadows' as *;
+
+.footer {
+  background-color: $color-primary-900;
+  color: $color-neutral-200;
+  margin-top: $space-section-md;
+}
+
+.inner {
+  display: grid;
+  gap: $space-10;
+  grid-template-columns: 1fr;
+  padding: $space-section-sm $space-page-gutter;
+  max-width: $space-page-max;
+  margin: 0 auto;
+
+  @include responsive-md {
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    padding: $space-section-md $space-8;
+    gap: $space-12;
+  }
+}
+
+.brandColumn {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  text-decoration: none;
+  color: $color-neutral-0;
+}
+
+.seal {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.brandName {
+  @include text-heading-sm;
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  color: $color-neutral-0;
+  margin: 0;
+}
+
+.brandTagline {
+  @include text-body-sm;
+  color: $color-primary-200;
+  margin: 0;
+}
+
+.brandCopy {
+  @include text-body-sm;
+  color: $color-primary-200;
+  max-width: 40ch;
+  margin: 0;
+}
+
+.navColumn,
+.contactColumn {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+
+  h3 {
+    @include text-label;
+    color: $color-neutral-0;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-widest;
+    margin-bottom: $space-2;
+  }
+
+  a {
+    @include text-body-sm;
+    color: $color-primary-200;
+    text-decoration: none;
+    transition: color $duration-fast $ease-default;
+
+    &:hover {
+      color: $color-neutral-0;
+    }
+  }
+
+  p {
+    @include text-body-sm;
+    color: $color-primary-200;
+    margin: 0;
+  }
+}
+
+.address {
+  margin-top: $space-2;
+}
+
+.bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: $space-4 $space-page-gutter;
+  text-align: center;
+
+  p {
+    @include text-caption;
+    color: $color-primary-300;
+    margin: 0;
+  }
+
+  @include responsive-md {
+    padding: $space-4 $space-8;
+  }
+}

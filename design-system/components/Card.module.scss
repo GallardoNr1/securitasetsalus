@@ -1,5 +1,5 @@
 // ============================================================
-// Card.module.scss — Clavero Design System
+// Card.module.scss — SecuritasEtSalus Design System
 // ============================================================
 
 @use '../tokens/colors' as *;
@@ -44,8 +44,8 @@
   border-color: rgba($color-success, 0.3);
 }
 
-// Card de diploma por vencer (borde dorado)
-.diplomaExpiring {
+// Card destacada (borde crema — para cursos featured, banners)
+.featured {
   border-color: rgba($color-accent-500, 0.4);
   box-shadow: 0 0 0 1px rgba($color-accent-500, 0.15), $shadow-sm;
 }

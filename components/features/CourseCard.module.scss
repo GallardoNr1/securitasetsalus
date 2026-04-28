@@ -1,0 +1,90 @@
+@use '../../design-system/tokens/colors' as *;
+@use '../../design-system/tokens/typography' as *;
+@use '../../design-system/tokens/spacing-shadows' as *;
+
+.card {
+  height: 100%;
+}
+
+.link {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  padding: $space-6;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+.title {
+  @include text-heading-md;
+  color: $color-text-primary;
+  margin: 0;
+}
+
+.description {
+  @include text-body-md;
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+.meta {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  margin-top: auto;
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+    @include text-body-sm;
+    color: $color-text-primary;
+  }
+}
+
+.metaLabel {
+  @include text-caption;
+  color: $color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-wider;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  padding-top: $space-4;
+  border-top: 1px solid $color-border-default;
+}
+
+.price {
+  @include text-heading-sm;
+  color: $color-text-brand;
+  font-weight: $font-weight-bold;
+}
+
+.seats {
+  @include text-body-sm;
+  color: $color-text-secondary;
+}
+
+.seatsLow {
+  color: $color-warning-dark;
+  font-weight: $font-weight-semibold;
+}
+
+.seatsFull {
+  color: $color-danger-dark;
+  font-weight: $font-weight-semibold;
+}

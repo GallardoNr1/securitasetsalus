@@ -1,0 +1,138 @@
+@use '../../../design-system/tokens/colors' as *;
+@use '../../../design-system/tokens/typography' as *;
+@use '../../../design-system/tokens/spacing-shadows' as *;
+
+.page {
+  max-width: $space-page-max;
+  margin: 0 auto;
+  padding: $space-section-sm $space-page-gutter;
+  display: flex;
+  flex-direction: column;
+  gap: $space-10;
+
+  @include responsive-md {
+    padding: $space-section-md $space-8;
+  }
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  max-width: 60ch;
+
+  h1 {
+    @include text-display-lg;
+    color: $color-text-primary;
+    margin: 0;
+  }
+
+  p {
+    @include text-body-lg;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+}
+
+.eyebrow {
+  @include text-label;
+  color: $color-text-brand;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  padding-bottom: $space-4;
+  border-bottom: 1px solid $color-border-default;
+}
+
+.filter {
+  display: inline-flex;
+  align-items: center;
+  padding: $space-2 $space-4;
+  background-color: transparent;
+  color: $color-text-secondary;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-full;
+  text-decoration: none;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  transition:
+    background-color $duration-fast $ease-default,
+    color            $duration-fast $ease-default,
+    border-color     $duration-fast $ease-default;
+
+  &:hover {
+    background-color: $color-primary-50;
+    color: $color-text-brand;
+    border-color: $color-primary-300;
+  }
+}
+
+.filterActive {
+  background-color: $color-brand;
+  color: $color-text-inverse;
+  border-color: $color-brand;
+
+  &:hover {
+    background-color: $color-primary-800;
+    color: $color-text-inverse;
+    border-color: $color-primary-800;
+  }
+}
+
+.grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: $space-6;
+  grid-template-columns: 1fr;
+
+  @include responsive-md {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include responsive-lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.empty {
+  padding: $space-12 $space-6;
+  background-color: $color-bg-subtle;
+  border-radius: $radius-xl;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-3;
+
+  h2 {
+    @include text-heading-lg;
+    color: $color-text-primary;
+    margin: 0;
+  }
+
+  p {
+    @include text-body-md;
+    color: $color-text-secondary;
+    max-width: 50ch;
+    margin: 0;
+  }
+}
+
+.emptyLink {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  color: $color-text-brand;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-weight: $font-weight-semibold;
+  margin-top: $space-3;
+}

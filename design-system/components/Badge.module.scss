@@ -1,7 +1,7 @@
 // ============================================================
-// Badge.module.scss — Clavero Design System
+// Badge.module.scss — SecuritasEtSalus Design System
 // ============================================================
-// Usado principalmente para el estado del diploma
+// Usado para el estado del diploma y de la inscripción
 
 @use '../tokens/colors' as *;
 @use '../tokens/typography' as *;
@@ -22,26 +22,39 @@
   white-space: nowrap;
 }
 
-// --- Estado del diploma ---
+// --- Estados del diploma SES ---
 .active {
   background-color: $color-success-light;
   color: $color-success-dark;
   border: 1px solid rgba($color-success, 0.25);
 }
 
-.expiring {
+.revoked {
+  background-color: $color-danger-light;
+  color: $color-danger-dark;
+  border: 1px solid rgba($color-danger, 0.25);
+}
+
+// --- Estados de la inscripción ---
+.confirmed {
+  background-color: $color-success-light;
+  color: $color-success-dark;
+  border: 1px solid rgba($color-success, 0.25);
+}
+
+.pending {
   background-color: $color-warning-light;
   color: $color-warning-dark;
   border: 1px solid rgba($color-warning, 0.25);
 }
 
-.expired {
+.cancelled {
   background-color: $color-neutral-100;
   color: $color-neutral-500;
   border: 1px solid $color-border-default;
 }
 
-.revoked {
+.failed {
   background-color: $color-danger-light;
   color: $color-danger-dark;
   border: 1px solid rgba($color-danger, 0.25);
@@ -54,7 +67,7 @@
   border: 1px solid $color-primary-200;
 }
 
-.gold {
+.accent {
   background-color: $color-accent-100;
   color: $color-accent-700;
   border: 1px solid $color-accent-200;
