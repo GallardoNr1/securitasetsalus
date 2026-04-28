@@ -1,0 +1,129 @@
+@use '../../../../design-system/tokens/colors' as *;
+@use '../../../../design-system/tokens/typography' as *;
+@use '../../../../design-system/tokens/spacing-shadows' as *;
+
+.page {
+  max-width: $space-page-max;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: $space-4;
+  padding-bottom: $space-4;
+  border-bottom: 1px solid $color-border-default;
+
+  h1 {
+    @include text-display-md;
+    color: $color-text-primary;
+    margin: $space-1 0 $space-2;
+  }
+
+  p {
+    @include text-body-md;
+    color: $color-text-secondary;
+    max-width: 60ch;
+    margin: 0;
+  }
+}
+
+.eyebrow {
+  @include text-label;
+  color: $color-text-brand;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-3;
+
+  @include responsive-md {
+    grid-template-columns: 2fr 1fr 1fr auto;
+  }
+}
+
+.search,
+.select {
+  width: 100%;
+  padding: $space-2 $space-3;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-md;
+  background-color: $color-bg-surface;
+  color: $color-text-primary;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+
+  &:focus {
+    outline: none;
+    border-color: $color-border-focus;
+  }
+}
+
+.titleCell {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  text-decoration: none;
+  color: inherit;
+
+  &:hover .title {
+    color: $color-text-brand;
+  }
+}
+
+.title {
+  @include text-body-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  transition: color $duration-fast $ease-default;
+}
+
+.slug {
+  @include text-caption;
+  color: $color-text-muted;
+  font-family: $font-mono;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1;
+  margin-top: $space-1;
+}
+
+.metaInline {
+  @include text-caption;
+  color: $color-text-muted;
+  margin-left: $space-2;
+}
+
+.empty {
+  padding: $space-10 $space-6;
+  background-color: $color-bg-subtle;
+  border-radius: $radius-xl;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-2;
+
+  p {
+    @include text-body-md;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+}
+
+.emptyLink {
+  @include text-body-sm;
+  color: $color-text-brand;
+  font-weight: $font-weight-semibold;
+}

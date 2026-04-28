@@ -1,0 +1,140 @@
+@use '../../../../../design-system/tokens/colors' as *;
+@use '../../../../../design-system/tokens/typography' as *;
+@use '../../../../../design-system/tokens/spacing-shadows' as *;
+
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+.back {
+  @include text-body-sm;
+  color: $color-text-secondary;
+  text-decoration: none;
+
+  &:hover {
+    color: $color-text-brand;
+  }
+}
+
+.header {
+  padding-bottom: $space-4;
+  border-bottom: 1px solid $color-border-default;
+
+  h1 {
+    @include text-display-md;
+    color: $color-text-primary;
+    margin: $space-1 0 $space-1;
+  }
+}
+
+.eyebrow {
+  @include text-label;
+  color: $color-text-brand;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
+}
+
+.slug {
+  @include text-mono;
+  color: $color-text-muted;
+  margin: 0 0 $space-3;
+}
+
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  align-items: center;
+}
+
+.muted {
+  @include text-body-sm;
+  color: $color-text-muted;
+}
+
+.summary {
+  display: grid;
+  gap: $space-4;
+  grid-template-columns: repeat(2, 1fr);
+
+  @include responsive-md {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  article {
+    padding: $space-4;
+    background-color: $color-bg-surface;
+    border: 1px solid $color-border-default;
+    border-radius: $radius-md;
+  }
+}
+
+.summaryLabel {
+  @include text-caption;
+  color: $color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-wider;
+  margin: 0 0 $space-1;
+}
+
+.summaryValue {
+  @include text-heading-md;
+  color: $color-text-primary;
+  margin: 0;
+}
+
+.sessions {
+  background-color: $color-bg-surface;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-md;
+  padding: $space-5 $space-6;
+
+  h2 {
+    @include text-heading-sm;
+    color: $color-text-primary;
+    margin: 0 0 $space-3;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+
+    li {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: $space-3;
+      @include text-body-sm;
+      color: $color-text-primary;
+    }
+  }
+}
+
+.sessionLabel {
+  @include text-label;
+  color: $color-text-brand;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
+  min-width: 80px;
+}
+
+.sessionLoc {
+  @include text-caption;
+  color: $color-text-muted;
+}
+
+.formSection {
+  h2 {
+    @include text-heading-md;
+    color: $color-text-primary;
+    margin: 0 0 $space-4;
+  }
+}
