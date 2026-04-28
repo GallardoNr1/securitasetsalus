@@ -44,15 +44,15 @@ npm run dev
 
 ## Estado actual
 
-**Fases 0 → 2 cerradas (2026-04-28).** La app compila, los tests pasan, BD viva en Supabase us-east-1 con migración aplicada y SUPER_ADMIN sembrado.
+**Fases 0 → 3 cerradas (2026-04-28).** La app compila, los tests pasan, BD viva en Supabase us-east-1, admin puede crear instructores y cursos con todos los flags del catálogo SENCE, catálogo público lee de BD real.
 
 | Fase | Estado | Detalle |
 |---|---|---|
 | 0 — Setup técnico | ✅ | [phase-0-done.md](docs/phases/phase-0-done.md) |
 | 1 — Landing + catálogo público | ✅ | [phase-1-done.md](docs/phases/phase-1-done.md) |
 | 2 — Auth + dashboards por rol | ✅ | [phase-2-done.md](docs/phases/phase-2-done.md) |
-| 3 — CRUD cursos + usuarios | ⬜ | siguiente |
-| 4 — Inscripción pagada con Stripe | ⬜ | |
+| 3 — CRUD cursos + usuarios | ✅ | [phase-3-done.md](docs/phases/phase-3-done.md) |
+| 4 — Inscripción pagada con Stripe | ⬜ | siguiente |
 | 5 — Asistencia + evaluaciones G19 + diplomas | ⬜ | |
 | 6 — Verify público + integración Clavero | ⬜ | |
 | 7 — Emails transaccionales de negocio | ⬜ | |

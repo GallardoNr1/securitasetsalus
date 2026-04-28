@@ -1,26 +1,47 @@
 import Link from 'next/link';
-import type { MockCourse } from '@/lib/mock/courses';
-import { COURSE_CATEGORIES } from '@/lib/mock/courses';
 import { formatPrice, formatDate } from '@/lib/format';
 import { getSubdivisionName } from '@/lib/regions';
 import { Card } from '@/components/ui/Card';
 import { Tag } from '@/components/ui/Tag';
 import styles from './CourseCard.module.scss';
 
+/**
+ * Datos mínimos del curso necesarios para renderizar la card.
+ * Se construye desde la query `listPublishedCourses` (lib/queries/courses.ts).
+ */
+type CourseCardData = {
+  id: string;
+  title: string;
+  slug: string;
+  shortDescription: string;
+  durationHours: number;
+  price: number;
+  currency: string;
+  capacity: number;
+  senceEligible: boolean;
+  claveroSkillCode: string | null;
+  subdivision: string | null;
+  venueName: string | null;
+  sessions: { startsAt: Date }[];
+  _count: { enrollments: number };
+};
+
 type Props = {
-  course: MockCourse;
+  course: CourseCardData;
 };
 
 export function CourseCard({ course }: Props) {
   const firstSession = course.sessions[0];
-  const seatsLeft = course.capacity - course.enrolledCount;
+  const seatsLeft = course.capacity - course._count.enrollments;
   const subdivisionName = getSubdivisionName(course.subdivision);
 
   return (
     <Card variant="elevated" interactive className={styles.card}>
       <Link href={`/cursos/${course.slug}`} className={styles.link}>
         <div className={styles.header}>
-          <Tag tone="brand">{COURSE_CATEGORIES[course.category]}</Tag>
+          {course.claveroSkillCode ? (
+            <Tag tone="brand">{course.claveroSkillCode}</Tag>
+          ) : null}
           {course.senceEligible ? <Tag tone="accent">Franquicia SENCE</Tag> : null}
         </div>
 
@@ -35,7 +56,7 @@ export function CourseCard({ course }: Props) {
           <li>
             <span className={styles.metaLabel}>Sede</span>
             <span>
-              {course.venueName}
+              {course.venueName ?? 'Por definir'}
               {subdivisionName ? `, ${subdivisionName}` : ''}
             </span>
           </li>

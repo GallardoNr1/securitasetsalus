@@ -1,0 +1,157 @@
+@use '../../../../design-system/tokens/colors' as *;
+@use '../../../../design-system/tokens/typography' as *;
+@use '../../../../design-system/tokens/spacing-shadows' as *;
+
+.page {
+  max-width: $space-page-max;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding-bottom: $space-4;
+  border-bottom: 1px solid $color-border-default;
+
+  h1 {
+    @include text-display-md;
+    color: $color-text-primary;
+    margin: $space-1 0 $space-2;
+  }
+
+  p {
+    @include text-body-md;
+    color: $color-text-secondary;
+    max-width: 60ch;
+    margin: 0;
+  }
+}
+
+.eyebrow {
+  @include text-label;
+  color: $color-text-brand;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
+}
+
+.empty {
+  padding: $space-12 $space-6;
+  background-color: $color-bg-subtle;
+  border-radius: $radius-xl;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-2;
+
+  h2 {
+    @include text-heading-md;
+    color: $color-text-primary;
+    margin: 0;
+  }
+
+  p {
+    @include text-body-md;
+    color: $color-text-secondary;
+    max-width: 50ch;
+    margin: 0;
+  }
+}
+
+.grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: $space-6;
+  grid-template-columns: 1fr;
+
+  @include responsive-md {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include responsive-lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-6;
+  background-color: $color-bg-surface;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-sm;
+
+  h2 {
+    @include text-heading-md;
+    color: $color-text-primary;
+    margin: 0;
+  }
+}
+
+.cardHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-3;
+  margin: 0;
+
+  dt {
+    @include text-caption;
+    color: $color-text-muted;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wider;
+  }
+
+  dd {
+    @include text-body-sm;
+    color: $color-text-primary;
+    margin: $space-1 0 0;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.dates,
+.venue {
+  @include text-body-sm;
+  color: $color-text-secondary;
+  margin: 0;
+
+  strong {
+    color: $color-text-primary;
+  }
+}
+
+.future {
+  @include text-caption;
+  color: $color-text-muted;
+  background-color: $color-bg-subtle;
+  border-left: 3px solid $color-brand-accent;
+  padding: $space-2 $space-3;
+  border-radius: $radius-sm;
+  margin: 0;
+}
+
+.adminLink {
+  @include text-body-sm;
+  color: $color-text-brand;
+  font-weight: $font-weight-semibold;
+  text-decoration: none;
+  margin-top: $space-1;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

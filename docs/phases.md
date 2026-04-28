@@ -7,7 +7,7 @@
 | 0 | Setup y configuración inicial | ✅ [Cerrada 2026-04-28](phases/phase-0-done.md) |
 | 1 | Landing page y catálogo público | ✅ [Cerrada 2026-04-28](phases/phase-1-done.md) |
 | 2 | Autenticación y roles | ✅ [Cerrada 2026-04-28](phases/phase-2-done.md) |
-| 3 | Gestión de cursos con sesiones múltiples | ⬜ Pendiente |
+| 3 | Gestión de cursos con sesiones múltiples | ✅ [Cerrada 2026-04-28](phases/phase-3-done.md) |
 | 4 | Inscripción pagada con Stripe | ⬜ Pendiente |
 | 5 | Asistencia, evaluación y emisión de diplomas | ⬜ Pendiente |
 | 6 | Verificación pública de diplomas + integración con Clavero | ⬜ Pendiente |

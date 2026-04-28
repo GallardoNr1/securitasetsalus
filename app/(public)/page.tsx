@@ -2,11 +2,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { CourseCard } from '@/components/features/CourseCard';
-import { getPublishedCourses } from '@/lib/mock/courses';
+import { listPublishedCourses } from '@/lib/queries/courses';
 import styles from './page.module.scss';
 
-export default function HomePage() {
-  const featuredCourses = getPublishedCourses().slice(0, 3);
+export default async function HomePage() {
+  const allPublished = await listPublishedCourses();
+  const featuredCourses = allPublished.slice(0, 3);
 
   return (
     <main>
@@ -86,30 +87,32 @@ export default function HomePage() {
       </section>
 
       {/* ---------- Cursos destacados ---------- */}
-      <section className={styles.sectionAlt}>
-        <div className={styles.sectionInner}>
-          <header className={styles.sectionHeader}>
-            <span className={styles.eyebrow}>Próximos cursos</span>
-            <h2>Empieza con uno de estos</h2>
-            <p>
-              Nuestros cursos más demandados, con cupos limitados para garantizar atención
-              personalizada del instructor.
-            </p>
-          </header>
+      {featuredCourses.length > 0 ? (
+        <section className={styles.sectionAlt}>
+          <div className={styles.sectionInner}>
+            <header className={styles.sectionHeader}>
+              <span className={styles.eyebrow}>Próximos cursos</span>
+              <h2>Empieza con uno de estos</h2>
+              <p>
+                Nuestros cursos más demandados, con cupos limitados para garantizar atención
+                personalizada del instructor.
+              </p>
+            </header>
 
-          <div className={styles.coursesGrid}>
-            {featuredCourses.map((course) => (
-              <CourseCard key={course.id} course={course} />
-            ))}
-          </div>
+            <div className={styles.coursesGrid}>
+              {featuredCourses.map((course) => (
+                <CourseCard key={course.id} course={course} />
+              ))}
+            </div>
 
-          <div className={styles.sectionFooter}>
-            <Button href="/cursos" variant="primary" size="md">
-              Ver todos los cursos
-            </Button>
+            <div className={styles.sectionFooter}>
+              <Button href="/cursos" variant="primary" size="md">
+                Ver todos los cursos
+              </Button>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       {/* ---------- Por qué SES ---------- */}
       <section className={styles.section}>
