@@ -181,7 +181,23 @@ model Course {
   // Flags de comportamiento
   hasEvaluation                       Boolean      @default(true)
   senceEligible                       Boolean      @default(false)  // Apto franquicia SENCE
-  eligibleForClaveroProfessionalCert  Boolean      @default(false)  // Input válido para Clavero
+
+  // Mapeo a Clavero. Si claveroSkillCode != null, el diploma de este curso
+  // sirve como input para certificación profesional Clavero. Códigos
+  // canónicos del catálogo SENCE: LE, LP, L3, AB, AA, AA+, V1, V2, M1, M2.
+  // Suffix opcional 'e+' para L3 cuando la sede tiene máquina avanzada.
+  claveroSkillCode                    String?
+  claveroSkillSuffix                  String?
+
+  // Prerrequisitos: códigos de skills SES que el alumno debe acreditar
+  // (vía diploma previo) para poder inscribirse a este curso. Vacío = sin
+  // prerrequisitos. Validación en Fase 4 (checkout).
+  prerequisiteSkillCodes              String[]
+
+  // Kit incluido (markdown) — describe el hardware/herramientas que se
+  // entregan al alumno además de la formación. Parte de la propuesta de
+  // valor según el catálogo SENCE.
+  includedKit                         String?
 
   instructorId                        String
   instructor                          User         @relation("CourseInstructor", fields: [instructorId], references: [id])
