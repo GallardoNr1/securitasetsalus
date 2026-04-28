@@ -1,0 +1,48 @@
+@use '../../../../../design-system/tokens/colors' as *;
+@use '../../../../../design-system/tokens/typography' as *;
+@use '../../../../../design-system/tokens/spacing-shadows' as *;
+
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+
+  h1 {
+    @include text-display-md;
+    color: $color-text-primary;
+    margin: 0;
+  }
+
+  p {
+    @include text-body-md;
+    color: $color-text-secondary;
+    max-width: 60ch;
+    margin: 0;
+  }
+}
+
+.eyebrow {
+  @include text-label;
+  color: $color-text-brand;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
+}
+
+.back {
+  @include text-body-sm;
+  color: $color-text-secondary;
+  text-decoration: none;
+  margin-bottom: $space-2;
+
+  &:hover {
+    color: $color-text-brand;
+  }
+}

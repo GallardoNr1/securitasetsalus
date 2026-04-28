@@ -1,0 +1,60 @@
+@use '../../../../../design-system/tokens/colors' as *;
+@use '../../../../../design-system/tokens/typography' as *;
+@use '../../../../../design-system/tokens/spacing-shadows' as *;
+
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+.back {
+  @include text-body-sm;
+  color: $color-text-secondary;
+  text-decoration: none;
+
+  &:hover {
+    color: $color-text-brand;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-4;
+  padding-bottom: $space-6;
+  border-bottom: 1px solid $color-border-default;
+
+  h1 {
+    @include text-display-md;
+    color: $color-text-primary;
+    margin: $space-1 0 $space-2;
+  }
+}
+
+.eyebrow {
+  @include text-label;
+  color: $color-text-brand;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
+}
+
+.email {
+  @include text-body-md;
+  color: $color-text-secondary;
+  margin: 0 0 $space-3;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2;
+}
+
+.muted {
+  @include text-body-sm;
+  color: $color-text-muted;
+}

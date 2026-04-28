@@ -1,0 +1,60 @@
+@use '../../../../design-system/tokens/colors' as *;
+@use '../../../../design-system/tokens/typography' as *;
+@use '../../../../design-system/tokens/spacing-shadows' as *;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  background-color: $color-bg-surface;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-xl;
+  padding: $space-8;
+  box-shadow: $shadow-sm;
+}
+
+.row {
+  display: grid;
+  gap: $space-4;
+  grid-template-columns: 1fr;
+
+  @include responsive-sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.error {
+  padding: $space-3 $space-4;
+  background-color: $color-danger-light;
+  color: $color-danger-dark;
+  border: 1px solid rgba($color-danger, 0.3);
+  border-radius: $radius-md;
+  @include text-body-sm;
+}
+
+.hint {
+  @include text-caption;
+  color: $color-text-muted;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-3;
+  margin-top: $space-3;
+  padding-top: $space-4;
+  border-top: 1px solid $color-border-default;
+}
+
+.cancelLink {
+  @include text-body-sm;
+  color: $color-text-secondary;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+
+  &:hover {
+    color: $color-text-brand;
+  }
+}
