@@ -106,22 +106,41 @@ Sistema de auth completo con verificación de email y redirección por roles.
 **Objetivo:** Admin crea cursos con varias sesiones; los cursos quedan publicables al catálogo.
 
 ### Tareas
-- [ ] Modelos `Course`, `CourseSession`.
-- [ ] CRUD de cursos en `/admin/cursos` (listado con filtros).
-- [ ] Formulario de creación `/admin/cursos/new`:
-  - Datos del curso (título, slug auto-generado, descripción corta, temario completo, duración total, precio, moneda con default `CLP`, capacidad).
+
+#### CRUD de usuarios (admin)
+- [ ] `/admin/usuarios` — listado con filtros (rol, estado de verificación, región).
+- [ ] `/admin/usuarios/new` — formulario para crear instructores manualmente con `emailVerifiedAt: now` (no requieren verificación, su identidad la garantiza el admin).
+- [ ] `/admin/usuarios/[id]` — editar datos, cambiar rol, desactivar usuario (soft delete preferido).
+- [ ] Validar que solo SUPER_ADMIN puede promover a otro SUPER_ADMIN.
+
+#### CRUD de cursos
+- [ ] Migración Prisma para añadir flags del catálogo oficial: `claveroSkillCode`, `claveroSkillSuffix`, `prerequisiteSkillCodes`, `includedKit`. Ver [course-catalog.md](course-catalog.md) para el detalle exacto de cada campo y los códigos canónicos LE/LP/L3/AB/AA/AA+/V1/V2/M1/M2.
+- [ ] `/admin/cursos` — listado con filtros (estado: DRAFT/PUBLISHED/CLOSED/CANCELLED, categoría, sede, instructor).
+- [ ] Formulario `/admin/cursos/new`:
+  - Datos del curso (título, slug auto-generado, descripción corta, temario completo en Markdown, duración total, precio, moneda con default `CLP`, capacidad).
+  - **Kit incluido** (`includedKit`, Markdown) — describe el hardware/herramientas que se entregan al alumno.
   - Asignar instructor (autocomplete sobre usuarios con rol INSTRUCTOR).
-  - Asignar región y sede.
-  - Añadir/quitar sesiones (al menos 1) con fecha y hora de inicio + fin.
-  - Flags: `hasEvaluation` (default true), `senceEligible` (default false), `eligibleForClaveroProfessionalCert` (default false).
-  - Estado: `DRAFT` o `PUBLISHED` (solo PUBLISHED aparece en `/cursos`).
-- [ ] Edición de curso (mismo form) con bloqueo de cambios cuando ya hay inscritos pagados.
-- [ ] `/admin/cursos/[id]` — detalle con lista de inscritos, asistencia agregada, acciones.
-- [ ] Vista del instructor `/instructor/cursos` — listado de cursos asignados.
-- [ ] Vista del alumno `/mis-cursos` — listado de inscripciones (filtra por estado).
+  - Asignar región y sede (`venueName`, `venueAddress`).
+  - Añadir/quitar sesiones (al menos 1) con fecha y hora de inicio + fin. Validar contigüedad/orden temporal.
+  - **Flags pedagógicos**: `hasEvaluation` (default true), `senceEligible` (default false).
+  - **Flags Clavero**: `eligibleForClaveroProfessionalCert` (default false). Si está activo, exige seleccionar `claveroSkillCode` (`LE | LP | L3 | AB | AA | AA+ | V1 | V2 | M1 | M2`) y opcionalmente `claveroSkillSuffix` (`e+`).
+  - **Prerrequisitos**: `prerequisiteSkillCodes` (multi-select sobre el catálogo de skills) — el sistema bloqueará la inscripción si el alumno no acredita esos skills previos.
+  - Estado: `DRAFT` (no aparece al público) o `PUBLISHED` (aparece en `/cursos`).
+- [ ] Edición de curso (mismo form) con bloqueo de cambios sensibles (precio, fechas, capacidad) cuando ya hay inscritos pagados.
+- [ ] `/admin/cursos/[id]` — detalle con lista de inscritos, asistencia agregada por sesión, acciones (cancelar curso, reasignar instructor, ver pagos del curso).
+
+#### Vistas para instructor y alumno
+- [ ] `/instructor/cursos` — listado de cursos asignados con sus fechas, sede y nº de inscritos.
+- [ ] `/instructor/cursos/[id]` — detalle limitado para impartir (sin acciones administrativas).
+- [ ] `/mis-cursos` — alumno ve sus inscripciones por estado.
+
+#### Reemplazo del mock por queries reales
+- [ ] `app/(public)/cursos/page.tsx` y `app/(public)/cursos/[slug]/page.tsx` pasan a leer de Prisma (`db.course.findMany`) en lugar de `lib/mock/courses.ts`.
+- [ ] Eliminar `lib/mock/courses.ts` cuando deje de usarse.
+- [ ] Crear `lib/queries/courses.ts` con helpers tipados para listar/buscar/detalle.
 
 ### Entregable
-Admin puede crear curso completo con sesiones, asignarlo a instructor, publicarlo al catálogo.
+Admin puede crear instructores y cursos con todos los flags del catálogo SENCE de forma autónoma. El catálogo público (`/cursos`) se alimenta de BD real, no de mock.
 
 ### Documentación obligatoria al cerrar
 `docs/phases/phase-3-done.md`
@@ -216,17 +235,21 @@ Endpoint funcional consumible desde Clavero. Página pública de verificación h
 **Objetivo:** Automatizar todas las comunicaciones con alumnos e instructores.
 
 ### Tareas
-- [ ] Configurar Resend + dominio verificado (DKIM + SPF + DMARC).
-- [ ] Plantillas React Email:
-  - Verificación de email
-  - Welcome post-verificación
-  - Confirmación de inscripción + datos prácticos
-  - Recordatorio 48h antes del primer día del curso
-  - Diploma emitido (con PDF adjunto o enlace firmado)
-  - No alcanzó requisitos del diploma (con motivo)
-  - Recibo de pago
-  - Recuperación de contraseña
-- [ ] Cron diario `/api/cron/course-reminders` que envía recordatorios 48h antes.
+- [ ] Configurar Resend en producción + dominio `ses.agsint.cl` verificado (DKIM + SPF + DMARC).
+
+> Las plantillas básicas de auth (Welcome, EmailVerification, PasswordReset, MagicLink) ya se construyeron en Fase 2 con branding SES. Aquí se añaden las transaccionales de negocio:
+
+- [ ] Plantillas React Email nuevas:
+  - **EnrollmentConfirmationEmail** — pago confirmado: datos prácticos del curso, qué llevar, sede, fechas.
+  - **CourseReminderEmail** — recordatorio 48h antes del primer día.
+  - **DiplomaIssuedEmail** — diploma emitido con enlace firmado al PDF + código de verificación.
+  - **DiplomaFailedEmail** — el alumno no alcanzó los requisitos, con motivo (`failedReason`).
+  - **PendingEvaluationEmail** — al cerrar el curso, si falta evaluación cruzada G19, recordar al alumno que la complete para recibir el diploma.
+  - **PaymentReceiptEmail** — recibo del pago con desglose, datos de SES (RUT SpA), enlace a `/billing`.
+  - **CancelationRefundEmail** — confirmación de reembolso parcial/total tras cancelación.
+- [ ] Helpers en `lib/email/send.ts` para cada uno (siguiendo el patrón de Fase 2).
+- [ ] Cron diario `/api/cron/course-reminders` que envía recordatorios 48h antes del primer día del curso. Protegido con `CRON_SECRET`.
+- [ ] Cron diario `/api/cron/pending-evaluations` que recuerda a alumnos en `PENDING_EVALUATION` que completen sus cuestionarios.
 - [ ] Reaprovechar layout/branding base de los emails de Clavero.
 
 ### Entregable

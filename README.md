@@ -44,4 +44,29 @@ npm run dev
 
 ## Estado actual
 
-Documentación inicial. Sin código todavía. Ver [docs/phases.md](docs/phases.md) para el plan.
+**Fases 0 → 2 cerradas (2026-04-28).** La app compila, los tests pasan, BD viva en Supabase us-east-1 con migración aplicada y SUPER_ADMIN sembrado.
+
+| Fase | Estado | Detalle |
+|---|---|---|
+| 0 — Setup técnico | ✅ | [phase-0-done.md](docs/phases/phase-0-done.md) |
+| 1 — Landing + catálogo público | ✅ | [phase-1-done.md](docs/phases/phase-1-done.md) |
+| 2 — Auth + dashboards por rol | ✅ | [phase-2-done.md](docs/phases/phase-2-done.md) |
+| 3 — CRUD cursos + usuarios | ⬜ | siguiente |
+| 4 — Inscripción pagada con Stripe | ⬜ | |
+| 5 — Asistencia + evaluaciones G19 + diplomas | ⬜ | |
+| 6 — Verify público + integración Clavero | ⬜ | |
+| 7 — Emails transaccionales de negocio | ⬜ | |
+| 8 — Material de curso (post-pago) | ⬜ | diferido fuera de MVP |
+| 9 — Tests, observabilidad, lanzamiento | ⬜ | |
+
+Ver [docs/phases.md](docs/phases.md) para el plan completo.
+
+### Smoke test verificado
+
+```bash
+$ npm run prisma:migrate     # 12 tablas creadas en Supabase
+$ npm run prisma:seed        # SUPER_ADMIN pre-verificado
+$ npm run dev                # http://localhost:3000
+# Login con SUPER_ADMIN → 302 + cookie authjs.session-token
+# GET /admin con cookie    → 200 con dashboard renderizado
+```

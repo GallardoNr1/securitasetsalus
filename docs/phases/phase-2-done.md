@@ -1,7 +1,7 @@
 # Fase 2 — Autenticación y roles
 
 **Cierre:** 2026-04-28.
-**Estado:** ✅ completada (a ciegas, sin BD ni Resend reales — el código compila y los tests pasan, queda pendiente cablear `.env.local` con credenciales reales para probar end-to-end).
+**Estado:** ✅ completada **+ verificada contra Supabase real**. La implementación se hizo a ciegas y posteriormente se cableó `.env.local` con Supabase us-east-1 + se corrió migración + seed + smoke test end-to-end con `curl` (login devuelve 302 con cookie `authjs.session-token`, `GET /admin` devuelve 200 con el dashboard renderizado).
 
 ## Qué se construyó
 
@@ -152,3 +152,21 @@ npm run dev
 # 5. /profile → edita name, guarda → recarga, persiste
 # 6. /admin (con la cuenta del seed) → ve el panel admin
 ```
+
+---
+
+## Post-cierre — verificación contra Supabase real
+
+Mismo día 2026-04-28, una vez creado el proyecto Supabase de SES (us-east-1, project ID `cegaqfnbkbbkaydojdlr`), se cableó `.env.local` y se ejecutó el flujo de activación:
+
+1. **`NEXTAUTH_SECRET` generado** localmente con `crypto.randomBytes(32)` y añadido a `.env.local`.
+2. **Migración inicial aplicada**: `npx prisma migrate dev --name init` → 12 tablas creadas en Supabase.
+3. **Seed ejecutado**: `npm run prisma:seed` → SUPER_ADMIN `mgallardo.wdeveloper@gmail.com` creado pre-verificado.
+4. **Smoke test con curl**:
+   - `GET /api/auth/csrf` → token CSRF correcto.
+   - `POST /api/auth/callback/credentials` con email + password del seed → HTTP 302 + cookie `authjs.session-token` creada.
+   - `GET /admin` con la cookie → HTTP 200 con el dashboard renderizado, saludo personalizado y CTAs de Fase 3+.
+
+**Resultado:** todo el flujo de auth funciona end-to-end contra BD real. La migración inicial quedó commiteada en `5f6ada1`.
+
+Pendiente solo de cablear Resend (cuando el cofundador tenga la cuenta lista) para que los emails de verificación / magic link / reset salgan de verdad en lugar de loguearse en consola.
