@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { isBucketConfigured } from '@/lib/r2';
+import { isBucketConfigured } from '@/lib/r2-config';
 import { SUPPORTED_REGIONS, type SupportedRegion } from '@/lib/regions';
 import { AvatarUploader } from './AvatarUploader';
 import { ProfileForm } from './ProfileForm';

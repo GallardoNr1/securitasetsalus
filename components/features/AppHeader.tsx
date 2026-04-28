@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { isBucketConfigured } from '@/lib/r2';
+import { isBucketConfigured } from '@/lib/r2-config';
 import { logoutAction } from '@/app/(auth)/actions';
 import { Avatar } from '@/components/ui/Avatar';
 import styles from './AppHeader.module.scss';
