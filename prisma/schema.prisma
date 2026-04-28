@@ -79,9 +79,56 @@ model User {
   emailVerificationTokens  EmailVerificationToken[]
   coursesAsInstructor      Course[]                  @relation("CourseInstructor")
   attendancesMarked        Attendance[]              @relation("AttendanceMarker")
+  // NextAuth (Magic Link via @auth/prisma-adapter)
+  accounts                 Account[]
+  sessions                 Session[]
 
   @@index([email])
   @@index([role])
+}
+
+// ------------------------------------------------------------
+// NextAuth (@auth/prisma-adapter)
+// ------------------------------------------------------------
+// Modelos requeridos por el adaptador para gestionar Magic Link y futuras
+// integraciones OAuth. La sesión real va por JWT, pero el adapter usa
+// VerificationToken para validar el token enviado por correo.
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String   // email del usuario
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
 
 model PasswordResetToken {

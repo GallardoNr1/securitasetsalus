@@ -1,0 +1,11 @@
+import type { Metadata } from 'next';
+import { ForgotPasswordForm } from './ForgotPasswordForm';
+
+export const metadata: Metadata = {
+  title: 'Recuperar contraseña',
+  robots: { index: false, follow: true },
+};
+
+export default function ForgotPasswordPage() {
+  return <ForgotPasswordForm />;
+}

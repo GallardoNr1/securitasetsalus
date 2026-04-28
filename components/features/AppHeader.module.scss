@@ -1,0 +1,113 @@
+@use '../../design-system/tokens/colors' as *;
+@use '../../design-system/tokens/typography' as *;
+@use '../../design-system/tokens/spacing-shadows' as *;
+
+.header {
+  background-color: $color-bg-surface;
+  border-bottom: 1px solid $color-border-default;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: $space-6;
+  padding: $space-3 $space-page-gutter;
+  max-width: $space-page-max;
+  margin: 0 auto;
+
+  @include responsive-md {
+    padding: $space-4 $space-8;
+  }
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  text-decoration: none;
+  color: $color-text-brand;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.name {
+  display: none;
+  @include text-heading-sm;
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+
+  @include responsive-md {
+    display: inline;
+  }
+}
+
+.userBlock {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  margin-left: auto;
+}
+
+.userInfo {
+  display: none;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.2;
+
+  @include responsive-sm {
+    display: flex;
+  }
+}
+
+.userName {
+  @include text-body-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.userRole {
+  @include text-caption;
+  color: $color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-wider;
+}
+
+.profileLink {
+  @include text-body-sm;
+  color: $color-text-secondary;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+
+  &:hover {
+    color: $color-text-brand;
+  }
+}
+
+.logoutButton {
+  @include text-body-sm;
+  color: $color-text-secondary;
+  background: transparent;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-md;
+  padding: $space-2 $space-3;
+  cursor: pointer;
+  font-family: $font-body;
+  font-weight: $font-weight-medium;
+  transition:
+    background-color $duration-fast $ease-default,
+    color            $duration-fast $ease-default,
+    border-color     $duration-fast $ease-default;
+
+  &:hover {
+    background-color: $color-danger-light;
+    color: $color-danger-dark;
+    border-color: rgba($color-danger, 0.3);
+  }
+}

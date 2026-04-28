@@ -1,0 +1,12 @@
+@use '../../design-system/tokens/colors' as *;
+@use '../../design-system/tokens/spacing-shadows' as *;
+
+.main {
+  min-height: calc(100vh - 64px);
+  background-color: $color-bg-page;
+  padding: $space-section-sm $space-page-gutter;
+
+  @include responsive-md {
+    padding: $space-section-sm $space-8;
+  }
+}

@@ -1,0 +1,50 @@
+@use '../../design-system/tokens/colors' as *;
+@use '../../design-system/tokens/typography' as *;
+@use '../../design-system/tokens/spacing-shadows' as *;
+
+.header {
+  padding: $space-4 $space-page-gutter;
+  border-bottom: 1px solid rgba($color-border-default, 0.5);
+  background-color: rgba($color-bg-page, 0.92);
+  backdrop-filter: blur(8px);
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-3;
+  text-decoration: none;
+  color: $color-text-primary;
+
+  &:hover {
+    color: $color-text-brand;
+  }
+}
+
+.logoMark {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.logoText {
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-lg;
+}
+
+.main {
+  min-height: calc(100vh - 24rem);
+  padding-block: $space-12 $space-section-sm;
+  background:
+    radial-gradient(ellipse at top, rgba($color-primary-700, 0.06), transparent 50%),
+    $color-bg-page;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-inline: $space-page-gutter;
+
+  @include responsive-md {
+    padding-block: $space-section-md;
+  }
+}
