@@ -51,14 +51,34 @@
 .userBlock {
   display: flex;
   align-items: center;
-  gap: $space-4;
+  gap: $space-3;
   margin-left: auto;
+}
+
+.profileLink {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-1 $space-2;
+  border-radius: $radius-md;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color $duration-fast $ease-default;
+
+  &:hover {
+    background-color: $color-primary-50;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-border-focus;
+    outline-offset: 2px;
+  }
 }
 
 .userInfo {
   display: none;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   line-height: 1.2;
 
   @include responsive-sm {
@@ -77,17 +97,6 @@
   color: $color-text-muted;
   text-transform: uppercase;
   letter-spacing: $letter-spacing-wider;
-}
-
-.profileLink {
-  @include text-body-sm;
-  color: $color-text-secondary;
-  text-decoration: none;
-  font-weight: $font-weight-medium;
-
-  &:hover {
-    color: $color-text-brand;
-  }
 }
 
 .logoutButton {
