@@ -170,3 +170,32 @@ Mismo día 2026-04-28, una vez creado el proyecto Supabase de SES (us-east-1, pr
 **Resultado:** todo el flujo de auth funciona end-to-end contra BD real. La migración inicial quedó commiteada en `5f6ada1`.
 
 Pendiente solo de cablear Resend (cuando el cofundador tenga la cuenta lista) para que los emails de verificación / magic link / reset salgan de verdad en lugar de loguearse en consola.
+
+---
+
+## Extra de Fase 2 — Avatar con foto subida
+
+Tras el cierre formal, se añadió el flujo completo de avatar con foto subida y cropper, con graceful fallback para cuando R2 aún no esté configurado. Decisión deliberada: dejarlo en Fase 2 (no en Fase 9 ni en una fase futura) para que la cabecera autenticada se vea presentable desde el primer alumno real.
+
+### Qué se construyó
+- **Schema**: `User.avatarKey` (string nullable). Migración `add_avatar_key` aplicada en Supabase.
+- **Storage**: nuevo bucket R2 `ses-avatars` con TTL de URL firmada de 1 h. Variable `R2_BUCKET_NAME_AVATARS` en `.env.example` y `lib/env.ts`.
+- **`lib/r2.ts`**: tipo ampliado a `R2Bucket = 'diplomas' | 'materials' | 'receipts' | 'avatars'`. `isR2Available()` ahora solo comprueba credenciales (sin exigir TODOS los buckets); nueva función `isBucketConfigured(bucket)` que verifica el bucket concreto. Esto permite activar avatares antes que diplomas/etc.
+- **Endpoint público** `/api/users/[id]/avatar` (runtime nodejs): consulta `avatarKey`, devuelve 302 a URL firmada de R2 con `Cache-Control: max-age=300`. 404 si no hay foto, 503 si R2 no está configurado.
+- **Server actions** en `app/(app)/profile/actions.ts`:
+  - `uploadAvatarAction(formData)` — valida tipo (JPG/PNG/WebP), tamaño (≤2 MB ya recortado), sube a R2 con key timestampeada, actualiza BD, borra foto anterior best-effort.
+  - `deleteAvatarAction()` — borra de R2 + pone `avatarKey: null`. Idempotente.
+- **Componente cliente** `AvatarUploader.tsx` con `react-easy-crop`: input file, validación cliente (≤10 MB origen), cropper circular con zoom 1-3x, recorte cuadrado a 512×512 JPEG quality 0.9, banners de éxito/error.
+- **`Avatar.tsx`** ampliado: si `avatarKey` + `userId` → carga `<Image src="/api/users/[id]/avatar" unoptimized />`; si no → fallback de iniciales.
+- **`AppHeader`** consulta `avatarKey` solo si R2 configurado (evita `<Image>` rota cuando R2 está vacío).
+- **`/profile`** muestra sección "Foto de perfil" con `AvatarUploader` arriba del formulario; si R2 no está configurado, sustituye el uploader por un mensaje "Se activa cuando el admin rellene las variables R2_*".
+
+### Verificación
+- `typecheck` OK, `lint` OK, 45/45 tests, `build` OK.
+- Probado en local con R2 sin configurar: `/profile` muestra el aviso correcto, `AppHeader` renderiza iniciales sin pedir el endpoint roto.
+
+### Pendiente para activación completa
+- [ ] Crear cuenta Cloudflare R2 + bucket `ses-avatars`.
+- [ ] Generar API token con permisos sobre el bucket.
+- [ ] Pegar `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` en `.env.local` (y luego en Vercel).
+- [ ] Probar end-to-end: subir → recortar → guardar → ver foto en cabecera y `/profile`.

@@ -67,6 +67,7 @@ model User {
   subdivision     String?   // ISO 3166-2 (CL-RM, ...)
   phone           String?
   rut             String?   // RUT chileno cuando se usa franquicia SENCE
+  avatarKey       String?   // Key en R2 (bucket ses-avatars) si subió foto
   emailVerifiedAt DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt

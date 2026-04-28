@@ -69,7 +69,7 @@ export function ProfileForm({ initial }: Props) {
   const subdivisions = getSubdivisions(region);
 
   return (
-    <div className={styles.page}>
+    <>
       {/* Sección 1 — datos de perfil */}
       <section className={styles.section}>
         <header className={styles.sectionHeader}>
@@ -243,6 +243,6 @@ export function ProfileForm({ initial }: Props) {
           </Button>
         </form>
       </section>
-    </div>
+    </>
   );
 }

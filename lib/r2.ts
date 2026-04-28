@@ -21,23 +21,28 @@ const accountId = process.env.R2_ACCOUNT_ID;
 const accessKeyId = process.env.R2_ACCESS_KEY_ID;
 const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
 
-export type R2Bucket = 'diplomas' | 'materials' | 'receipts';
+export type R2Bucket = 'diplomas' | 'materials' | 'receipts' | 'avatars';
 
 const BUCKET_ENV_VARS: Record<R2Bucket, string | undefined> = {
   diplomas: process.env.R2_BUCKET_NAME_DIPLOMAS,
   materials: process.env.R2_BUCKET_NAME_MATERIALS,
   receipts: process.env.R2_BUCKET_NAME_RECEIPTS,
+  avatars: process.env.R2_BUCKET_NAME_AVATARS,
 };
 
+/**
+ * Devuelve true si el cliente S3 puede instanciarse (credenciales OK).
+ * No exige que TODOS los buckets estén configurados — cada operación
+ * comprueba el suyo en `bucketName()`. Esto permite arrancar avatares
+ * sin tener configurados aún diplomas/materiales/recibos.
+ */
 export function isR2Available(): boolean {
-  return Boolean(
-    accountId &&
-      accessKeyId &&
-      secretAccessKey &&
-      BUCKET_ENV_VARS.diplomas &&
-      BUCKET_ENV_VARS.materials &&
-      BUCKET_ENV_VARS.receipts,
-  );
+  return Boolean(accountId && accessKeyId && secretAccessKey);
+}
+
+/** Comprueba si un bucket específico está configurado. */
+export function isBucketConfigured(bucket: R2Bucket): boolean {
+  return isR2Available() && Boolean(BUCKET_ENV_VARS[bucket]);
 }
 
 function bucketName(bucket: R2Bucket): string {
@@ -122,4 +127,7 @@ export const r2Keys = {
   diplomaPdf: (userId: string, diplomaId: string) => `${userId}/${diplomaId}.pdf`,
   courseMaterial: (courseId: string, filename: string) => `${courseId}/${filename}`,
   paymentReceipt: (userId: string, paymentId: string) => `${userId}/${paymentId}.pdf`,
+  // Timestamp en la key para invalidar cache del navegador cuando el user
+  // sube un avatar nuevo (la URL firmada cambia, el componente refresca).
+  avatar: (userId: string, ext: string) => `${userId}/${Date.now()}.${ext}`,
 };

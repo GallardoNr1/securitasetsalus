@@ -38,6 +38,7 @@ const envSchema = z.object({
   R2_BUCKET_NAME_DIPLOMAS: z.string().optional(),
   R2_BUCKET_NAME_MATERIALS: z.string().optional(),
   R2_BUCKET_NAME_RECEIPTS: z.string().optional(),
+  R2_BUCKET_NAME_AVATARS: z.string().optional(),
   R2_PUBLIC_URL: z.url().optional(),
 
   // Email — Resend (Fase 7+)
