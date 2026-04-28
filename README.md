@@ -16,7 +16,8 @@ Escuela de formación profesional en cerrajería y seguridad para Latinoamérica
 | [docs/rules.md](docs/rules.md) | Reglas del proyecto — nomenclatura, git, calidad, seguridad |
 | [docs/deployment.md](docs/deployment.md) | Dominio, DNS, Vercel, env vars en producción |
 | [docs/integration-clavero.md](docs/integration-clavero.md) | Contrato de verificación de diplomas SES ↔ Clavero |
-| [docs/decisions-pending.md](docs/decisions-pending.md) | **18 decisiones pendientes** que bloquean Fase 0 — leer y resolver primero |
+| [docs/course-catalog.md](docs/course-catalog.md) | **Catálogo oficial de cursos** con códigos de skill Clavero (referencia para Fase 3) |
+| [docs/decisions-pending.md](docs/decisions-pending.md) | 18 decisiones planteadas al inicio (17 cerradas) |
 
 ## Regla principal
 
