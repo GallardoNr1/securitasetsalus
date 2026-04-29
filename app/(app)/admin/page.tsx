@@ -86,15 +86,15 @@ export default async function AdminDashboardPage() {
         <ul>
           <li>
             <strong>Fase 4:</strong> inscripciones pagadas con Stripe — el alumno se
-            inscribirá desde el catálogo público.
+            inscribirá desde el catálogo público (bloqueada por la constitución de la SpA).
           </li>
           <li>
-            <strong>Fase 5:</strong> asistencia, evaluación y emisión automática de diplomas.
-            Incluye el flujo de evaluaciones cruzadas G19 (OTEC SENCE).
+            <strong>Fase 6:</strong> verificación pública del diploma + integración con Clavero
+            (endpoint <code>/api/diplomas/[code]/verify</code>).
           </li>
           <li>
-            <strong>Fase 6:</strong> verificación pública del diploma + integración con
-            Clavero.
+            <strong>Fase 7:</strong> emails transaccionales adicionales (recordatorios de
+            sesión, confirmación de inscripción).
           </li>
         </ul>
       </section>

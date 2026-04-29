@@ -35,8 +35,8 @@ export default async function InstructorCoursesPage() {
         <span className={styles.eyebrow}>Instructor</span>
         <h1>Mis cursos asignados</h1>
         <p>
-          Cursos que tienes que impartir. En la fase 5 podrás marcar asistencia por sesión y
-          registrar evaluaciones desde aquí.
+          Cursos que tienes que impartir. Desde aquí pasas lista por sesión, evalúas a tus
+          alumnos al cierre del curso y emites sus diplomas con QR público.
         </p>
       </header>
 
