@@ -134,24 +134,34 @@
   }
 }
 
-.future {
-  @include text-caption;
-  color: $color-text-muted;
-  background-color: $color-bg-subtle;
-  border-left: 3px solid $color-brand-accent;
-  padding: $space-2 $space-3;
-  border-radius: $radius-sm;
-  margin: 0;
+.cardActions {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  margin-top: auto;
+  padding-top: $space-2;
+  border-top: 1px solid $color-border-default;
 }
 
-.adminLink {
+.primaryLink {
   @include text-body-sm;
   color: $color-text-brand;
   font-weight: $font-weight-semibold;
   text-decoration: none;
-  margin-top: $space-1;
 
   &:hover {
+    text-decoration: underline;
+  }
+}
+
+.adminLink {
+  @include text-body-sm;
+  color: $color-text-muted;
+  font-weight: $font-weight-medium;
+  text-decoration: none;
+
+  &:hover {
+    color: $color-text-brand;
     text-decoration: underline;
   }
 }

@@ -110,16 +110,16 @@ export default async function InstructorCoursesPage() {
                   </p>
                 ) : null}
 
-                <p className={styles.future}>
-                  La gestión de asistencia y evaluación se activa en la fase 5. Mientras tanto
-                  puedes ver los datos del curso aquí.
-                </p>
-
-                {session.user.role === 'SUPER_ADMIN' ? (
-                  <Link href={`/admin/cursos/${c.id}`} className={styles.adminLink}>
-                    Editar como admin →
+                <div className={styles.cardActions}>
+                  <Link href={`/instructor/cursos/${c.id}`} className={styles.primaryLink}>
+                    Gestionar asistencia →
                   </Link>
-                ) : null}
+                  {session.user.role === 'SUPER_ADMIN' ? (
+                    <Link href={`/admin/cursos/${c.id}`} className={styles.adminLink}>
+                      Editar como admin →
+                    </Link>
+                  ) : null}
+                </div>
               </li>
             );
           })}

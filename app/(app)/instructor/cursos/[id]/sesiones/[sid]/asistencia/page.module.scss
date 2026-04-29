@@ -1,0 +1,203 @@
+@use '../../../../../../../../design-system/tokens/colors' as *;
+@use '../../../../../../../../design-system/tokens/typography' as *;
+@use '../../../../../../../../design-system/tokens/spacing-shadows' as *;
+
+.page {
+  max-width: 60rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  padding-bottom: $space-3;
+  border-bottom: 1px solid $color-border-default;
+}
+
+.back {
+  @include text-body-sm;
+  color: $color-text-secondary;
+  text-decoration: none;
+  align-self: flex-start;
+  margin-bottom: $space-2;
+
+  &:hover {
+    color: $color-text-primary;
+  }
+}
+
+.header h1 {
+  @include text-display-md;
+  color: $color-text-primary;
+  margin: 0;
+}
+
+.dateLine {
+  @include text-body-md;
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+.empty {
+  padding: $space-5;
+  border: 1px dashed $color-border-default;
+  border-radius: $radius-md;
+  text-align: center;
+
+  h2 {
+    @include text-heading-md;
+    color: $color-text-primary;
+    margin: 0 0 $space-2;
+  }
+
+  p {
+    @include text-body-md;
+    color: $color-text-secondary;
+    margin: 0;
+    max-width: 60ch;
+    margin-inline: auto;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: $space-3;
+  padding: $space-3 $space-4;
+  background: $color-neutral-50;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-md;
+}
+
+.counter {
+  @include text-body-md;
+  color: $color-text-primary;
+
+  strong {
+    font-weight: 700;
+  }
+}
+
+.bulkActions {
+  display: flex;
+  gap: $space-2;
+}
+
+.bulkButton {
+  @include text-body-sm;
+  background: transparent;
+  border: 1px solid $color-border-strong;
+  border-radius: $radius-md;
+  padding: $space-1 $space-3;
+  cursor: pointer;
+  color: $color-text-primary;
+
+  &:hover:not(:disabled) {
+    background: $color-neutral-100;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.roster {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.row {
+  border: 1px solid $color-border-default;
+  border-radius: $radius-md;
+  background: $color-neutral-0;
+
+  &:has(.checkbox:checked) {
+    background: $color-success-light;
+    border-color: $color-success;
+  }
+}
+
+.rowLabel {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-2 $space-3;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  accent-color: $color-brand;
+}
+
+.studentName {
+  @include text-body-md;
+  color: $color-text-primary;
+  font-weight: 500;
+  flex: 1;
+}
+
+.previouslyMarked {
+  @include text-caption;
+  color: $color-text-muted;
+  font-style: italic;
+}
+
+.feedbackOk {
+  @include text-body-sm;
+  color: $color-success-dark;
+  background: $color-success-light;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  margin: 0;
+}
+
+.feedbackError {
+  @include text-body-sm;
+  color: $color-danger;
+  background: $color-danger-light;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: $space-3;
+  padding-top: $space-3;
+  border-top: 1px solid $color-border-default;
+}
+
+.cancelLink {
+  @include text-body-sm;
+  color: $color-text-secondary;
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    color: $color-text-primary;
+    text-decoration: underline;
+  }
+}

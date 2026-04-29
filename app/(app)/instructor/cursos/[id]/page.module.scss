@@ -1,0 +1,198 @@
+@use '../../../../../design-system/tokens/colors' as *;
+@use '../../../../../design-system/tokens/typography' as *;
+@use '../../../../../design-system/tokens/spacing-shadows' as *;
+
+.page {
+  max-width: $space-page-max;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding-bottom: $space-4;
+  border-bottom: 1px solid $color-border-default;
+}
+
+.back {
+  @include text-body-sm;
+  color: $color-text-secondary;
+  text-decoration: none;
+  align-self: flex-start;
+  margin-bottom: $space-2;
+
+  &:hover {
+    color: $color-text-primary;
+  }
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  flex-wrap: wrap;
+}
+
+.header h1 {
+  @include text-display-md;
+  color: $color-text-primary;
+  margin: $space-1 0 $space-3;
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: $space-3;
+  margin: 0;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+  }
+
+  dt {
+    @include text-caption;
+    color: $color-text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  dd {
+    @include text-body-md;
+    color: $color-text-primary;
+    margin: 0;
+    font-weight: 600;
+  }
+}
+
+.sessions {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+
+  h2 {
+    @include text-heading-md;
+    color: $color-text-primary;
+    margin: 0;
+  }
+
+  p {
+    @include text-body-sm;
+    color: $color-text-secondary;
+    margin: 0;
+    max-width: 60ch;
+  }
+}
+
+.empty {
+  padding: $space-5;
+  border: 1px dashed $color-border-default;
+  border-radius: $radius-md;
+  text-align: center;
+  color: $color-text-secondary;
+
+  p {
+    @include text-body-md;
+    margin: 0;
+  }
+}
+
+.sessionList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.sessionCard {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: $space-4;
+  padding: $space-3 $space-4;
+  background: $color-neutral-50;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-md;
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+    gap: $space-2;
+  }
+}
+
+.sessionMeta {
+  display: flex;
+  flex-direction: column;
+  gap: $space-0;
+}
+
+.sessionNumber {
+  @include text-body-sm;
+  color: $color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.sessionDate {
+  @include text-body-md;
+  color: $color-text-primary;
+  font-weight: 500;
+}
+
+.sessionLocation {
+  @include text-body-sm;
+  color: $color-text-secondary;
+}
+
+.sessionStatus {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  align-items: flex-end;
+
+  @media (max-width: 720px) {
+    align-items: flex-start;
+  }
+}
+
+.statusPending {
+  @include text-body-sm;
+  color: $color-warning-dark;
+  font-weight: 600;
+}
+
+.statusPartial {
+  @include text-body-sm;
+  color: $color-warning-dark;
+}
+
+.lateWarning {
+  @include text-caption;
+  color: $color-danger;
+}
+
+.takeAction {
+  @include text-body-sm;
+  color: $color-text-brand;
+  text-decoration: none;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
