@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import { getCourseById } from '@/lib/queries/courses';
 import { listInstructors } from '@/lib/queries/users';
 import { Badge } from '@/components/ui/Badge';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Tag } from '@/components/ui/Tag';
 import {
   CLAVERO_SKILL_LABELS,
@@ -63,9 +63,13 @@ export default async function EditCoursePage({ params }: Props) {
 
   return (
     <div className={styles.page}>
-      <Link href="/admin/courses" className={styles.back}>
-        ← Volver al listado
-      </Link>
+      <Breadcrumbs
+        items={[
+          { label: 'Panel admin', href: '/admin' },
+          { label: 'Cursos', href: '/admin/courses' },
+          { label: course.title },
+        ]}
+      />
 
       <header className={styles.header}>
         <div>

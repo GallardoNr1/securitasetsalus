@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { UserForm } from '../UserForm';
 import styles from './page.module.scss';
 
@@ -18,10 +18,14 @@ export default async function NewUserPage() {
 
   return (
     <div className={styles.page}>
+      <Breadcrumbs
+        items={[
+          { label: 'Panel admin', href: '/admin' },
+          { label: 'Usuarios', href: '/admin/users' },
+          { label: 'Nuevo' },
+        ]}
+      />
       <header className={styles.header}>
-        <Link href="/admin/users" className={styles.back}>
-          ← Volver al listado
-        </Link>
         <span className={styles.eyebrow}>Administración</span>
         <h1>Crear usuario</h1>
         <p>

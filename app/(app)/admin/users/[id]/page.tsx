@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import { getUserById } from '@/lib/queries/users';
 import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { SUPPORTED_REGIONS, type SupportedRegion } from '@/lib/regions';
 import { formatDate } from '@/lib/format';
 import { UserForm } from '../UserForm';
@@ -36,9 +36,13 @@ export default async function EditUserPage({ params }: Props) {
 
   return (
     <div className={styles.page}>
-      <Link href="/admin/users" className={styles.back}>
-        ← Volver al listado
-      </Link>
+      <Breadcrumbs
+        items={[
+          { label: 'Panel admin', href: '/admin' },
+          { label: 'Usuarios', href: '/admin/users' },
+          { label: user.name },
+        ]}
+      />
 
       <header className={styles.header}>
         <Avatar name={user.name} userId={user.id} avatarKey={user.avatarKey} size="lg" />
