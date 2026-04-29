@@ -26,7 +26,15 @@ export function LoginForm() {
         setError(result.message);
         return;
       }
-      router.push('/dashboard');
+      // Redirigimos al panel correcto según el rol — evitamos que un
+      // SUPER_ADMIN aterrice en /dashboard (vista de alumno) tras login.
+      const dest =
+        result.role === 'SUPER_ADMIN'
+          ? '/admin'
+          : result.role === 'INSTRUCTOR'
+            ? '/instructor'
+            : '/dashboard';
+      router.push(dest);
       router.refresh();
     });
   }
