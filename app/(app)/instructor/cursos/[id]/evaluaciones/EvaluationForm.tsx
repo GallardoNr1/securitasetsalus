@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Avatar } from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
+import { useIsDirty } from '@/lib/hooks/use-dirty';
 import { saveEvaluationsAction } from '@/app/(app)/instructor/actions';
 import styles from './page.module.scss';
 
@@ -54,6 +55,22 @@ export function EvaluationForm({
   const [feedback, setFeedback] = useState<{ kind: 'ok' | 'error'; message: string } | null>(
     null,
   );
+
+  // Snapshot ya guardado vs estado actual: comparamos solo los campos
+  // editables (notas + comentarios). Tras guardar lo actualizamos y el
+  // botón vuelve a quedar deshabilitado.
+  const snapshotOf = (es: typeof initialEntries) =>
+    es.map((e) => ({
+      id: e.enrollmentId,
+      t: e.technicalScore,
+      k: e.knowledgeScore,
+      a: e.attitudeScore,
+      p: e.participationScore,
+      n: e.notes,
+    }));
+  const [savedSnapshot, setSavedSnapshot] = useState(() => snapshotOf(initialEntries));
+  const currentSnapshot = useMemo(() => snapshotOf(entries), [entries]);
+  const isDirty = useIsDirty(savedSnapshot, currentSnapshot);
 
   function updateEntry<K extends keyof EvaluationEntry>(
     enrollmentId: string,
@@ -127,6 +144,7 @@ export function EvaluationForm({
           message: `${result.message} ${result.passedCount} aprueba${result.passedCount === 1 ? '' : 'n'}.`,
         });
         router.refresh();
+        setSavedSnapshot(currentSnapshot);
       } else {
         setFeedback({ kind: 'error', message: result.message });
       }
@@ -241,7 +259,7 @@ export function EvaluationForm({
         <Link href={`/instructor/cursos/${courseId}`} className={styles.cancelLink}>
           Cancelar
         </Link>
-        <Button type="submit" loading={isPending} disabled={isPending}>
+        <Button type="submit" loading={isPending} disabled={isPending || !isDirty}>
           Guardar evaluaciones
         </Button>
       </div>

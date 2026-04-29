@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
@@ -17,6 +17,7 @@ import {
   getSubdivisions,
   type SupportedRegion,
 } from '@/lib/regions';
+import { useFormDirty, useIsDirty } from '@/lib/hooks/use-dirty';
 import { createCourseAction, updateCourseAction } from './actions';
 import styles from './CourseForm.module.scss';
 
@@ -81,6 +82,36 @@ export function CourseForm({ mode, courseId, initial, instructors, locked = fals
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [pending, startTransition] = useTransition();
 
+  // Dirty state — el botón Guardar/Crear se desactiva cuando el form
+  // coincide con el snapshot inicial. Tras crear, redirigimos así que
+  // no necesitamos resetear el snapshot. Tras editar sí.
+  const formRef = useRef<HTMLFormElement>(null);
+  const initialFormSnapshot: Record<string, string> = {
+    title: initial.title,
+    slug: initial.slug,
+    shortDescription: initial.shortDescription,
+    fullSyllabus: initial.fullSyllabus,
+    durationHours: String(initial.durationHours),
+    price: String(initial.price),
+    currency: initial.currency,
+    capacity: String(initial.capacity),
+    region: initial.region,
+    subdivision: initial.subdivision ?? '',
+    venueName: initial.venueName ?? '',
+    venueAddress: initial.venueAddress ?? '',
+    instructorId: initial.instructorId,
+    status: initial.status,
+    hasEvaluation: initial.hasEvaluation ? 'on' : '',
+    senceEligible: initial.senceEligible ? 'on' : '',
+    claveroSkillCode: initial.claveroSkillCode ?? '',
+    claveroSkillSuffix: initial.claveroSkillSuffix ?? '',
+    includedKit: initial.includedKit ?? '',
+  };
+  const isFieldsDirty = useFormDirty(formRef, initialFormSnapshot);
+  // Las sesiones viven en useState propio, así que las comparamos aparte.
+  const isSessionsDirty = useIsDirty(initial.sessions, sessions);
+  const isDirty = isFieldsDirty || isSessionsDirty;
+
   function fieldError(name: string): string | undefined {
     return fieldErrors[name];
   }
@@ -139,7 +170,7 @@ export function CourseForm({ mode, courseId, initial, instructors, locked = fals
   const subdivisions = getSubdivisions(region);
 
   return (
-    <form action={handleSubmit} className={styles.form} noValidate>
+    <form ref={formRef} action={handleSubmit} className={styles.form} noValidate>
       {error ? <div className={styles.error}>{error}</div> : null}
       {locked ? (
         <div className={styles.warn}>
@@ -590,7 +621,13 @@ export function CourseForm({ mode, courseId, initial, instructors, locked = fals
       </fieldset>
 
       <div className={styles.actions}>
-        <Button type="submit" variant="primary" size="md" loading={pending}>
+        <Button
+          type="submit"
+          variant="primary"
+          size="md"
+          loading={pending}
+          disabled={pending || !isDirty}
+        >
           {mode === 'create' ? 'Crear curso' : 'Guardar cambios'}
         </Button>
         <Link href="/admin/cursos" className={styles.cancelLink}>

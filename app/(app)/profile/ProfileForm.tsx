@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useRef, useState, useTransition } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Field, Input, Label, ErrorMessage, Select } from '@/components/ui/Input';
 import { PasswordInput } from '@/components/ui/PasswordInput';
+import { useFormDirty, snapshotForm } from '@/lib/hooks/use-dirty';
 import { REGION_LABELS, SUPPORTED_REGIONS, type SupportedRegion } from '@/lib/regions';
 import { getSubdivisions } from '@/lib/regions';
 import { changePasswordAction, updateProfileAction } from './actions';
@@ -31,6 +32,28 @@ export function ProfileForm({ initial }: Props) {
   const [profilePending, startProfileTransition] = useTransition();
   const [pwdPending, startPwdTransition] = useTransition();
 
+  // Refs + snapshots para que el botón Guardar de cada sección solo se
+  // active cuando el usuario haya tocado algo respecto al último guardado.
+  const profileFormRef = useRef<HTMLFormElement>(null);
+  const [savedProfileSnapshot, setSavedProfileSnapshot] = useState<Record<string, string>>({
+    name: initial.name,
+    region: initial.region,
+    subdivision: initial.subdivision ?? '',
+    phone: initial.phone ?? '',
+    rut: initial.rut ?? '',
+  });
+  const isProfileDirty = useFormDirty(profileFormRef, savedProfileSnapshot);
+
+  const passwordFormRef = useRef<HTMLFormElement>(null);
+  // Para la contraseña el snapshot inicial son strings vacíos: cualquier
+  // tecleo activa el botón. Tras guardar, el form se resetea y vuelve a
+  // quedar deshabilitado.
+  const isPasswordDirty = useFormDirty(passwordFormRef, {
+    currentPassword: '',
+    newPassword: '',
+    newPasswordConfirm: '',
+  });
+
   function handleProfileSubmit(formData: FormData) {
     startProfileTransition(async () => {
       setProfileMsg(null);
@@ -44,6 +67,18 @@ export function ProfileForm({ initial }: Props) {
         return;
       }
       setProfileMsg({ ok: true, text: result.message });
+      // Tras un guardado exitoso, el snapshot pasa a ser el estado actual:
+      // el botón vuelve a quedar deshabilitado hasta el próximo cambio.
+      if (profileFormRef.current) {
+        const snap = snapshotForm(profileFormRef.current);
+        setSavedProfileSnapshot({
+          name: snap.name ?? '',
+          region: snap.region ?? '',
+          subdivision: snap.subdivision ?? '',
+          phone: snap.phone ?? '',
+          rut: snap.rut ?? '',
+        });
+      }
     });
   }
 
@@ -81,7 +116,7 @@ export function ProfileForm({ initial }: Props) {
           <div className={profileMsg.ok ? styles.success : styles.error}>{profileMsg.text}</div>
         ) : null}
 
-        <form action={handleProfileSubmit} className={styles.form} noValidate>
+        <form ref={profileFormRef} action={handleProfileSubmit} className={styles.form} noValidate>
           <Field>
             <Label htmlFor="name" required>
               Nombre completo
@@ -174,7 +209,13 @@ export function ProfileForm({ initial }: Props) {
             </Field>
           </div>
 
-          <Button type="submit" variant="primary" size="md" loading={profilePending}>
+          <Button
+            type="submit"
+            variant="primary"
+            size="md"
+            loading={profilePending}
+            disabled={profilePending || !isProfileDirty}
+          >
             Guardar cambios
           </Button>
         </form>
@@ -192,6 +233,7 @@ export function ProfileForm({ initial }: Props) {
         ) : null}
 
         <form
+          ref={passwordFormRef}
           id="passwordForm"
           action={handlePasswordSubmit}
           className={styles.form}
@@ -238,7 +280,13 @@ export function ProfileForm({ initial }: Props) {
             </Field>
           </div>
 
-          <Button type="submit" variant="secondary" size="md" loading={pwdPending}>
+          <Button
+            type="submit"
+            variant="secondary"
+            size="md"
+            loading={pwdPending}
+            disabled={pwdPending || !isPasswordDirty}
+          >
             Cambiar contraseña
           </Button>
         </form>

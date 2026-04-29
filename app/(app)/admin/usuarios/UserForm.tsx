@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Field, Input, Label, ErrorMessage, Select } from '@/components/ui/Input';
 import { PasswordInput } from '@/components/ui/PasswordInput';
+import { useFormDirty, snapshotForm } from '@/lib/hooks/use-dirty';
 import { REGION_LABELS, SUPPORTED_REGIONS, getSubdivisions, type SupportedRegion } from '@/lib/regions';
 import { createUserAction, updateUserAction } from './actions';
 import styles from './UserForm.module.scss';
@@ -36,6 +37,23 @@ export function UserForm({ mode, userId, initial }: Props) {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [pending, startTransition] = useTransition();
 
+  // Snapshot del último estado guardado — el botón Guardar se desactiva
+  // cuando el form coincide con esto. En create, el snapshot inicial son
+  // los defaults vacíos, así que el botón se activa al primer tecleo.
+  const formRef = useRef<HTMLFormElement>(null);
+  const [savedSnapshot, setSavedSnapshot] = useState({
+    name: initial.name,
+    email: initial.email,
+    role: initial.role,
+    region: initial.region,
+    subdivision: initial.subdivision ?? '',
+    phone: initial.phone ?? '',
+    rut: initial.rut ?? '',
+    // Para create: los inputs de password también están vacíos por default.
+    password: '',
+  });
+  const isDirty = useFormDirty(formRef, savedSnapshot);
+
   function handleSubmit(formData: FormData) {
     startTransition(async () => {
       setError(null);
@@ -65,6 +83,12 @@ export function UserForm({ mode, userId, initial }: Props) {
         return;
       }
       router.refresh();
+      // El form sigue montado tras editar — actualizamos el snapshot
+      // para que el botón vuelva a quedar deshabilitado.
+      if (formRef.current) {
+        const snap = snapshotForm(formRef.current);
+        setSavedSnapshot((prev) => ({ ...prev, ...snap }));
+      }
     });
   }
 
@@ -75,7 +99,7 @@ export function UserForm({ mode, userId, initial }: Props) {
   const subdivisions = getSubdivisions(region);
 
   return (
-    <form action={handleSubmit} className={styles.form} noValidate>
+    <form ref={formRef} action={handleSubmit} className={styles.form} noValidate>
       {error ? <div className={styles.error}>{error}</div> : null}
 
       <Field>
@@ -217,7 +241,13 @@ export function UserForm({ mode, userId, initial }: Props) {
       ) : null}
 
       <div className={styles.actions}>
-        <Button type="submit" variant="primary" size="md" loading={pending}>
+        <Button
+          type="submit"
+          variant="primary"
+          size="md"
+          loading={pending}
+          disabled={pending || !isDirty}
+        >
           {mode === 'create' ? 'Crear usuario' : 'Guardar cambios'}
         </Button>
         <Link href="/admin/usuarios" className={styles.cancelLink}>
