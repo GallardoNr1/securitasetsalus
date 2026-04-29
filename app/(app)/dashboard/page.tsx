@@ -16,6 +16,9 @@ export default async function StudentDashboardPage() {
 
   const firstName = session.user.name?.split(' ')[0] ?? 'alumno';
   const enrollments = await listEnrollmentsByStudent(session.user.id);
+  const activeDiplomas = enrollments.filter(
+    (e) => e.diploma && e.diploma.status === 'ACTIVE',
+  ).length;
 
   return (
     <div className={styles.page}>
@@ -52,10 +55,19 @@ export default async function StudentDashboardPage() {
         <article className={styles.card}>
           <h2>Mis diplomas</h2>
           <p>
-            Cuando completes un curso recibirás aquí tu diploma PDF con código verificable. Se
-            activa en la fase 5 del desarrollo.
+            {activeDiplomas === 0
+              ? 'Aún no tienes diplomas emitidos. Cuando completes un curso, aparecerá aquí con su código público y enlace de descarga.'
+              : `Tienes ${activeDiplomas} ${activeDiplomas === 1 ? 'diploma emitido' : 'diplomas emitidos'} con código de verificación pública.`}
           </p>
-          <span className={styles.muted}>Disponible próximamente</span>
+          <div className={styles.actions}>
+            {activeDiplomas > 0 ? (
+              <Button href="/mis-cursos" variant="primary" size="md">
+                Ver mis diplomas
+              </Button>
+            ) : (
+              <span className={styles.muted}>Sin diplomas aún</span>
+            )}
+          </div>
         </article>
 
         <article className={styles.card}>
