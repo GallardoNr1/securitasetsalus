@@ -169,20 +169,25 @@ EMAIL_FROM=SecuritasEtSalus <noreply@securitasetsalus.cl>
 
 ### E1. Sentry
 
-**Estado:** ⏳ SDK integrado y configurado pero sin DSN. Crear proyecto cuando convenga.
+**Estado:** ✅ activo. Smoke test verificado en producción (eventos llegan al dashboard).
+
+**Cuenta:** asociada a `dev@securitasetsalus.cl`.
+
+**Org:** `securitas-et-salus`. Proyecto: `seguritasetsalus` (slug con typo, no afecta funcionalidad — el nombre visible se puede cambiar en Project Settings).
 
 **Plan:** Free (5.000 errores/mes).
 
-**Pasos:**
-1. Crear cuenta en sentry.io con `dev@securitasetsalus.cl`.
-2. Crear proyecto Next.js llamado `securitasetsalus`.
-3. Copiar el DSN.
-4. Pegar en Vercel:
-   - `NEXT_PUBLIC_SENTRY_DSN=<dsn>`
-5. (Opcional) Auth token para source maps en build:
-   - `SENTRY_AUTH_TOKEN=<token>`
+**Region:** `de.sentry.io` (Frankfurt) — elegida por defecto al crear el proyecto.
 
-**Smoke test tras conectar:** lanzar un error inducido en producción (`throw new Error('test sentry')` en una page → push) y verificar que aparece en el dashboard.
+**Variables:**
+```
+NEXT_PUBLIC_SENTRY_DSN=https://...@o4511303585366017.ingest.de.sentry.io/4511303605747792
+SENTRY_AUTH_TOKEN=  (vacío — opcional, solo para subir source maps en builds)
+```
+
+**Dashboard:** https://securitas-et-salus.sentry.io/issues/?project=4511303605747792
+
+> **No ejecutar `npx @sentry/wizard@latest -i nextjs`** aunque la UI de onboarding lo sugiera. Ya tenemos todo el SDK integrado vía `instrumentation.ts` + `sentry.{client,server,edge}.config.ts`. El wizard machacaría la configuración existente.
 
 ---
 

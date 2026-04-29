@@ -160,8 +160,8 @@ Admin puede crear instructores y cursos con todos los flags del catálogo SENCE 
 - [x] R2 operativo (bucket único `securitas-et-salus` con prefijos).
 - [x] Fix `NEXTAUTH_SECRET` → `AUTH_SECRET` (Auth.js v5).
 - [x] Fix bug AWS SDK ESM/CJS (split `lib/r2.ts` ↔ `lib/r2-config.ts`).
-- [ ] Apex `securitasetsalus.cl` (CNAMEs en Cloudflare → Vercel) — pendiente acción manual.
-- [ ] Sentry DSN — pendiente crear proyecto.
+- [x] Apex `securitasetsalus.cl` activo (CNAMEs en Cloudflare → Vercel, SSL OK).
+- [x] Sentry DSN cableado y verificado end-to-end en producción.
 
 ### Documentación obligatoria al cerrar
 `docs/phases/phase-3.5-deploy-and-domain-done.md` ✅
