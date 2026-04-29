@@ -40,28 +40,28 @@ export default async function AdminDashboardPage() {
         <article>
           <p className={styles.statLabel}>Usuarios</p>
           <p className={styles.statValue}>{usersCount}</p>
-          <Link href="/admin/usuarios" className={styles.statLink}>
+          <Link href="/admin/users" className={styles.statLink}>
             Gestionar →
           </Link>
         </article>
         <article>
           <p className={styles.statLabel}>Instructores</p>
           <p className={styles.statValue}>{instructorsCount}</p>
-          <Link href="/admin/usuarios?role=INSTRUCTOR" className={styles.statLink}>
+          <Link href="/admin/users?role=INSTRUCTOR" className={styles.statLink}>
             Ver →
           </Link>
         </article>
         <article>
           <p className={styles.statLabel}>Cursos publicados</p>
           <p className={styles.statValue}>{coursesPublished}</p>
-          <Link href="/admin/cursos?status=PUBLISHED" className={styles.statLink}>
+          <Link href="/admin/courses?status=PUBLISHED" className={styles.statLink}>
             Ver →
           </Link>
         </article>
         <article>
           <p className={styles.statLabel}>Borradores</p>
           <p className={styles.statValue}>{coursesDraft}</p>
-          <Link href="/admin/cursos?status=DRAFT" className={styles.statLink}>
+          <Link href="/admin/courses?status=DRAFT" className={styles.statLink}>
             Ver →
           </Link>
         </article>
@@ -70,11 +70,11 @@ export default async function AdminDashboardPage() {
       <section className={styles.quickActions}>
         <h2>Acciones rápidas</h2>
         <div className={styles.actions}>
-          <Link href="/admin/cursos/new" className={styles.actionCard}>
+          <Link href="/admin/courses/new" className={styles.actionCard}>
             <h3>Crear curso</h3>
             <p>Nuevo curso con sesiones múltiples, mapeado a Clavero y SENCE.</p>
           </Link>
-          <Link href="/admin/usuarios/new" className={styles.actionCard}>
+          <Link href="/admin/users/new" className={styles.actionCard}>
             <h3>Crear usuario</h3>
             <p>Añadir instructor o admin manualmente. Queda pre-verificado.</p>
           </Link>

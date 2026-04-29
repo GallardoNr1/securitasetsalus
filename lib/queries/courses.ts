@@ -5,7 +5,7 @@ import type { CourseListFilters } from '@/lib/validations/courses';
 const ADMIN_PAGE_SIZE = 20;
 
 /**
- * Listado paginado de cursos para /admin/cursos con filtros opcionales.
+ * Listado paginado de cursos para /admin/courses con filtros opcionales.
  */
 export async function listCoursesAdmin(filters: CourseListFilters) {
   const where: Prisma.CourseWhereInput = {};
@@ -55,7 +55,7 @@ export async function listCoursesAdmin(filters: CourseListFilters) {
 export type CourseListItem = Awaited<ReturnType<typeof listCoursesAdmin>>['courses'][number];
 
 /**
- * Detalle completo del curso para /admin/cursos/[id] (edición).
+ * Detalle completo del curso para /admin/courses/[id] (edición).
  */
 export async function getCourseById(id: string) {
   return db.course.findUnique({
@@ -92,7 +92,7 @@ export async function getPublishedCourseBySlug(slug: string) {
 }
 
 /**
- * Listado público de cursos publicados (para /cursos en Fase 3c).
+ * Listado público de cursos publicados (para /courses en Fase 3c).
  */
 export async function listPublishedCourses() {
   return db.course.findMany({
@@ -107,7 +107,7 @@ export async function listPublishedCourses() {
 }
 
 /**
- * Cursos asignados a un instructor (para /instructor/cursos en Fase 3c).
+ * Cursos asignados a un instructor (para /instructor/courses en Fase 3c).
  */
 export async function listCoursesByInstructor(instructorId: string) {
   return db.course.findMany({
@@ -121,7 +121,7 @@ export async function listCoursesByInstructor(instructorId: string) {
 }
 
 /**
- * Inscripciones del alumno (para /mis-cursos).
+ * Inscripciones del alumno (para /my-courses).
  *
  * Incluye el diploma asociado si existe (Fase 5c).
  */

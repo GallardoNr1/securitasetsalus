@@ -22,8 +22,8 @@ const routeRules: Array<{ prefix: string; roles: Role[] }> = [
   { prefix: '/admin', roles: ['SUPER_ADMIN'] },
   { prefix: '/instructor', roles: ['INSTRUCTOR', 'SUPER_ADMIN'] },
   { prefix: '/dashboard', roles: ['STUDENT', 'SUPER_ADMIN'] },
-  { prefix: '/mis-cursos', roles: ['STUDENT', 'SUPER_ADMIN'] },
-  { prefix: '/mis-diplomas', roles: ['STUDENT', 'SUPER_ADMIN'] },
+  { prefix: '/my-courses', roles: ['STUDENT', 'SUPER_ADMIN'] },
+  { prefix: '/my-diplomas', roles: ['STUDENT', 'SUPER_ADMIN'] },
   { prefix: '/billing', roles: ['STUDENT', 'SUPER_ADMIN'] },
   { prefix: '/profile', roles: [] },
 ];

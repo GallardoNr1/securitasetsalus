@@ -24,7 +24,7 @@ export default async function HomePage() {
               verificables por QR y reconocimiento profesional avalado por OTEC SENCE.
             </p>
             <div className={styles.heroActions}>
-              <Button href="/cursos" variant="primary" size="lg">
+              <Button href="/courses" variant="primary" size="lg">
                 Ver cursos disponibles
               </Button>
               <Button href="#como-funciona" variant="outline" size="lg">
@@ -106,7 +106,7 @@ export default async function HomePage() {
             </div>
 
             <div className={styles.sectionFooter}>
-              <Button href="/cursos" variant="primary" size="md">
+              <Button href="/courses" variant="primary" size="md">
                 Ver todos los cursos
               </Button>
             </div>
@@ -160,7 +160,7 @@ export default async function HomePage() {
         <div className={styles.ctaInner}>
           <h2>¿Listo para empezar?</h2>
           <p>Explora nuestro catálogo y reserva tu cupo en el próximo curso.</p>
-          <Link href="/cursos" className={styles.ctaButton}>
+          <Link href="/courses" className={styles.ctaButton}>
             Ver catálogo de cursos
           </Link>
         </div>

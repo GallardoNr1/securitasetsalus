@@ -97,7 +97,7 @@ type DiplomaIssuedArgs = {
 export async function sendDiplomaIssuedEmail(args: DiplomaIssuedArgs): Promise<SendResult> {
   const url = appUrl();
   const verifyUrl = `${url}/verify/${args.diplomaCode}`;
-  const myCoursesUrl = `${url}/mis-cursos`;
+  const myCoursesUrl = `${url}/my-courses`;
   const props = {
     name: args.name,
     courseTitle: args.courseTitle,

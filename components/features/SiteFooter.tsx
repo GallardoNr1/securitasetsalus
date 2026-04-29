@@ -29,7 +29,7 @@ export function SiteFooter() {
 
         <nav className={styles.navColumn} aria-label="Navegación del sitio">
           <h3>Sitio</h3>
-          <Link href="/cursos">Catálogo de cursos</Link>
+          <Link href="/courses">Catálogo de cursos</Link>
           <Link href="/#como-funciona">Cómo funciona</Link>
           <Link href="/login">Iniciar sesión</Link>
           <Link href="/register">Crear cuenta</Link>

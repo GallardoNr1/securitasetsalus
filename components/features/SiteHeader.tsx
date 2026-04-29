@@ -20,7 +20,7 @@ export function SiteHeader() {
         </Link>
 
         <nav className={styles.nav} aria-label="Navegación principal">
-          <Link href="/cursos" className={styles.navLink}>
+          <Link href="/courses" className={styles.navLink}>
             Cursos
           </Link>
           <Link href="/#como-funciona" className={styles.navLink}>
@@ -35,7 +35,7 @@ export function SiteHeader() {
           <Button href="/login" variant="ghost" size="sm">
             Iniciar sesión
           </Button>
-          <Button href="/cursos" variant="primary" size="sm">
+          <Button href="/courses" variant="primary" size="sm">
             Ver cursos
           </Button>
         </div>

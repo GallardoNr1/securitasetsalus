@@ -19,7 +19,7 @@ export function ComingSoon({ title, phase, description }: Props) {
           <Button href="/" variant="primary" size="md">
             Volver al inicio
           </Button>
-          <Link href="/cursos" className={styles.secondaryLink}>
+          <Link href="/courses" className={styles.secondaryLink}>
             Explorar cursos
           </Link>
         </div>

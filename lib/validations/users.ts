@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { isValidSubdivisionForCountry, SUPPORTED_REGIONS } from '@/lib/regions';
 
 /**
- * Validaciones para CRUD de usuarios desde /admin/usuarios.
+ * Validaciones para CRUD de usuarios desde /admin/users.
  *
  * El SUPER_ADMIN puede crear instructores, alumnos y otros admins.
  * Los instructores creados manualmente quedan pre-verificados (sin

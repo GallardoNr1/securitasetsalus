@@ -18,7 +18,7 @@ export async function getUserAvatarKey(userId: string): Promise<string | null> {
 }
 
 /**
- * Listado paginado de usuarios para /admin/usuarios con filtros opcionales.
+ * Listado paginado de usuarios para /admin/users con filtros opcionales.
  */
 export async function listUsers(filters: UserListFilters) {
   const where: Prisma.UserWhereInput = {};

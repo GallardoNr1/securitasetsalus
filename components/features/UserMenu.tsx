@@ -30,18 +30,19 @@ type MenuItem = { href: Route; label: string };
 const MENU_ITEMS: Record<Role, MenuItem[]> = {
   SUPER_ADMIN: [
     { href: '/admin', label: 'Panel admin' },
-    { href: '/admin/usuarios', label: 'Usuarios' },
-    { href: '/admin/cursos', label: 'Cursos' },
+    { href: '/admin/users', label: 'Usuarios' },
+    { href: '/admin/courses', label: 'Cursos' },
     { href: '/profile', label: 'Mi perfil' },
   ],
   INSTRUCTOR: [
     { href: '/instructor', label: 'Panel instructor' },
-    { href: '/instructor/cursos', label: 'Mis cursos' },
+    { href: '/instructor/courses', label: 'Mis cursos' },
     { href: '/profile', label: 'Mi perfil' },
   ],
   STUDENT: [
     { href: '/dashboard', label: 'Mi panel' },
-    { href: '/mis-cursos', label: 'Mis cursos' },
+    { href: '/my-courses', label: 'Mis cursos' },
+    { href: '/my-diplomas', label: 'Mis diplomas' },
     { href: '/profile', label: 'Mi perfil' },
   ],
 };

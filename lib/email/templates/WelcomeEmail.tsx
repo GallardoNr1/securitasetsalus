@@ -23,7 +23,7 @@ export function WelcomeEmail({ name, appUrl }: Props) {
       </Text>
       <Section style={{ textAlign: 'center', margin: '0 0 24px' }}>
         <Button
-          href={`${appUrl}/cursos`}
+          href={`${appUrl}/courses`}
           style={{
             backgroundColor: COLORS.brand,
             color: COLORS.white,
@@ -40,8 +40,8 @@ export function WelcomeEmail({ name, appUrl }: Props) {
       </Section>
       <Text style={{ fontSize: '14px', color: COLORS.mute, lineHeight: '20px', margin: 0 }}>
         O abre este enlace en tu navegador:{' '}
-        <Link href={`${appUrl}/cursos`} style={{ color: COLORS.brand }}>
-          {appUrl}/cursos
+        <Link href={`${appUrl}/courses`} style={{ color: COLORS.brand }}>
+          {appUrl}/courses
         </Link>
       </Text>
     </BaseLayout>
@@ -57,7 +57,7 @@ export function welcomeEmailText({ name, appUrl }: Props): string {
     '',
     'Al completar un curso recibirás un diploma con código QR público. Cualquier cliente, empresa o autoridad puede comprobar su autenticidad en segundos.',
     '',
-    `Ver cursos disponibles: ${appUrl}/cursos`,
+    `Ver cursos disponibles: ${appUrl}/courses`,
     '',
     '—',
     'SecuritasEtSalus — Formación profesional en cerrajería y seguridad',

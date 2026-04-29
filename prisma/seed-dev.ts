@@ -155,7 +155,7 @@ async function main() {
   }
   console.log(`✅ ${students.length} enrollments CONFIRMED`);
 
-  console.log('\n🎉 Datos demo listos para probar /instructor/cursos.');
+  console.log('\n🎉 Datos demo listos para probar /instructor/courses.');
   console.log('\nCredenciales demo:');
   console.log('  Instructor → instructor.demo@securitasetsalus.cl / Instructor123!');
   console.log('  Alumnos    → alumno1..4.demo@securitasetsalus.cl / Alumno123!');

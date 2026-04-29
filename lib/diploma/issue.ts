@@ -113,7 +113,7 @@ export async function issueDiplomaForEnrollment(enrollmentId: string): Promise<I
   });
 
   // Email best-effort — si falla, el diploma queda emitido igual y el
-  // alumno puede acceder desde /mis-cursos.
+  // alumno puede acceder desde /my-courses.
   try {
     await sendDiplomaIssuedEmail({
       to: enrollment.user.email,

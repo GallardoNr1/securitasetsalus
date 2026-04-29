@@ -37,7 +37,7 @@ export function CourseCard({ course }: Props) {
 
   return (
     <Card variant="elevated" interactive className={styles.card}>
-      <Link href={`/cursos/${course.slug}`} className={styles.link}>
+      <Link href={`/courses/${course.slug}`} className={styles.link}>
         <div className={styles.header}>
           {course.claveroSkillCode ? (
             <Tag tone="brand">{course.claveroSkillCode}</Tag>

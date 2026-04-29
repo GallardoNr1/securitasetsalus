@@ -41,11 +41,11 @@ export default async function StudentDashboardPage() {
           </p>
           <div className={styles.actions}>
             {enrollments.length > 0 ? (
-              <Button href="/mis-cursos" variant="primary" size="md">
+              <Button href="/my-courses" variant="primary" size="md">
                 Ver mis cursos
               </Button>
             ) : (
-              <Button href="/cursos" variant="primary" size="md">
+              <Button href="/courses" variant="primary" size="md">
                 Ver catálogo
               </Button>
             )}
@@ -61,7 +61,7 @@ export default async function StudentDashboardPage() {
           </p>
           <div className={styles.actions}>
             {activeDiplomas > 0 ? (
-              <Button href="/mis-cursos" variant="primary" size="md">
+              <Button href="/my-diplomas" variant="primary" size="md">
                 Ver mis diplomas
               </Button>
             ) : (

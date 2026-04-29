@@ -3,7 +3,7 @@ import { CLAVERO_SKILL_CODES, CLAVERO_SKILL_SUFFIXES } from '@/lib/clavero-skill
 import { SUPPORTED_REGIONS, isValidSubdivisionForCountry } from '@/lib/regions';
 
 /**
- * Validaciones para CRUD de cursos desde /admin/cursos.
+ * Validaciones para CRUD de cursos desde /admin/courses.
  *
  * Un curso tiene N sesiones (al menos 1) que se editan en el mismo form
  * mediante un array indexado en el FormData (sessions.0.startsAt, ...).

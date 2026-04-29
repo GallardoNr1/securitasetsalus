@@ -3,7 +3,7 @@ import { auth } from '@/lib/auth';
 
 /**
  * Redirige al instructor directamente a su listado de cursos asignados.
- * El "panel" como tal sigue siendo /instructor/cursos.
+ * El "panel" como tal sigue siendo /instructor/courses.
  */
 export default async function InstructorIndexPage() {
   const session = await auth();
@@ -11,5 +11,5 @@ export default async function InstructorIndexPage() {
   if (session.user.role !== 'INSTRUCTOR' && session.user.role !== 'SUPER_ADMIN') {
     redirect('/');
   }
-  redirect('/instructor/cursos');
+  redirect('/instructor/courses');
 }

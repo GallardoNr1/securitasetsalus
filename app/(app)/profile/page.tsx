@@ -1,12 +1,20 @@
 import type { Metadata } from 'next';
+import type { Route } from 'next';
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { isBucketConfigured } from '@/lib/r2-config';
 import { SUPPORTED_REGIONS, type SupportedRegion } from '@/lib/regions';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { AvatarUploader } from './AvatarUploader';
 import { ProfileForm } from './ProfileForm';
 import styles from './profile.module.scss';
+
+const DASHBOARD_FOR_ROLE: Record<'SUPER_ADMIN' | 'INSTRUCTOR' | 'STUDENT', { label: string; href: Route }> = {
+  SUPER_ADMIN: { label: 'Panel admin', href: '/admin' },
+  INSTRUCTOR: { label: 'Panel instructor', href: '/instructor' },
+  STUDENT: { label: 'Mi panel', href: '/dashboard' },
+};
 
 export const metadata: Metadata = {
   title: 'Mi perfil',
@@ -38,9 +46,16 @@ export default async function ProfilePage() {
       : 'CL';
 
   const avatarsConfigured = isBucketConfigured('avatars');
+  const home = DASHBOARD_FOR_ROLE[session.user.role];
 
   return (
     <div className={styles.page}>
+      <Breadcrumbs
+        items={[
+          { label: home.label, href: home.href },
+          { label: 'Mi perfil' },
+        ]}
+      />
       <section className={styles.section}>
         <header className={styles.sectionHeader}>
           <h2>Foto de perfil</h2>

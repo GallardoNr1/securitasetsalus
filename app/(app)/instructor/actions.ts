@@ -113,8 +113,8 @@ export async function markAttendanceAction(input: {
       ),
     );
 
-    revalidatePath(`/instructor/cursos/${courseSession.courseId}`);
-    revalidatePath(`/instructor/cursos/${courseSession.courseId}/sesiones/${courseSession.id}/asistencia`);
+    revalidatePath(`/instructor/courses/${courseSession.courseId}`);
+    revalidatePath(`/instructor/courses/${courseSession.courseId}/sessions/${courseSession.id}/attendance`);
 
     return {
       ok: true,
@@ -321,8 +321,8 @@ export async function saveEvaluationsAction(input: {
       }
     });
 
-    revalidatePath(`/instructor/cursos/${course.id}`);
-    revalidatePath(`/instructor/cursos/${course.id}/evaluaciones`);
+    revalidatePath(`/instructor/courses/${course.id}`);
+    revalidatePath(`/instructor/courses/${course.id}/evaluations`);
 
     return {
       ok: true,
@@ -391,8 +391,8 @@ export async function issueDiplomasAction(courseId: string): Promise<IssueDiplom
   try {
     const result = await issueDiplomasForCourse(course.id);
 
-    revalidatePath(`/instructor/cursos/${course.id}`);
-    revalidatePath('/mis-cursos');
+    revalidatePath(`/instructor/courses/${course.id}`);
+    revalidatePath('/my-courses');
 
     const parts: string[] = [];
     if (result.issued > 0) parts.push(`${result.issued} emitido${result.issued === 1 ? '' : 's'}`);

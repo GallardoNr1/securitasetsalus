@@ -1,0 +1,53 @@
+@use '../tokens/colors' as *;
+@use '../tokens/typography' as *;
+@use '../tokens/spacing-shadows' as *;
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $space-1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  @include text-body-sm;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+
+  // Excepto el último item, todos llevan separador después.
+  &:not(:last-child)::after {
+    content: '/';
+    color: $color-text-muted;
+    margin: 0 $space-1;
+    font-weight: $font-weight-regular;
+  }
+}
+
+.link {
+  color: $color-text-secondary;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-sm;
+  padding: 2px 4px;
+  transition: color $duration-fast $ease-default, background-color $duration-fast $ease-default;
+
+  &:hover {
+    color: $color-text-brand;
+    background-color: $color-primary-50;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-border-focus;
+    outline-offset: 2px;
+  }
+}
+
+.current {
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  padding: 2px 4px;
+}
