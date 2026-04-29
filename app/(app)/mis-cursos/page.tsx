@@ -127,8 +127,10 @@ export default async function MyCoursesPage() {
                         <a
                           href={`/api/diplomas/${e.diploma.code}/download`}
                           className={styles.diplomaButton}
+                          target="_blank"
+                          rel="noopener noreferrer"
                         >
-                          Descargar PDF →
+                          Ver diploma →
                         </a>
                       ) : null}
                       <Link
