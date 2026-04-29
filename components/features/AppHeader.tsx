@@ -3,15 +3,8 @@ import Image from 'next/image';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { isBucketConfigured } from '@/lib/r2-config';
-import { logoutAction } from '@/app/(auth)/actions';
-import { Avatar } from '@/components/ui/Avatar';
+import { UserMenu } from './UserMenu';
 import styles from './AppHeader.module.scss';
-
-const ROLE_LABELS = {
-  SUPER_ADMIN: 'Administrador',
-  INSTRUCTOR: 'Instructor',
-  STUDENT: 'Alumno',
-} as const;
 
 export async function AppHeader() {
   const session = await auth();
@@ -44,27 +37,10 @@ export async function AppHeader() {
         </Link>
 
         {user && user.name ? (
-          <div className={styles.userBlock}>
-            <Link
-              href="/profile"
-              className={styles.profileLink}
-              aria-label="Ir a mi perfil"
-              title="Mi perfil"
-            >
-              <Avatar name={user.name} userId={user.id} avatarKey={avatarKey} size="md" />
-              <div className={styles.userInfo}>
-                <span className={styles.userName}>{user.name}</span>
-                <span className={styles.userRole}>
-                  {ROLE_LABELS[user.role as keyof typeof ROLE_LABELS] ?? user.role}
-                </span>
-              </div>
-            </Link>
-            <form action={logoutAction}>
-              <button type="submit" className={styles.logoutButton}>
-                Cerrar sesión
-              </button>
-            </form>
-          </div>
+          <UserMenu
+            user={{ id: user.id, name: user.name, role: user.role }}
+            avatarKey={avatarKey}
+          />
         ) : null}
       </div>
     </header>

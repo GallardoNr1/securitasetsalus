@@ -1,0 +1,170 @@
+@use '../../design-system/tokens/colors' as *;
+@use '../../design-system/tokens/typography' as *;
+@use '../../design-system/tokens/spacing-shadows' as *;
+
+.container {
+  position: relative;
+  margin-left: auto;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-1 $space-2;
+  border: none;
+  background: transparent;
+  border-radius: $radius-md;
+  cursor: pointer;
+  color: inherit;
+  font-family: inherit;
+  transition: background-color $duration-fast $ease-default;
+
+  &:hover {
+    background-color: $color-primary-50;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-border-focus;
+    outline-offset: 2px;
+  }
+}
+
+.userInfo {
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+
+  @include responsive-sm {
+    display: flex;
+  }
+}
+
+.userName {
+  @include text-body-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.userRole {
+  @include text-caption;
+  color: $color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-wider;
+}
+
+.chevron {
+  @include text-caption;
+  color: $color-text-muted;
+  margin-left: -$space-1;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + #{$space-2});
+  right: 0;
+  min-width: 240px;
+  background: $color-bg-surface;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-md;
+  box-shadow: $shadow-lg;
+  padding: $space-2;
+  z-index: 60;
+  animation: fadeIn 120ms $ease-default;
+}
+
+.dropdownHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: $space-2 $space-3;
+}
+
+.dropdownName {
+  @include text-body-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.dropdownRole {
+  @include text-caption;
+  color: $color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-wider;
+}
+
+.divider {
+  height: 1px;
+  background: $color-border-default;
+  margin: $space-1 (-$space-2);
+}
+
+.menuList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.menuItem {
+  display: block;
+  padding: $space-2 $space-3;
+  border-radius: $radius-sm;
+  color: $color-text-primary;
+  text-decoration: none;
+  @include text-body-sm;
+  font-weight: $font-weight-medium;
+  transition: background-color $duration-fast $ease-default;
+
+  &:hover {
+    background-color: $color-primary-50;
+    color: $color-text-brand;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-border-focus;
+    outline-offset: -2px;
+  }
+}
+
+.logoutForm {
+  margin: 0;
+}
+
+.logoutItem {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: $space-2 $space-3;
+  border: none;
+  background: transparent;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  font-family: inherit;
+  @include text-body-sm;
+  font-weight: $font-weight-medium;
+  color: $color-danger;
+  transition: background-color $duration-fast $ease-default;
+
+  &:hover {
+    background-color: $color-danger-light;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-border-focus;
+    outline-offset: -2px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
