@@ -121,7 +121,9 @@ export async function listCoursesByInstructor(instructorId: string) {
 }
 
 /**
- * Inscripciones del alumno (para /mis-cursos en Fase 3c).
+ * Inscripciones del alumno (para /mis-cursos).
+ *
+ * Incluye el diploma asociado si existe (Fase 5c).
  */
 export async function listEnrollmentsByStudent(userId: string) {
   return db.enrollment.findMany({
@@ -133,6 +135,9 @@ export async function listEnrollmentsByStudent(userId: string) {
           sessions: { orderBy: { sessionNumber: 'asc' } },
           instructor: { select: { id: true, name: true } },
         },
+      },
+      diploma: {
+        select: { id: true, code: true, status: true, issuedAt: true, pdfKey: true },
       },
     },
   });

@@ -6,6 +6,10 @@ import {
   emailVerificationEmailText,
 } from './templates/EmailVerificationEmail';
 import { PasswordResetEmail, passwordResetEmailText } from './templates/PasswordResetEmail';
+import {
+  DiplomaIssuedEmail,
+  diplomaIssuedEmailText,
+} from './templates/DiplomaIssuedEmail';
 
 /**
  * API de alto nivel para enviar emails transaccionales de SES.
@@ -78,6 +82,34 @@ export async function sendPasswordResetEmail(args: PasswordResetArgs): Promise<S
   return sendEmail({
     to: args.to,
     subject: 'Restablece tu contraseña de SecuritasEtSalus',
+    html,
+    text,
+  });
+}
+
+type DiplomaIssuedArgs = {
+  to: string;
+  name: string;
+  courseTitle: string;
+  diplomaCode: string;
+};
+
+export async function sendDiplomaIssuedEmail(args: DiplomaIssuedArgs): Promise<SendResult> {
+  const url = appUrl();
+  const verifyUrl = `${url}/verify/${args.diplomaCode}`;
+  const myCoursesUrl = `${url}/mis-cursos`;
+  const props = {
+    name: args.name,
+    courseTitle: args.courseTitle,
+    diplomaCode: args.diplomaCode,
+    verifyUrl,
+    myCoursesUrl,
+  };
+  const html = await render(DiplomaIssuedEmail(props));
+  const text = diplomaIssuedEmailText(props);
+  return sendEmail({
+    to: args.to,
+    subject: `Tu diploma de "${args.courseTitle}" está listo`,
     html,
     text,
   });

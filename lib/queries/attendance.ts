@@ -24,16 +24,38 @@ export async function getCourseForInstructor(
       _count: {
         select: {
           enrollments: { where: { status: { in: ['CONFIRMED', 'COMPLETED'] } } },
+          diplomas: true,
         },
       },
     },
   });
 
+  // Contadores adicionales para el bloque "Emisión de diplomas".
+  // Hacemos consultas separadas porque Prisma no permite where condicional
+  // nested dentro del mismo `_count` para múltiples filtros sobre la misma
+  // relación.
+  const [completedCount, passedCount] = await Promise.all([
+    db.enrollment.count({
+      where: { courseId, status: 'COMPLETED' },
+    }),
+    db.enrollment.count({
+      where: {
+        courseId,
+        status: 'COMPLETED',
+        OR: [
+          { evaluation: { passed: true } },
+          // Cursos sin evaluación no requieren passed=true.
+          { course: { hasEvaluation: false } },
+        ],
+      },
+    }),
+  ]);
+
   if (!course) return null;
   if (!options.bypassOwnerCheck && course.instructorId !== instructorId) {
     return null;
   }
-  return course;
+  return Object.assign(course, { completedCount, passedCount });
 }
 
 export type CourseForInstructor = NonNullable<

@@ -218,3 +218,64 @@
     text-decoration: underline;
   }
 }
+
+.diplomas {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-4;
+  background: $color-neutral-50;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-md;
+}
+
+.diplomaStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: $space-3;
+  margin: 0;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+  }
+
+  dt {
+    @include text-caption;
+    color: $color-text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  dd {
+    @include text-heading-md;
+    color: $color-text-primary;
+    margin: 0;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.diplomaActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.feedbackOk {
+  @include text-body-sm;
+  color: $color-success-dark;
+  background: $color-success-light;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  margin: 0;
+}
+
+.feedbackError {
+  @include text-body-sm;
+  color: $color-danger;
+  background: $color-danger-light;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  margin: 0;
+}

@@ -112,6 +112,34 @@ export default async function MyCoursesPage() {
                     <dd>{formatPrice(e.course.price, e.course.currency)}</dd>
                   </div>
                 </dl>
+
+                {e.diploma && e.diploma.status === 'ACTIVE' ? (
+                  <div className={styles.diploma}>
+                    <div className={styles.diplomaInfo}>
+                      <span className={styles.diplomaEyebrow}>Diploma emitido</span>
+                      <span className={styles.diplomaCode}>{e.diploma.code}</span>
+                      <span className={styles.diplomaIssued}>
+                        Emitido el {formatDate(e.diploma.issuedAt, 'short')}
+                      </span>
+                    </div>
+                    <div className={styles.diplomaActions}>
+                      {e.diploma.pdfKey ? (
+                        <a
+                          href={`/api/diplomas/${e.diploma.code}/download`}
+                          className={styles.diplomaButton}
+                        >
+                          Descargar PDF →
+                        </a>
+                      ) : null}
+                      <Link
+                        href={`/verify/${e.diploma.code}`}
+                        className={styles.diplomaSecondary}
+                      >
+                        Ver verificación pública
+                      </Link>
+                    </div>
+                  </div>
+                ) : null}
               </li>
             );
           })}

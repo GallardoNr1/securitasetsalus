@@ -6,6 +6,7 @@ import { getCourseForInstructor } from '@/lib/queries/attendance';
 import { Badge } from '@/components/ui/Badge';
 import { Tag } from '@/components/ui/Tag';
 import { formatDate } from '@/lib/format';
+import { DiplomaEmissionSection } from './DiplomaEmissionSection';
 import styles from './page.module.scss';
 
 export const metadata: Metadata = {
@@ -176,7 +177,7 @@ export default async function InstructorCourseDetailPage({ params }: PageProps) 
               Cuando termines de pasar lista de todas las sesiones, evalúa a cada alumno con
               nota chilena 1.0–7.0 en técnica, conocimientos
               {course.evaluatesAttitude ? ', actitud' : ''} y participación. La nota final
-              decide si recibe diploma (Fase 5c).
+              decide si recibe diploma.
             </p>
           </header>
           <Link href={`/instructor/cursos/${course.id}/evaluaciones`} className={styles.closureLink}>
@@ -184,6 +185,12 @@ export default async function InstructorCourseDetailPage({ params }: PageProps) 
           </Link>
         </section>
       ) : null}
+
+      <DiplomaEmissionSection
+        courseId={course.id}
+        passedCount={course.passedCount}
+        diplomasIssued={course._count.diplomas}
+      />
     </div>
   );
 }

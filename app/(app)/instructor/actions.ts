@@ -5,6 +5,7 @@ import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { attendanceMarkSchema } from '@/lib/validations/attendance';
 import { evaluationBatchSchema } from '@/lib/validations/evaluation';
+import { issueDiplomasForCourse } from '@/lib/diploma/issue';
 
 const ATTENDANCE_THRESHOLD = 0.75; // 75% de asistencia mínima — requisito SENCE.
 
@@ -335,6 +336,81 @@ export async function saveEvaluationsAction(input: {
       ok: false,
       error: 'unknown',
       message: 'No se pudieron guardar las evaluaciones. Intenta de nuevo.',
+    };
+  }
+}
+
+// ---------- Emisión de diplomas (Fase 5c) ----------
+
+export type IssueDiplomasResult =
+  | {
+      ok: true;
+      message: string;
+      issued: number;
+      alreadyHad: number;
+      notEligible: number;
+      failed: number;
+    }
+  | {
+      ok: false;
+      error: 'unauthorized' | 'forbidden' | 'course-not-found' | 'unknown';
+      message: string;
+    };
+
+/**
+ * Emite los diplomas de todos los alumnos del curso que están en COMPLETED
+ * y aprobaron la evaluación final. Idempotente: los que ya tengan diploma
+ * se cuentan en `alreadyHad`, no se duplica nada.
+ *
+ * Solo el instructor del curso o un SUPER_ADMIN pueden disparar la emisión.
+ */
+export async function issueDiplomasAction(courseId: string): Promise<IssueDiplomasResult> {
+  const session = await auth();
+  if (!session?.user) {
+    return { ok: false, error: 'unauthorized', message: 'No estás autenticado.' };
+  }
+
+  const course = await db.course.findUnique({
+    where: { id: courseId },
+    select: { id: true, instructorId: true, title: true },
+  });
+  if (!course) {
+    return {
+      ok: false,
+      error: 'course-not-found',
+      message: 'No encontramos el curso.',
+    };
+  }
+
+  const isOwner = course.instructorId === session.user.id;
+  const isAdmin = session.user.role === 'SUPER_ADMIN';
+  if (!isOwner && !isAdmin) {
+    return { ok: false, error: 'forbidden', message: 'No eres instructor de este curso.' };
+  }
+
+  try {
+    const result = await issueDiplomasForCourse(course.id);
+
+    revalidatePath(`/instructor/cursos/${course.id}`);
+    revalidatePath('/mis-cursos');
+
+    const parts: string[] = [];
+    if (result.issued > 0) parts.push(`${result.issued} emitido${result.issued === 1 ? '' : 's'}`);
+    if (result.alreadyHad > 0) parts.push(`${result.alreadyHad} ya tenía${result.alreadyHad === 1 ? '' : 'n'} diploma`);
+    if (result.notEligible > 0) parts.push(`${result.notEligible} no apto${result.notEligible === 1 ? '' : 's'}`);
+    if (result.failed > 0) parts.push(`${result.failed} fallaron`);
+
+    return {
+      ok: true,
+      message: parts.length === 0 ? 'No había alumnos por procesar.' : parts.join(' · '),
+      ...result,
+    };
+  } catch (err) {
+    console.error('[diplomas issue]', err);
+    return {
+      ok: false,
+      error: 'unknown',
+      message: 'No se pudieron emitir los diplomas. Intenta de nuevo.',
     };
   }
 }

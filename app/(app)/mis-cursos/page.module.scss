@@ -128,3 +128,74 @@
     margin: $space-1 0 0;
   }
 }
+
+.diploma {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  margin-top: $space-3;
+  padding: $space-3 $space-4;
+  background: $color-success-light;
+  border: 1px solid $color-success;
+  border-radius: $radius-md;
+}
+
+.diplomaInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.diplomaEyebrow {
+  @include text-caption;
+  color: $color-success-dark;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.diplomaCode {
+  @include text-body-md;
+  font-family: monospace;
+  color: $color-text-primary;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.diplomaIssued {
+  @include text-body-sm;
+  color: $color-text-secondary;
+}
+
+.diplomaActions {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.diplomaButton {
+  @include text-body-sm;
+  padding: $space-2 $space-3;
+  background: $color-brand;
+  color: $color-text-inverse;
+  border-radius: $radius-md;
+  text-decoration: none;
+  font-weight: 600;
+
+  &:hover {
+    background: $color-primary-800;
+  }
+}
+
+.diplomaSecondary {
+  @include text-body-sm;
+  color: $color-text-brand;
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
