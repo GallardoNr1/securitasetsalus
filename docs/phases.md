@@ -147,6 +147,27 @@ Admin puede crear instructores y cursos con todos los flags del catálogo SENCE 
 
 ---
 
+## Fase 3.5 — Deploy, dominio y servicios externos (puente)
+
+**Objetivo:** sacar SES de localhost a `https://securitasetsalus.cl` con todos los servicios externos cableados (Vercel, dominio, Cloudflare DNS, Email Routing, Resend, Supabase nuevo, R2). Sin código nuevo de producto — todo es plumbing.
+
+### Bloques (todos cerrados al 2026-04-29)
+- [x] Compra dominio en NIC Chile + delegación DNS a Cloudflare.
+- [x] Cloudflare Email Routing (`dev@securitasetsalus.cl` + catch-all → Gmail).
+- [x] Resend cuenta + dominio verificado + API key.
+- [x] Migración a nuevo proyecto Supabase (`tbuskfmnublyyvhhexmb`).
+- [x] Vercel: repo conectado, build pasando, sitio accesible en `securitasetsalus.vercel.app`.
+- [x] R2 operativo (bucket único `securitas-et-salus` con prefijos).
+- [x] Fix `NEXTAUTH_SECRET` → `AUTH_SECRET` (Auth.js v5).
+- [x] Fix bug AWS SDK ESM/CJS (split `lib/r2.ts` ↔ `lib/r2-config.ts`).
+- [ ] Apex `securitasetsalus.cl` (CNAMEs en Cloudflare → Vercel) — pendiente acción manual.
+- [ ] Sentry DSN — pendiente crear proyecto.
+
+### Documentación obligatoria al cerrar
+`docs/phases/phase-3.5-deploy-and-domain-done.md` ✅
+
+---
+
 ## Fase 4 — Inscripción pagada con Stripe
 
 **Objetivo:** El alumno se inscribe y paga directamente desde el catálogo.

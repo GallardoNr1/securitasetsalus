@@ -92,12 +92,27 @@ export async function deleteObject(bucket: R2Bucket, key: string): Promise<void>
   );
 }
 
-/** Convenciones de keys por bucket. */
+/**
+ * Convenciones de keys.
+ *
+ * SES usa UN ÚNICO bucket R2 (`securitas-et-salus`) con prefijos por tipo de
+ * artefacto, en lugar de cuatro buckets separados. Razón: un solo token API,
+ * más simple de operar, mismo modelo que usa el repo hermano Clavero.
+ *
+ * El argumento `bucket` que reciben las funciones (uploadBuffer, etc.) sigue
+ * existiendo solo como hint semántico — todas las env vars `R2_BUCKET_NAME_*`
+ * apuntan al mismo bucket físico. El prefijo en la key (`avatars/`, etc.) es
+ * lo que separa los artefactos.
+ */
 export const r2Keys = {
-  diplomaPdf: (userId: string, diplomaId: string) => `${userId}/${diplomaId}.pdf`,
-  courseMaterial: (courseId: string, filename: string) => `${courseId}/${filename}`,
-  paymentReceipt: (userId: string, paymentId: string) => `${userId}/${paymentId}.pdf`,
+  diplomaPdf: (userId: string, diplomaId: string) =>
+    `diplomas/${userId}/${diplomaId}.pdf`,
+  courseMaterial: (courseId: string, filename: string) =>
+    `materials/${courseId}/${filename}`,
+  paymentReceipt: (userId: string, paymentId: string) =>
+    `receipts/${userId}/${paymentId}.pdf`,
   // Timestamp en la key para invalidar cache del navegador cuando el user
   // sube un avatar nuevo (la URL firmada cambia, el componente refresca).
-  avatar: (userId: string, ext: string) => `${userId}/${Date.now()}.${ext}`,
+  avatar: (userId: string, ext: string) =>
+    `avatars/${userId}/${Date.now()}.${ext}`,
 };

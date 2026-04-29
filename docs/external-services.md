@@ -1,13 +1,15 @@
 # Servicios externos — SecuritasEtSalus
 
-Inventario único de las cuentas, dominios y vars de entorno que necesita SES para funcionar en producción. Si te preguntas "¿dónde estaba la API key de Stripe?", "¿qué buckets tenía R2?" o "¿dónde se compró el dominio?", aquí está la respuesta.
+Inventario único de las cuentas, dominios y vars de entorno que usa SES en producción. Estado actualizado al 2026-04-29 tras Fase 3.5 (deploy y dominio).
+
+> Para el detalle del proceso de configuración de cada servicio, ver `docs/phases/phase-3.5-deploy-and-domain-done.md`.
 
 ## Categorías
 
 ```
 A. INFRAESTRUCTURA   → Vercel + Supabase
 B. STORAGE           → Cloudflare R2
-C. DOMINIO Y EMAIL   → NIC Chile + Resend
+C. DOMINIO Y EMAIL   → NIC Chile + Cloudflare DNS + Email Routing + Resend
 D. PAGOS             → Stripe
 E. OBSERVABILIDAD    → Sentry
 ```
@@ -18,38 +20,43 @@ E. OBSERVABILIDAD    → Sentry
 
 ### A1. Vercel (hosting)
 
-**Para qué:** ejecuta Next.js (frontend + API routes + middleware) y emite SSL automático.
+**Estado:** ✅ activo en `https://securitasetsalus.vercel.app`. Apex `securitasetsalus.cl` pendiente de añadir CNAMEs.
 
-**Cuenta:** *[PENDIENTE: confirmar — personal o de la SpA cuando esté constituida]*.
+**Cuenta:** `gallardonr1s-projects` (cuenta personal del founder).
 
-**Plan recomendado:** Hobby (gratis) hasta que haya tráfico real; subir a Pro ($20/mes/usuario) cuando lance al piloto si necesitamos analytics avanzados o protección de ramas.
+**Plan:** Hobby (gratis). Subir a Pro cuando haya tráfico real o necesitemos analytics avanzados.
 
-**Configuración necesaria al crear el proyecto:**
-- Conectar repositorio GitHub `securitasetsalus`.
-- Rama `main` → producción, `develop` → previews.
-- Build command (ya en `vercel.json`): `npm run typecheck && NODE_ENV=test npm test && npm run build`.
-- Variables de entorno (ver lista al final).
+**Configuración:**
+- Repo conectado: `GallardoNr1/securitasetsalus`.
+- Rama `main` → producción.
+- Build command (en `vercel.json`): `npm run typecheck && NODE_ENV=test npm test && npm run build`.
+- Variables de entorno: ver tabla al final.
 
-**Dominio:** se conecta tras compra en NIC Chile (ver C).
+**CLI enlazada:** sí. Comandos útiles:
+```bash
+npx vercel ls            # listar deploys
+npx vercel logs <url>    # runtime logs en vivo
+npx vercel inspect <url> # metadatos
+```
 
 ---
 
-### A2. Supabase (base de datos PostgreSQL)
+### A2. Supabase (Postgres)
 
-**Para qué:** Postgres gestionado para todas las tablas de Prisma (usuarios, cursos, sesiones, inscripciones, pagos, diplomas, etc.).
+**Estado:** ✅ activo. Proyecto `tbuskfmnublyyvhhexmb` en `aws-1-us-east-1`.
 
-**Cuenta:** ✅ creada con cuenta personal de Moises.
+**Cuenta:** asociada a `dev@securitasetsalus.cl`.
 
-**Proyecto SES:** ✅ `cegaqfnbkbbkaydojdlr` en región `aws-1-us-east-1`. Plan Free (8 GB).
+**Plan:** Free (8 GB).
 
-**Conexión:** ya configurada vía `DATABASE_URL` (Transaction pooler, puerto 6543) y `DIRECT_URL` (Session pooler, puerto 5432). Vars en `.env.local`.
+**Conexión:** `DATABASE_URL` (pooled 6543) y `DIRECT_URL` (direct 5432).
 
-**Migraciones aplicadas:**
-- `init` — 12 tablas base (User, Account, Session, VerificationToken, PasswordResetToken, EmailVerificationToken, Course, CourseSession, Enrollment, Attendance, Payment, Diploma).
+**Migraciones aplicadas (3):**
+- `init` — 12 tablas base.
 - `add_avatar_key` — campo `User.avatarKey`.
-- `course_clavero_fields` — campos `claveroSkillCode`, `claveroSkillSuffix`, `prerequisiteSkillCodes`, `includedKit`.
+- `course_clavero_fields` — flags SENCE + mapeo Clavero.
 
-**Lo único pendiente:** transferir el proyecto a la organización de la SpA cuando esté constituida (el proyecto se mueve sin recrear BD).
+**Pendiente:** transferir el proyecto a la organización de la SpA cuando esté constituida.
 
 ---
 
@@ -57,92 +64,83 @@ E. OBSERVABILIDAD    → Sentry
 
 ### B1. Cloudflare R2 (object storage)
 
-**Para qué:** archivos privados servidos vía URLs firmadas con expiración corta. Cuatro buckets:
+**Estado:** ✅ activo. Smoke test end-to-end OK.
 
-| Bucket | Contenido | Var de entorno |
-|---|---|---|
-| `ses-avatars` | Fotos de perfil (cropper de 512×512) | `R2_BUCKET_NAME_AVATARS` |
-| `ses-diplomas` | PDFs de diplomas con QR | `R2_BUCKET_NAME_DIPLOMAS` |
-| `ses-course-materials` | Material descargable post-pago | `R2_BUCKET_NAME_MATERIALS` |
-| `ses-payment-receipts` | Recibos de pago en PDF | `R2_BUCKET_NAME_RECEIPTS` |
+**Cuenta:** asociada al Cloudflare del founder. Account ID `26cb0ab5d3ee3bf800b5ca1cc199ecc7`.
 
-**Cuenta:** ❌ pendiente. Crear en [dash.cloudflare.com](https://dash.cloudflare.com) — gratis, pide tarjeta solo como verificación de identidad.
+**Plan:** Free (10 GB storage + egress ilimitado — el gran diferenciador frente a S3).
 
-**Coste:** $0/mes hasta 10 GB de storage + egress ilimitado (gran diferenciador frente a S3).
+**Modelo de buckets:** **un único bucket `securitas-et-salus` con prefijos** (en lugar de cuatro buckets separados como se planteó inicialmente). Más simple, mismo modelo que Clavero. Detalle en `phase-3.5-deploy-and-domain-done.md` §8.
 
-**Pasos para activar:**
-1. Crear cuenta Cloudflare.
-2. Sidebar → R2 → Enable R2.
-3. Crear los 4 buckets con los nombres de la tabla.
-4. R2 → Manage R2 API Tokens → Create token con permisos Object Read & Write.
-5. Apuntar Account ID, Access Key ID, Secret Access Key.
-6. Pegar en `.env.local` (y luego en Vercel) las 6 vars: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` + 3 `R2_BUCKET_NAME_*` (ya en `.env.local` pero apuntando a vacío).
+```
+securitas-et-salus/
+├── avatars/{userId}/{timestamp}.{ext}
+├── diplomas/{userId}/{diplomaId}.pdf
+├── materials/{courseId}/{filename}
+└── receipts/{userId}/{paymentId}.pdf
+```
 
-**No requiere DNS de Cloudflare.** R2 funciona con solo credenciales.
+Las 4 vars `R2_BUCKET_NAME_*` siguen existiendo pero apuntan al mismo bucket — preparado por si en el futuro se separan.
 
-**Lo que se desbloquea al activarlo:**
-- Avatares con foto subida (Fase 2 extra ya implementada).
-- Diplomas PDF en R2 (Fase 5).
-- Material descargable de cursos (Fase 8, diferida).
+**Token API:** `securitasetsalus-prod` (Account Token, scope: bucket `securitas-et-salus`, permiso Object Read & Write, sin TTL).
+
+**Smoke test:** `npx tsx --env-file=.env.local scripts/test-r2.ts`.
+
+> **Atención:** el AWS SDK v3.1036.0 tiene un bug ESM/CJS con `@nodable/entities` — si tocas `lib/r2.ts` o `lib/r2-config.ts`, lee `phase-3.5-deploy-and-domain-done.md` §7 antes.
 
 ---
 
 ## C. Dominio y Email
 
-### C1. NIC Chile (dominio `.cl`)
+### C1. NIC Chile (registro `.cl`)
 
-**Para qué:** registro oficial del dominio `securitasetsalus.cl`. Solo NIC Chile puede registrar `.cl`.
+**Estado:** ✅ comprado. Dominio `securitasetsalus.cl` registrado a nombre del founder.
 
-**Estado:** ❌ pendiente compra.
+**Renovación:** anual.
 
-**Coste:** ~CLP 9.890/año, ~CLP 18.500 por 2 años (recomendado).
+**DNS:** **delegado a Cloudflare**. Nameservers configurados en NIC: `meera.ns.cloudflare.com` + `joel.ns.cloudflare.com`.
 
-**Pasos:**
-1. Ir a [nic.cl](https://www.nic.cl).
-2. Buscar `securitasetsalus.cl`.
-3. Comprar 2 años con RUT personal de Moises (transferible a la SpA después).
-4. En NIC Chile → Mis dominios → Modificar Datos Técnicos → añadir DNS records:
-   - `A` apuntando a `76.76.21.21` (Vercel).
-   - `CNAME www` apuntando a `cname.vercel-dns.com`.
+> Recordatorio: `.cl` no es transferible a otros registradores. NIC siempre mantiene el registro, pero el DNS sí se delega.
 
-**DNS:** se gestiona en NIC Chile mismo (no se transfiere a Cloudflare). Si en el futuro necesitamos features de Cloudflare DNS (Email Routing, etc.), se cambian los nameservers — los `.cl` se quedan registrados en NIC sí o sí.
+### C2. Cloudflare DNS
 
-### C2. Cloudflare Registrar (`.com` defensivo, opcional)
+**Estado:** ✅ zona `securitasetsalus.cl` activa.
 
-**Para qué:** registrar `securitasetsalus.com` solo como reserva de marca, no se conecta a nada.
+**Registros gestionados:**
+- 3× MX `route1/2/3.mx.cloudflare.net` (Email Routing).
+- 1× TXT SPF para Email Routing en `@`.
+- 3× registros DNS de Resend (DKIM/SPF/DMARC en subdominio `send`).
+- ⏳ pendientes: 2× CNAME apuntando a Vercel (`@` y `www` → `cname.vercel-dns.com`, DNS only).
 
-**Estado:** ❌ pendiente, opcional.
+### C3. Cloudflare Email Routing
 
-**Coste:** ~$10/año (precio al coste, sin markup).
+**Estado:** ✅ activo.
 
-**Pasos:**
-1. Crear cuenta Cloudflare (la misma que para R2).
-2. Cloudflare → Registrar → buscar `securitasetsalus.com` → comprar.
-3. No se configura DNS — solo se posee.
+**Direcciones:**
+- `dev@securitasetsalus.cl` → Gmail personal del founder (verified destination).
+- Catch-all `*@securitasetsalus.cl` → mismo Gmail.
 
-### C3. Resend (email transaccional)
+**Activity log:** Cloudflare → Email Routing → Activity log (cada email entrante con OK/error).
 
-**Para qué:** envío de emails desde la app — verificación de email tras registro, magic link, password reset, en el futuro confirmaciones de inscripción y diplomas emitidos.
+### C4. Resend (envío)
 
-**Estado:** ❌ pendiente. Mientras tanto, todos los emails se loguean en la consola del dev server gracias al graceful fallback en `lib/email/client.ts`.
+**Estado:** ✅ activo. Dominio verificado.
 
-**Coste:** $0/mes hasta 3.000 emails/mes (más que suficiente para el piloto).
+**Cuenta:** asociada a `dev@securitasetsalus.cl`.
 
-**Pasos:**
-1. Crear cuenta en [resend.com](https://resend.com).
-2. Domains → Add Domain → `ses.agsint.cl` (o `securitasetsalus.cl` cuando lo tengas).
-3. Resend te da 3 registros DNS a poner en NIC Chile (DKIM/SPF/DMARC).
-4. Pegar en NIC Chile → confirmar verificación en Resend.
-5. API Keys → crear API Key con permiso "Sending access".
-6. Pegar en `.env.local` y Vercel:
-   - `RESEND_API_KEY`
-   - `EMAIL_FROM='SecuritasEtSalus <noreply@securitasetsalus.cl>'`
+**Plan:** Free (3.000 emails/mes).
 
-**Lo que se desbloquea:**
-- Verificación de email de los registros (Fase 2, ahora cae en consola).
-- Magic link login (Fase 2, ahora cae en consola).
-- Password reset (Fase 2, ahora cae en consola).
-- Todos los emails transaccionales de Fase 7.
+**Región:** `us-east-1` (mismo continente que Supabase y Vercel).
+
+**API key activa:** `securitasetsalus-prod` con permission Sending access.
+
+**Variables:**
+```
+RESEND_API_KEY=re_...
+EMAIL_FROM=SecuritasEtSalus <noreply@securitasetsalus.cl>
+```
+
+> `noreply@securitasetsalus.cl` no necesita ser un buzón real. El dominio verificado autoriza el envío. Las respuestas a `noreply@` caen en el catch-all → Gmail.
 
 ---
 
@@ -150,107 +148,79 @@ E. OBSERVABILIDAD    → Sentry
 
 ### D1. Stripe
 
-**Para qué:** cobrar inscripciones a cursos. Activación tras Fase 4.
+**Estado:** ❌ pendiente. Bloqueado por SpA chilena (RUT empresarial requerido para live mode).
 
-**Estado:** ❌ pendiente. Hay graceful fallback en `lib/stripe.ts` — sin claves, los flujos de pago se desactivan en la UI sin reventar.
+**Plan:** $0/mes + 3,5% + 30 CLP por transacción de tarjeta chilena.
 
-**Bloqueo principal:** Stripe live mode requiere **RUT empresarial chileno**. Se puede usar test mode con cuenta personal mientras tanto.
-
-**Coste:** $0/mes + 3,5% + 30 CLP por transacción de tarjeta chilena.
+**Mientras tanto:** graceful fallback en `lib/stripe.ts` — sin claves, los flujos de pago se desactivan en la UI sin reventar.
 
 **Pasos cuando llegue Fase 4:**
-1. Constituir SpA chilena (trámite legal).
-2. Crear cuenta Stripe en [dashboard.stripe.com/register](https://dashboard.stripe.com/register) con datos de la SpA.
+1. Constituir SpA chilena.
+2. Crear cuenta Stripe con datos de la SpA.
 3. Empezar en test mode (no requiere completar info bancaria).
-4. Crear webhook con URL `https://securitasetsalus.cl/api/payments/webhook` (cuando esté en producción).
-5. Pegar `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET` en `.env.local` y Vercel.
+4. Crear webhook con URL `https://securitasetsalus.cl/api/payments/webhook`.
+5. Pegar `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`.
 
-**Diferencia vs Clavero:** SES no usa `STRIPE_*_PRICE_ID` — los precios son `price_data` dinámico por curso (ver `lib/stripe.ts`).
+**Diferencia vs Clavero:** SES no usa `STRIPE_*_PRICE_ID` — los precios son `price_data` dinámico por curso.
 
 ---
 
 ## E. Observabilidad
 
-### E1. Sentry (errores y trazas)
+### E1. Sentry
 
-**Para qué:** capturar errores no manejados en runtime (frontend + server + edge) y trazas de performance.
+**Estado:** ⏳ SDK integrado y configurado pero sin DSN. Crear proyecto cuando convenga.
 
-**Estado:** ❌ pendiente. El SDK está integrado vía `instrumentation.ts` + 3 `sentry.*.config.ts`, pero sin DSN no envía nada (queda en consola).
-
-**Coste:** $0/mes hasta 5.000 errores/mes (más que suficiente para el piloto).
+**Plan:** Free (5.000 errores/mes).
 
 **Pasos:**
-1. Crear cuenta en [sentry.io](https://sentry.io).
-2. Crear organización (puede compartir con Clavero o ser separada).
-3. Crear proyecto **Next.js** llamado `securitasetsalus`.
-4. Sentry te da el DSN.
-5. Pegar en `.env.local` y Vercel:
+1. Crear cuenta en sentry.io con `dev@securitasetsalus.cl`.
+2. Crear proyecto Next.js llamado `securitasetsalus`.
+3. Copiar el DSN.
+4. Pegar en Vercel:
    - `NEXT_PUBLIC_SENTRY_DSN=<dsn>`
-   - `SENTRY_DSN=<mismo dsn>`
-6. Para subir source maps en build: crear API token en Sentry → Internal Integrations → pegar como `SENTRY_AUTH_TOKEN` en Vercel.
+5. (Opcional) Auth token para source maps en build:
+   - `SENTRY_AUTH_TOKEN=<token>`
 
-**Smoke test tras conectar:** lanzar un error inducido en producción (`throw new Error('test sentry')` en una page → push) y verificar que aparece en el dashboard de Sentry.
+**Smoke test tras conectar:** lanzar un error inducido en producción (`throw new Error('test sentry')` en una page → push) y verificar que aparece en el dashboard.
 
 ---
 
 ## Mapa completo de variables de entorno
 
-| Variable | Servicio | Estado | Bloquea |
+| Variable | Servicio | Estado | Notas |
 |---|---|---|---|
-| `DATABASE_URL` | Supabase | ✅ cableada | — |
-| `DIRECT_URL` | Supabase | ✅ cableada | — |
-| `NEXTAUTH_SECRET` | NextAuth | ✅ generada | — |
-| `NEXTAUTH_URL` | NextAuth | ✅ `localhost:3000` (vacío en Vercel) | — |
-| `NEXT_PUBLIC_APP_URL` | App | 🟡 `ses.agsint.cl` (cambiar a `securitasetsalus.cl`) | dominio |
-| `R2_ACCOUNT_ID` | Cloudflare R2 | ❌ vacío | avatares con foto |
-| `R2_ACCESS_KEY_ID` | Cloudflare R2 | ❌ vacío | idem |
-| `R2_SECRET_ACCESS_KEY` | Cloudflare R2 | ❌ vacío | idem |
-| `R2_BUCKET_NAME_AVATARS` | Cloudflare R2 | ✅ `ses-avatars` | (necesita las 3 anteriores) |
-| `R2_BUCKET_NAME_DIPLOMAS` | Cloudflare R2 | ✅ `ses-diplomas` | Fase 5 |
-| `R2_BUCKET_NAME_MATERIALS` | Cloudflare R2 | ✅ `ses-course-materials` | Fase 8 |
-| `R2_BUCKET_NAME_RECEIPTS` | Cloudflare R2 | ✅ `ses-payment-receipts` | Fase 4 |
-| `RESEND_API_KEY` | Resend | ❌ vacío | emails reales (verificación, magic link, reset) |
-| `EMAIL_FROM` | Resend | 🟡 `noreply@ses.agsint.cl` (cambiar al dominio definitivo) | idem |
-| `CRON_SECRET` | Vercel Cron | ❌ vacío | crons de Fase 5+ |
-| `STRIPE_SECRET_KEY` | Stripe | ❌ vacío | Fase 4 |
-| `STRIPE_PUBLISHABLE_KEY` | Stripe | ❌ vacío | Fase 4 |
-| `STRIPE_WEBHOOK_SECRET` | Stripe | ❌ vacío | Fase 4 |
-| `NEXT_PUBLIC_SENTRY_DSN` | Sentry | ❌ vacío | observabilidad en prod |
-| `SENTRY_DSN` | Sentry | ❌ vacío | idem (server-side) |
-| `SENTRY_AUTH_TOKEN` | Sentry | ❌ vacío | source maps en builds de Vercel |
+| `NEXT_PUBLIC_APP_URL` | App | ✅ `https://securitasetsalus.cl` | |
+| `DATABASE_URL` | Supabase | ✅ pooled 6543 | proyecto `tbuskfmnublyyvhhexmb` |
+| `DIRECT_URL` | Supabase | ✅ direct 5432 | idem |
+| `AUTH_SECRET` | Auth.js v5 | ✅ generado | **NO usar `NEXTAUTH_SECRET` — Auth.js v5 no la lee** |
+| `AUTH_URL` | Auth.js v5 | 🟡 solo en local (`localhost:3000`) | en Vercel se calcula automáticamente |
+| `RESEND_API_KEY` | Resend | ✅ activa | |
+| `EMAIL_FROM` | Resend | ✅ `noreply@securitasetsalus.cl` | |
+| `R2_ACCOUNT_ID` | Cloudflare R2 | ✅ `26cb0ab5...` | |
+| `R2_ACCESS_KEY_ID` | Cloudflare R2 | ✅ activa | |
+| `R2_SECRET_ACCESS_KEY` | Cloudflare R2 | ✅ activa | |
+| `R2_BUCKET_NAME_AVATARS` | Cloudflare R2 | ✅ `securitas-et-salus` | bucket único, prefijo separa |
+| `R2_BUCKET_NAME_DIPLOMAS` | Cloudflare R2 | ✅ `securitas-et-salus` | idem |
+| `R2_BUCKET_NAME_MATERIALS` | Cloudflare R2 | ✅ `securitas-et-salus` | idem |
+| `R2_BUCKET_NAME_RECEIPTS` | Cloudflare R2 | ✅ `securitas-et-salus` | idem |
+| `R2_PUBLIC_URL` | Cloudflare R2 | ❌ vacío | solo si activamos bucket público |
+| `STRIPE_SECRET_KEY` | Stripe | ❌ vacío | Fase 4, bloqueado por SpA |
+| `STRIPE_PUBLISHABLE_KEY` | Stripe | ❌ vacío | idem |
+| `STRIPE_WEBHOOK_SECRET` | Stripe | ❌ vacío | idem |
+| `NEXT_PUBLIC_SENTRY_DSN` | Sentry | ❌ vacío | crear proyecto |
+| `SENTRY_AUTH_TOKEN` | Sentry | ❌ vacío | opcional, source maps |
+| `CRON_SECRET` | Vercel Cron | ❌ vacío | Fase 7+ |
+
+> Variables que **NO** deben estar en Vercel: `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `AUTH_URL`. Auth.js v5 las ignora o se autocalculan.
 
 ---
 
-## Orden recomendado de activación
-
-```
-1. Comprar securitasetsalus.cl (NIC Chile)         🔴 esta semana
-   └─▶ Define el dominio que usarán Resend, Vercel y Sentry
-
-2. Crear cuenta Cloudflare + activar R2            🟠 esta semana
-   └─▶ Activa avatares con foto
-
-3. Crear cuenta Vercel + conectar repo SES         🟠 esta semana
-   └─▶ Tener producción accesible
-
-4. Apuntar securitasetsalus.cl a Vercel            🟠 esta semana
-   └─▶ Tras (1) + (3)
-
-5. Crear cuenta Resend + verificar dominio         🟡 cuando puedas
-   └─▶ Activa emails reales (auth + confirmaciones)
-
-6. Crear proyecto Sentry + pegar DSN               🟡 esta semana
-   └─▶ Capturar errores en prod antes del piloto
-
-7. Stripe (cuenta SES propia)                      🟢 cuando llegue Fase 4
-   └─▶ Bloqueado por SpA constituida
-```
-
 ## Cómo me lo pasas tú
 
-Cuando montes una de estas cuentas, simplemente me dices:
-- "Tengo R2 → me pasas las 5 vars, las pego en `.env.local` y verificamos."
-- "Compré `securitasetsalus.cl` → te paso por screen-share el panel y configuramos DNS."
-- "Resend listo → me pasas la API key y el dominio verificado."
+Cuando montes una cuenta nueva o renueves credenciales:
+- "Tengo Sentry → te paso el DSN, lo pego en Vercel + .env.local."
+- "Vino la SpA → te paso las claves Stripe."
+- "Hay que rotar el token R2 → genero uno nuevo y te lo paso."
 
-No necesito tener acceso directo a las cuentas. Las credenciales viajan por el chat y las pego yo en los archivos correctos.
+No necesito acceso directo a las cuentas. Las credenciales viajan por el chat y las pego en los archivos correctos + Vercel.

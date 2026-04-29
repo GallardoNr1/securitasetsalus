@@ -2,17 +2,15 @@
 
 Documentación operativa sobre dónde vive SES en producción, cómo está configurado el dominio y qué variables de entorno necesita cada servicio.
 
+> Para el chronicle del primer deploy y los gotchas que aparecieron por el camino, ver `docs/phases/phase-3.5-deploy-and-domain-done.md`.
+
 ## URL de producción
 
-**Producción inicial:** `https://ses.agsint.cl` (subdominio bajo el dominio que ya gestiona el founder en cPanel).
+**Dominio definitivo:** `https://securitasetsalus.cl` (registrado en NIC Chile, DNS delegado a Cloudflare).
 
-**Migración prevista al dominio definitivo:** cuando la SpA chilena esté formalmente constituida y se compre uno de:
-- `securitasetsalus.cl` (preferente — refuerza identidad legal chilena, ~CLP 12.000/año).
-- `securitas-et-salus.com` (alternativa internacional si SES escala fuera de Chile pronto).
+**URL temporal de Vercel siempre activa:** `https://securitasetsalus.vercel.app`.
 
-La migración es de ~15 min siguiendo el procedimiento de la sección "Migrar a dominio definitivo" más abajo.
-
-**Fallback de Vercel siempre activo:** `<project-name>.vercel.app`.
+**Estado al 2026-04-29:** la URL `vercel.app` funciona. El apex `securitasetsalus.cl` espera a que se añadan los CNAMEs en Cloudflare apuntando a `cname.vercel-dns.com`.
 
 ---
 
@@ -20,8 +18,8 @@ La migración es de ~15 min siguiendo el procedimiento de la sección "Migrar a 
 
 ```
 ┌─────────────┐         ┌──────────────┐        ┌─────────────┐
-│   Browser   │───DNS──▶│  ecohosting  │───────▶│   Vercel    │
-│             │         │ (cPanel DNS) │  CNAME │  (Next.js)  │
+│   Browser   │───DNS──▶│  Cloudflare  │───────▶│   Vercel    │
+│             │         │ (DNS + Email)│  CNAME │  (Next.js)  │
 └─────────────┘         └──────────────┘        └─────────────┘
                                                        │
                              ┌─────────────────────────┼─────────────────┬───────────┐
@@ -29,7 +27,7 @@ La migración es de ~15 min siguiendo el procedimiento de la sección "Migrar a 
                              ▼                         ▼                 ▼           ▼
                       ┌──────────────┐          ┌────────────┐    ┌────────────┐ ┌────────┐
                       │  Supabase    │          │ Cloudflare │    │  Resend    │ │ Stripe │
-                      │ (Postgres SES)│          │     R2     │    │            │ │        │
+                      │ (Postgres)   │          │     R2     │    │            │ │ (later)│
                       └──────────────┘          └────────────┘    └────────────┘ └────────┘
 ```
 
@@ -37,82 +35,70 @@ La migración es de ~15 min siguiendo el procedimiento de la sección "Migrar a 
 
 | Servicio | Qué hace |
 |---|---|
-| **ecohosting.cl** | DNS del subdominio `ses.agsint.cl` (mismo proveedor que Clavero). |
+| **NIC Chile** | Registro `.cl`. DNS delegado a Cloudflare (nameservers `meera.ns.cloudflare.com` + `joel.ns.cloudflare.com`). |
+| **Cloudflare DNS** | Gestión de registros del dominio. CNAMEs apuntan al sitio de Vercel. |
+| **Cloudflare Email Routing** | Forward de `dev@securitasetsalus.cl` y catch-all → Gmail personal. |
 | **Vercel** | Ejecuta Next.js, API routes, middleware. Emite SSL. Despliegue continuo desde GitHub. |
-| **Supabase (proyecto SES)** | Postgres separado del de Clavero. |
-| **Cloudflare R2** | Diplomas, materiales de curso, recibos. Cuenta R2 puede compartirse con Clavero, pero buckets separados. |
-| **Stripe** | **Cuenta propia de SES**, separada de la de Clavero. Se crea con datos de la SpA chilena nueva. |
-| **Resend** | Cuenta y dominio verificado propio para SES (DKIM/SPF/DMARC del dominio SES). |
-| **Sentry** | Proyecto separado del de Clavero. |
+| **Supabase** | Postgres SES (proyecto `tbuskfmnublyyvhhexmb`). |
+| **Cloudflare R2** | Un bucket único `securitas-et-salus` con prefijos `avatars/`, `diplomas/`, `materials/`, `receipts/`. |
+| **Resend** | Envío transaccional de emails. Dominio verificado en Resend. |
+| **Stripe** | **Cuenta propia de SES** (Fase 4, bloqueada por SpA chilena). |
+| **Sentry** | SDK integrado, DSN pendiente. |
 
 ---
 
-## Cómo configurar el subdominio (mientras sea temporal)
+## Cómo conectar el dominio (procedimiento)
 
-### Registro DNS (en cPanel de ecohosting → Zone Editor de `agsint.cl`)
+### En Cloudflare → DNS
 
-```
-Tipo:  CNAME
-Nombre: ses
-Valor:  cname.vercel-dns.com
-TTL:   300 (5 minutos)
-```
+| Type | Name | Content | Proxy status | TTL |
+|---|---|---|---|---|
+| `CNAME` | `@` | `cname.vercel-dns.com` | **DNS only** (gris) | Auto |
+| `CNAME` | `www` | `cname.vercel-dns.com` | **DNS only** (gris) | Auto |
 
-### Dominio asociado en Vercel
+> **Importante:** la nube tiene que estar gris (DNS only), no naranja (proxied). Si está proxied, Vercel no puede emitir el certificado SSL.
 
-Settings → Domains → `ses.agsint.cl` añadido al proyecto Vercel de SES.
+> Cloudflare permite CNAME en `@` apex gracias a CNAME flattening — sin necesidad de hardcodear IPs de Vercel.
 
-Vercel detecta el CNAME y emite automáticamente certificado SSL (Let's Encrypt). Propagación 5 min – 2 h.
+### En Vercel → Settings → Domains
+
+1. Añadir `securitasetsalus.cl` → Add.
+2. Añadir `www.securitasetsalus.cl` → Add.
+3. Vercel detecta los CNAMEs en 1-3 min y emite el SSL (Let's Encrypt) automáticamente.
+4. Marcar `securitasetsalus.cl` como Primary.
 
 ---
 
 ## Variables de entorno en Vercel
 
-Para producción funcional, estas vars deben estar en Vercel (Settings → Environment Variables, en Production + Preview):
+Para producción funcional, estas vars deben estar en Vercel (Settings → Environment Variables, en Production + Preview + Development).
 
-### Obligatorias
+> Para la lista completa con estado y notas, ver `docs/external-services.md`. Aquí solo los gotchas más comunes.
 
-| Variable | Valor | De dónde sale |
-|---|---|---|
-| `DATABASE_URL` | Pooled connection Supabase (puerto 6543) | Supabase → Settings → Database → Connection pooling |
-| `DIRECT_URL` | Direct connection Supabase (puerto 5432) | Supabase → igual, modo "Session" |
-| `NEXTAUTH_SECRET` | 32 bytes random base64 | `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` |
-| `NEXT_PUBLIC_APP_URL` | URL pública (ej. `https://ses.agsint.cl`) | Cambia al migrar dominio |
+### Obligatorias para que la app levante
+
+| Variable | Notas |
+|---|---|
+| `DATABASE_URL` | Supabase pooled (puerto 6543) |
+| `DIRECT_URL` | Supabase direct (puerto 5432) |
+| `AUTH_SECRET` | **Auth.js v5 lee `AUTH_SECRET`, NO `NEXTAUTH_SECRET`** |
+| `NEXT_PUBLIC_APP_URL` | URL pública del sitio |
+| `EMAIL_FROM` | Lo lee el provider Resend al inicializar |
 
 ### Storage (R2)
 
-| Variable | Notas |
-|---|---|
-| `R2_ACCOUNT_ID` | Cuenta R2 (puede ser la misma que Clavero) |
-| `R2_ACCESS_KEY_ID` | API token con permisos sobre los buckets de SES |
-| `R2_SECRET_ACCESS_KEY` | idem |
-| `R2_BUCKET_NAME_DIPLOMAS` | `ses-diplomas` |
-| `R2_BUCKET_NAME_MATERIALS` | `ses-course-materials` |
-| `R2_BUCKET_NAME_RECEIPTS` | `ses-payment-receipts` |
+Las 6 vars de R2 (3 credenciales + 3 nombres de bucket que apuntan al mismo `securitas-et-salus`) son **obligatorias** porque el código lee `BUCKET_ENV_VARS` al cargar `lib/r2-config.ts`. Sin las 4 `R2_BUCKET_NAME_*`, `isBucketConfigured(...)` devuelve `false` y los avatares no se cargan.
 
 ### Pagos (Stripe)
 
-| Variable | Notas |
-|---|---|
-| `STRIPE_SECRET_KEY` | sk_test_... o sk_live_... |
-| `STRIPE_PUBLISHABLE_KEY` | pk_test_... o pk_live_... |
-| `STRIPE_WEBHOOK_SECRET` | whsec_... — atado al endpoint configurado |
+`STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`. Vacíos hasta Fase 4 — la app levanta igual gracias a `lib/stripe.ts` (graceful fallback).
 
 (No hay `STRIPE_*_PRICE_ID` en SES — los precios son dinámicos por curso.)
 
-### Email (Resend)
+### Variables que **NO** deben estar en Vercel
 
-| Variable | Notas |
-|---|---|
-| `RESEND_API_KEY` | re_... |
-| `EMAIL_FROM` | `noreply@<dominio-ses>` con DKIM/SPF/DMARC verificados |
-
-### Observabilidad (Sentry)
-
-| Variable | Notas |
-|---|---|
-| `SENTRY_DSN` | Server-side DSN |
-| `NEXT_PUBLIC_SENTRY_DSN` | Client-side DSN |
+- `NEXTAUTH_SECRET` — Auth.js v5 ya no la lee. Borrar si existe.
+- `NEXTAUTH_URL` / `AUTH_URL` — Vercel calcula la URL sola con `x-forwarded-host`. Si la pones apuntando a `localhost`, rompes los redirects post-login.
 
 ---
 
@@ -121,44 +107,39 @@ Para producción funcional, estas vars deben estar en Vercel (Settings → Envir
 | Rama | Despliegue |
 |---|---|
 | `main` | Producción (URL definitiva) |
-| `develop` | Preview URL única por commit |
-| `feature/*` | Preview individual |
+| Cualquier otra | Preview URL única por commit |
 
-Workflow típico (mismo que Clavero):
-1. Trabajas en `develop`.
+Workflow típico:
+1. Trabajas en `develop` (o feature branch).
 2. Push → Vercel genera preview URL.
 3. Pruebas en esa preview.
-4. Merge `develop → main` → producción despliega sola.
-5. Verificas en el dominio de producción.
+4. Merge a `main` → producción despliega sola.
+5. Verificas en `securitasetsalus.cl`.
 
 **Build gateado por tests:** el `buildCommand` de `vercel.json` ejecuta `typecheck + unit tests` con `NODE_ENV=test` antes de buildear. Si fallan, el deploy se aborta. Mismo patrón que Clavero.
 
 ---
 
-## Migrar a dominio definitivo
+## Vercel CLI
 
-Cuando se compre el dominio definitivo (`securitasetsalus.cl` u otro), el cambio es mecánico (15 min):
+Repo enlazado tras `npx vercel link`. Útil para:
 
-1. **DNS** del nuevo dominio:
-   ```
-   Tipo:  CNAME
-   Nombre: www (o @ con ALIAS/ANAME si lo soporta el registrador)
-   Valor:  cname.vercel-dns.com
-   TTL:   300
-   ```
-   Si el registrador no soporta CNAME en root, usar A record `76.76.21.21` (Vercel).
+```bash
+npx vercel ls                      # listar deploys recientes
+npx vercel logs <url>              # runtime logs en vivo
+npx vercel inspect <url>           # metadatos del deploy
+npx vercel env pull .env.local     # bajar todas las env vars de Vercel a local (si conviene)
+```
 
-2. **Añadir dominio en Vercel** → Settings → Domains → Add.
-3. **Marcar como primario** → ⋯ → Set as Primary.
-4. **Actualizar `NEXT_PUBLIC_APP_URL`** a la nueva URL.
-5. **Redeploy sin cache** → Deployments → último → Redeploy (desmarcar "Use existing Build Cache").
-6. **Dejar redirect desde el subdominio antiguo** para que los QR de diplomas viejos sigan resolviendo.
+---
 
-### Diplomas pre-existentes
+## Bug del AWS SDK — leer antes de tocar `lib/r2*.ts`
 
-Los QR de diplomas emitidos antes del cambio apuntan al dominio antiguo. Estrategia recomendada (igual que Clavero):
-- **A)** Dejar el dominio antiguo activo con redirect automático (los QR viejos siguen funcionando sin tocar nada).
-- **B)** Regenerar PDFs con `UPDATE "Diploma" SET "pdfKey" = NULL;` — el siguiente acceso regenera el PDF con el nuevo dominio.
+El SDK `@aws-sdk/client-s3@3.1036.0` arrastra `@nodable/entities@2.1.0` (ESM-only) que su propio `xml-builder` importa con `require()`. En el runtime serverless de Vercel eso lanza `ERR_REQUIRE_ESM` y mata cualquier ruta que cargue el SDK.
+
+**Mitigación:** los helpers de configuración de R2 viven en `lib/r2-config.ts` (sin imports del SDK). `AppHeader.tsx` y `app/(app)/profile/page.tsx` solo importan de ahí. `lib/r2.ts` (con SDK) solo se carga en route handlers y server actions específicos del avatar.
+
+> **Si "limpias" `lib/r2-config.ts` pensando que es código duplicado, vuelves a romper /admin en producción.** El propio archivo tiene un comentario explicativo. Detalle completo en `docs/phases/phase-3.5-deploy-and-domain-done.md` §7.
 
 ---
 
@@ -166,22 +147,29 @@ Los QR de diplomas emitidos antes del cambio apuntan al dominio antiguo. Estrate
 
 ### En Vercel
 - Dashboard → deploy → **Logs** en vivo.
-- Runtime Logs → output de las funciones serverless.
+- Runtime Logs → output de funciones serverless.
 - Build Logs → output de `next build`.
+- CLI: `npx vercel logs <url>` para streaming.
 
 ### En Supabase
-- **Logs** sidebar → API / Auth / Database logs.
+- Logs sidebar → API / Auth / Database logs.
 - Connection pool utilization.
 
 ### En Cloudflare R2
 - Metrics → requests, bandwidth, storage.
-- Plan free: 10 GB/mes + egress ilimitado.
+- Plan free: 10 GB storage + egress ilimitado.
 
-### En Sentry
+### En Cloudflare Email Routing
+- Activity log → cada email entrante con OK/error.
+
+### En Resend
+- Logs → cada email enviado con código de respuesta.
+
+### En Sentry (cuando esté activo)
 - Issues → errores agrupados.
 - Performance → trazas.
 
-### En Stripe
+### En Stripe (cuando esté activo)
 - Dashboard → Payments + Events.
 - Logs de webhook con código de respuesta.
 
@@ -191,18 +179,22 @@ Los QR de diplomas emitidos antes del cambio apuntan al dominio antiguo. Estrate
 
 | Síntoma | Causa probable | Fix |
 |---|---|---|
-| Dominio no responde | DNS aún no propagó | Esperar o verificar con dnschecker.org |
+| `/admin` da 500 al desplegar | Falta `AUTH_SECRET` (no `NEXTAUTH_SECRET`) | Renombrar var en Vercel + redeploy |
+| `/admin` da 500 con `ERR_REQUIRE_ESM` | Algún archivo importa `@/lib/r2` cuando debería usar `@/lib/r2-config` | Cambiar el import |
+| `Build error: table public.X does not exist` | Vercel apunta a Supabase distinto del que tiene migraciones | Actualizar `DATABASE_URL` y `DIRECT_URL` en Vercel |
+| Dominio no responde | DNS aún propagando o nube en Cloudflare está naranja | Esperar / cambiar a DNS only |
 | 404 de Vercel | Dominio no asociado al proyecto | Settings → Domains → Add |
 | Error SSL | Certificado emitiéndose | Esperar 2 min, recargar |
-| Webhook Stripe falla | `STRIPE_WEBHOOK_SECRET` incorrecto o endpoint URL distinto | Comparar valor en Stripe dashboard vs Vercel env vars |
-| Emails caen en spam | DMARC/DKIM/SPF no configurados | Verificar dominio en Resend dashboard |
-| PDFs lentos | R2 vars mal configuradas | Validar `R2_*` en env + redeploy sin cache |
-| QR apuntan al dominio viejo | `NEXT_PUBLIC_APP_URL` desactualizada o build cacheado | Actualizar + redeploy sin cache |
+| Magic link no llega | RESEND_API_KEY falta o dominio no verificado en Resend | Logs de Resend |
+| Avatar no carga | Las 4 `R2_BUCKET_NAME_*` no están en Vercel | Añadirlas (todas a `securitas-et-salus`) |
+| QR de diploma apunta a localhost | `NEXT_PUBLIC_APP_URL` desactualizada | Actualizar y redeploy sin cache |
 
 ---
 
 ## Referencias cruzadas
 
+- [docs/phases/phase-3.5-deploy-and-domain-done.md](phases/phase-3.5-deploy-and-domain-done.md) — chronicle del despliegue.
+- [docs/external-services.md](external-services.md) — inventario de cuentas y env vars.
 - [docs/infrastructure.md](infrastructure.md) — plan de infraestructura.
 - [docs/integration-clavero.md](integration-clavero.md) — contrato con Clavero.
 - [.env.example](../.env.example) — variables de entorno documentadas.
