@@ -167,6 +167,23 @@ export default async function InstructorCourseDetailPage({ params }: PageProps) 
           </ul>
         )}
       </section>
+
+      {course.hasEvaluation ? (
+        <section className={styles.closure}>
+          <header className={styles.sectionHeader}>
+            <h2>Cierre del curso</h2>
+            <p>
+              Cuando termines de pasar lista de todas las sesiones, evalúa a cada alumno con
+              nota chilena 1.0–7.0 en técnica, conocimientos
+              {course.evaluatesAttitude ? ', actitud' : ''} y participación. La nota final
+              decide si recibe diploma (Fase 5c).
+            </p>
+          </header>
+          <Link href={`/instructor/cursos/${course.id}/evaluaciones`} className={styles.closureLink}>
+            Evaluación final →
+          </Link>
+        </section>
+      ) : null}
     </div>
   );
 }

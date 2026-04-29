@@ -80,6 +80,7 @@ model User {
   emailVerificationTokens  EmailVerificationToken[]
   coursesAsInstructor      Course[]                  @relation("CourseInstructor")
   attendancesMarked        Attendance[]              @relation("AttendanceMarker")
+  evaluationsGiven         Evaluation[]              @relation("EvaluationEvaluator")
   // NextAuth (Magic Link via @auth/prisma-adapter)
   accounts                 Account[]
   sessions                 Session[]
@@ -182,6 +183,15 @@ model Course {
   hasEvaluation                       Boolean      @default(true)
   senceEligible                       Boolean      @default(false)  // Apto franquicia SENCE
 
+  // Configuración de la evaluación final (Fase 5b).
+  // Escala chilena tradicional 1-7, con 4.0 como nota mínima de aprobación.
+  // El instructor evalúa al alumno en hasta 4 dimensiones; las activas
+  // por defecto son las cuatro, pero `evaluatesAttitude` se puede apagar
+  // por curso si el formato no requiere medir actitud (cursos cortos,
+  // talleres puntuales, etc.).
+  evaluationPassingGrade              Float        @default(4.0)
+  evaluatesAttitude                   Boolean      @default(true)
+
   // Mapeo a Clavero. Si claveroSkillCode != null, el diploma de este curso
   // sirve como input para certificación profesional Clavero. Códigos
   // canónicos del catálogo SENCE: LE, LP, L3, AB, AA, AA+, V1, V2, M1, M2.
@@ -258,6 +268,7 @@ model Enrollment {
   attendances      Attendance[]
   payments         Payment[]
   diploma          Diploma?
+  evaluation       Evaluation?
 
   @@unique([userId, courseId])
   @@index([userId])
@@ -278,6 +289,46 @@ model Attendance {
 
   @@unique([enrollmentId, sessionId])
   @@index([sessionId])
+}
+
+// ------------------------------------------------------------
+// Evaluación final del alumno (Fase 5b)
+// ------------------------------------------------------------
+// Se crea al cierre del curso: el instructor evalúa al alumno en hasta
+// 4 dimensiones con nota chilena 1-7. La nota final es el promedio de las
+// dimensiones activas (la actitud se puede desactivar por curso vía
+// Course.evaluatesAttitude). El campo `passed` se calcula al guardar
+// teniendo en cuenta el umbral del curso y la asistencia mínima (75%).
+//
+// 1:1 con Enrollment — un alumno solo se evalúa una vez por curso.
+// El instructor puede editar la evaluación las veces que quiera hasta
+// que el curso pase a CLOSED.
+
+model Evaluation {
+  id           String     @id @default(cuid())
+  enrollmentId String     @unique
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+
+  // Notas por dimensión, escala chilena 1-7. Nullable porque el form se
+  // puede guardar parcial (el instructor puede ir rellenando) y porque
+  // la dimensión de actitud puede estar desactivada en el curso.
+  technicalScore     Float?  // Técnica: ¿ejecuta correctamente las tareas del curso?
+  knowledgeScore     Float?  // Conocimientos: ¿entiende el porqué, no solo el cómo?
+  attitudeScore      Float?  // Actitud: puntualidad, ética, profesionalidad
+  participationScore Float?  // Participación: trabajo en equipo, preguntas
+
+  // Calculados al guardar.
+  finalGrade Float?    // Promedio de dimensiones activas con nota.
+  passed     Boolean?  // true si finalGrade >= Course.evaluationPassingGrade Y asistencia >= 75%.
+
+  notes String?  // Comentarios libres del instructor.
+
+  evaluatedById String
+  evaluatedBy   User     @relation("EvaluationEvaluator", fields: [evaluatedById], references: [id])
+  evaluatedAt   DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([evaluatedById])
 }
 
 model Payment {

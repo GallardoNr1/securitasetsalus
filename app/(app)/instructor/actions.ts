@@ -4,6 +4,9 @@ import { revalidatePath } from 'next/cache';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { attendanceMarkSchema } from '@/lib/validations/attendance';
+import { evaluationBatchSchema } from '@/lib/validations/evaluation';
+
+const ATTENDANCE_THRESHOLD = 0.75; // 75% de asistencia mínima — requisito SENCE.
 
 export type MarkAttendanceResult =
   | { ok: true; message: string; markedCount: number }
@@ -123,6 +126,215 @@ export async function markAttendanceAction(input: {
       ok: false,
       error: 'unknown',
       message: 'No se pudo guardar la asistencia. Intenta de nuevo.',
+    };
+  }
+}
+
+// ---------- Evaluación final (Fase 5b) ----------
+
+export type SaveEvaluationsResult =
+  | { ok: true; message: string; savedCount: number; passedCount: number }
+  | {
+      ok: false;
+      error: 'unauthorized' | 'forbidden' | 'invalid' | 'course-not-found' | 'unknown';
+      message: string;
+    };
+
+/**
+ * Guarda las evaluaciones finales del curso.
+ *
+ * Por cada entry calcula:
+ *  - finalGrade = promedio de las dimensiones rellenadas (1-7).
+ *    Si el curso tiene `evaluatesAttitude: false`, ignora attitudeScore
+ *    aunque venga relleno (defensa adicional contra forms manipulados).
+ *  - passed = (finalGrade >= course.evaluationPassingGrade) Y
+ *             (asistencia del alumno >= 75% de las sesiones del curso).
+ *
+ * Si el alumno aún no tiene ninguna nota rellena, se persiste la
+ * Evaluation pero con finalGrade=null y passed=null — útil para guardar
+ * borradores parciales sin "fallar" al alumno.
+ *
+ * Además actualiza Enrollment.finalGrade y Enrollment.status (COMPLETED/
+ * FAILED) cuando passed se puede calcular definitivamente.
+ */
+export async function saveEvaluationsAction(input: {
+  courseId: string;
+  entries: Array<{
+    enrollmentId: string;
+    technicalScore: number | null;
+    knowledgeScore: number | null;
+    attitudeScore: number | null;
+    participationScore: number | null;
+    notes: string | null;
+  }>;
+}): Promise<SaveEvaluationsResult> {
+  const session = await auth();
+  if (!session?.user) {
+    return { ok: false, error: 'unauthorized', message: 'No estás autenticado.' };
+  }
+
+  const parsed = evaluationBatchSchema.safeParse(input);
+  if (!parsed.success) {
+    return {
+      ok: false,
+      error: 'invalid',
+      message: parsed.error.issues[0]?.message ?? 'Datos inválidos.',
+    };
+  }
+
+  const course = await db.course.findUnique({
+    where: { id: parsed.data.courseId },
+    select: {
+      id: true,
+      instructorId: true,
+      evaluatesAttitude: true,
+      evaluationPassingGrade: true,
+      _count: { select: { sessions: true } },
+    },
+  });
+  if (!course) {
+    return {
+      ok: false,
+      error: 'course-not-found',
+      message: 'No encontramos el curso.',
+    };
+  }
+
+  const isOwner = course.instructorId === session.user.id;
+  const isAdmin = session.user.role === 'SUPER_ADMIN';
+  if (!isOwner && !isAdmin) {
+    return {
+      ok: false,
+      error: 'forbidden',
+      message: 'No eres instructor de este curso.',
+    };
+  }
+
+  // Filtrar enrollments válidos del curso (defensa contra IDs falsos).
+  const enrollmentIds = parsed.data.entries.map((e) => e.enrollmentId);
+  const validEnrollments = await db.enrollment.findMany({
+    where: {
+      id: { in: enrollmentIds },
+      courseId: course.id,
+      status: { in: ['CONFIRMED', 'COMPLETED', 'FAILED'] },
+    },
+    include: {
+      _count: { select: { attendances: { where: { attended: true } } } },
+    },
+  });
+  const enrollmentMap = new Map(validEnrollments.map((e) => [e.id, e]));
+
+  const totalSessions = course._count.sessions;
+  let passedCount = 0;
+
+  try {
+    await db.$transaction(async (tx) => {
+      for (const entry of parsed.data.entries) {
+        const enrollment = enrollmentMap.get(entry.enrollmentId);
+        if (!enrollment) continue;
+
+        // Calcular finalGrade promediando solo las dimensiones rellenadas
+        // y activas para este curso.
+        const dimensions: Array<number | null> = [
+          entry.technicalScore,
+          entry.knowledgeScore,
+          course.evaluatesAttitude ? entry.attitudeScore : null,
+          entry.participationScore,
+        ];
+        const filledDimensions = dimensions.filter((d): d is number => d !== null);
+
+        const finalGrade =
+          filledDimensions.length === 0
+            ? null
+            : Number(
+                (
+                  filledDimensions.reduce((sum, n) => sum + n, 0) / filledDimensions.length
+                ).toFixed(2),
+              );
+
+        // passed solo se decide cuando todas las dimensiones activas están
+        // rellenadas (decisión definitiva del instructor) Y la asistencia
+        // alcanza el umbral SENCE.
+        const requiredDimensions = course.evaluatesAttitude ? 4 : 3;
+        const allFilled = filledDimensions.length === requiredDimensions;
+        const attendanceRatio =
+          totalSessions === 0 ? 1 : enrollment._count.attendances / totalSessions;
+        const meetsAttendance = attendanceRatio >= ATTENDANCE_THRESHOLD;
+
+        const passed: boolean | null =
+          finalGrade === null || !allFilled
+            ? null
+            : finalGrade >= course.evaluationPassingGrade && meetsAttendance;
+
+        if (passed === true) passedCount++;
+
+        // Determinar failedReason si suspendió.
+        let failedReason: string | null = null;
+        if (passed === false) {
+          const lowGrade = finalGrade !== null && finalGrade < course.evaluationPassingGrade;
+          if (lowGrade && !meetsAttendance) failedReason = 'both';
+          else if (lowGrade) failedReason = 'evaluation';
+          else failedReason = 'attendance';
+        }
+
+        await tx.evaluation.upsert({
+          where: { enrollmentId: entry.enrollmentId },
+          update: {
+            technicalScore: entry.technicalScore,
+            knowledgeScore: entry.knowledgeScore,
+            // Si la actitud está desactivada en el curso, persistimos null
+            // ignorando lo que mande el cliente.
+            attitudeScore: course.evaluatesAttitude ? entry.attitudeScore : null,
+            participationScore: entry.participationScore,
+            notes: entry.notes,
+            finalGrade,
+            passed,
+            evaluatedById: session.user.id,
+            evaluatedAt: new Date(),
+          },
+          create: {
+            enrollmentId: entry.enrollmentId,
+            technicalScore: entry.technicalScore,
+            knowledgeScore: entry.knowledgeScore,
+            attitudeScore: course.evaluatesAttitude ? entry.attitudeScore : null,
+            participationScore: entry.participationScore,
+            notes: entry.notes,
+            finalGrade,
+            passed,
+            evaluatedById: session.user.id,
+          },
+        });
+
+        // Actualizamos Enrollment solo cuando hay decisión definitiva
+        // (passed != null). Si passed=null, dejamos el status tal cual.
+        if (passed !== null) {
+          await tx.enrollment.update({
+            where: { id: entry.enrollmentId },
+            data: {
+              finalGrade,
+              status: passed ? 'COMPLETED' : 'FAILED',
+              failedReason: failedReason,
+            },
+          });
+        }
+      }
+    });
+
+    revalidatePath(`/instructor/cursos/${course.id}`);
+    revalidatePath(`/instructor/cursos/${course.id}/evaluaciones`);
+
+    return {
+      ok: true,
+      message: `Evaluaciones guardadas (${enrollmentMap.size} alumno${enrollmentMap.size === 1 ? '' : 's'}).`,
+      savedCount: enrollmentMap.size,
+      passedCount,
+    };
+  } catch (err) {
+    console.error('[evaluations save]', err);
+    return {
+      ok: false,
+      error: 'unknown',
+      message: 'No se pudieron guardar las evaluaciones. Intenta de nuevo.',
     };
   }
 }

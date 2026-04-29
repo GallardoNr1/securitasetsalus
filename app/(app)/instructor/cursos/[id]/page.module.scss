@@ -196,3 +196,25 @@
     text-decoration: underline;
   }
 }
+
+.closure {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-4;
+  background: $color-accent-50;
+  border: 1px solid $color-accent-200;
+  border-radius: $radius-md;
+}
+
+.closureLink {
+  @include text-body-md;
+  color: $color-text-brand;
+  text-decoration: none;
+  font-weight: 600;
+  align-self: flex-start;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
