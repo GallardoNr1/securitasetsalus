@@ -208,11 +208,21 @@ Separar la **configuración** (que solo lee env vars) de las **operaciones** (qu
 
 Ninguno de los dos afecta al render server-side de páginas.
 
-### Por qué no se actualiza el SDK
+### Pin del SDK a 3.864.0
 
-La 3.1036.0 fue la última que probé. Bajar a una rama 3.700.x sin la dependencia rota es un fix válido pero arriesga otros breaking changes. Como el split funciona y el SDK solo se carga al subir avatar/diploma, dejamos el pin actual hasta que haya patch oficial.
+El split de `lib/r2.ts` ↔ `lib/r2-config.ts` aisló el bug del render de páginas, pero **al subir un avatar de verdad** el server action `profile/actions.ts` cargaba el SDK y volvía a fallar con el mismo `ERR_REQUIRE_ESM`. Confirmado en producción tras el primer deploy con R2 operativo.
 
-> **Si en el futuro alguien "limpia" `lib/r2-config.ts` pensando que es duplicado, vuelve a romper /admin.** Hay un comentario explícito en el archivo explicando por qué existe.
+Fix definitivo: pin de `@aws-sdk/client-s3` y `@aws-sdk/s3-request-presigner` a **`3.864.0`** (mediados 2025) — versión anterior al cambio en `xml-builder` que introdujo `@nodable/entities`. Pin exacto sin caret en `package.json` para que npm no nos vuelva a subir sin querer.
+
+Verificado:
+- `@nodable/entities` ya no se instala en `node_modules`.
+- `xml-builder` ahora es 3.862.0 (con `entities` sin scope, no ESM-only).
+- Smoke test R2 sigue OK con la nueva versión.
+- Subida real de avatar funciona en producción.
+
+> **Si actualizas el SDK en el futuro**, prueba el upload de avatar en producción antes de mergear. Si AWS publica patch oficial (algún 3.1100+ que bote `@nodable/entities`), se puede subir.
+
+> **El split de `lib/r2-config.ts` se mantiene** aunque el bug de runtime esté arreglado: sigue siendo correcto evitar bundlear el SDK en rutas que solo necesitan saber si R2 está configurado. Hay un comentario explícito en el archivo explicando por qué existe.
 
 ---
 
