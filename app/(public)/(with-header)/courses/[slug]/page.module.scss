@@ -1,6 +1,6 @@
-@use '../../../../design-system/tokens/colors' as *;
-@use '../../../../design-system/tokens/typography' as *;
-@use '../../../../design-system/tokens/spacing-shadows' as *;
+@use '../../../../../design-system/tokens/colors' as *;
+@use '../../../../../design-system/tokens/typography' as *;
+@use '../../../../../design-system/tokens/spacing-shadows' as *;
 
 .page {
   max-width: $space-page-max;

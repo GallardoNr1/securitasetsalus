@@ -126,3 +126,25 @@ $bp-2xl: 1536px;  // pantallas grandes
 @mixin responsive-only-tablet {
   @media (min-width: $bp-md) and (max-width: #{$bp-lg - 1px}) { @content; }
 }
+
+
+// ============================================================
+// Aliases cortos del handoff de rediseño (compatibilidad)
+// ============================================================
+// Snippets del handoff usan $r-md, $sh-lg, $ease-default, etc.
+// Mapeamos a los tokens canónicos sin duplicar valores.
+
+$r-sm:   $radius-sm;
+$r-md:   $radius-md;
+$r-lg:   $radius-lg;
+$r-xl:   $radius-xl;
+$r-2xl:  $radius-2xl;
+$r-full: $radius-full;
+
+$sh-sm:  $shadow-sm;
+$sh-md:  $shadow-md;
+$sh-lg:  $shadow-lg;
+$sh-xl:  $shadow-xl;
+$sh-2xl: $shadow-2xl;
+
+$duration-base: $duration-normal;

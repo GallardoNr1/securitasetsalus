@@ -3,89 +3,419 @@
 @use '../../design-system/tokens/spacing-shadows' as *;
 
 // ============================================================
-// Hero
+// Hero v3 (rediseño 2026-04-30)
+// Asimétrico, sello grande a la derecha, gradientes radiales,
+// status pill, stats de confianza, tarjetas flotantes alrededor del sello.
 // ============================================================
 .hero {
+  position: relative;
+  padding: 120px $space-6 80px;
   background:
-    linear-gradient(180deg, $color-primary-50 0%, $color-bg-page 100%);
-  padding: $space-section-sm $space-page-gutter $space-section-md;
+    radial-gradient(1200px 600px at 80% -10%, rgba(143, 196, 168, 0.30), transparent 60%),
+    radial-gradient(800px 400px at 0% 20%, rgba(201, 184, 122, 0.22), transparent 65%),
+    $bg-page;
+  overflow: hidden;
 
   @include responsive-md {
-    padding: $space-section-md $space-8 $space-section-lg;
+    padding: 140px $space-8 100px;
   }
 }
 
+// Patrón de cuadrícula sutil que cubre el hero entero.
+.heroGrid {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
 .heroInner {
+  position: relative;
+  max-width: $space-page-max;
+  margin: 0 auto;
   display: grid;
   gap: $space-12;
   grid-template-columns: 1fr;
-  max-width: $space-page-max;
-  margin: 0 auto;
   align-items: center;
 
   @include responsive-lg {
-    grid-template-columns: 1.4fr 1fr;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 64px;
   }
 }
 
 .heroContent {
   display: flex;
   flex-direction: column;
-  gap: $space-5;
 }
 
-.eyebrow {
-  @include text-label;
-  color: $color-text-brand;
-  text-transform: uppercase;
-  letter-spacing: $letter-spacing-widest;
+// --- Status pill ---
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px 6px 14px;
+  background: $n-0;
+  border: 1px solid $n-300;
+  border-radius: $r-full;
+  margin-bottom: 32px;
+  box-shadow: $sh-sm;
+  align-self: flex-start;
 }
 
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $p-500;
+  box-shadow: 0 0 0 4px rgba(90, 155, 123, 0.18);
+}
+
+.statusText {
+  font-size: 13px;
+  color: $n-700;
+  font-weight: 500;
+}
+
+.statusBadge {
+  padding: 4px 10px;
+  background: $p-50;
+  color: $p-700;
+  border-radius: $r-full;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+// --- Título display fluido ---
 .heroTitle {
-  @include text-display-lg;
-  color: $color-text-primary;
-  max-width: 18ch;
-  margin: 0;
+  font-family: $f-display;
+  font-size: clamp(48px, 7.5vw, 104px);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+  color: $n-900;
+  margin: 0 0 28px;
+}
 
-  em {
-    font-style: italic;
-    color: $color-text-brand;
-  }
+.titleHighlight {
+  position: relative;
+  display: inline-block;
+}
 
-  @include responsive-md {
-    @include text-display-xl;
-  }
+.titleHighlightText {
+  position: relative;
+  z-index: 1;
+}
+
+// Subrayado/highlight crema detrás de "cerrajería"
+.titleHighlightBg {
+  position: absolute;
+  inset: auto -6px -2px -6px;
+  height: 38%;
+  background: $a-300;
+  z-index: 0;
+  border-radius: 4px;
+  opacity: 0.7;
+}
+
+.titleItalic {
+  font-style: italic;
+  color: $p-700;
+  font-weight: 500;
 }
 
 .heroLead {
-  @include text-body-lg;
-  color: $color-text-secondary;
-  max-width: 50ch;
-  margin: 0;
+  font-size: 19px;
+  line-height: 1.55;
+  color: $n-600;
+  margin: 0 0 36px;
+  max-width: 520px;
+  font-family: $f-body;
 }
 
+// --- Botones del hero (CTA negro + ghost) ---
 .heroActions {
   display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 48px;
   flex-wrap: wrap;
-  gap: $space-3;
-  margin-top: $space-3;
 }
 
-.heroVisual {
-  display: flex;
-  justify-content: center;
+.heroPrimary {
+  display: inline-flex;
   align-items: center;
+  gap: 12px;
+  padding: 16px 28px;
+  background: $n-900;
+  color: $n-0;
+  border-radius: $r-full;
+  text-decoration: none;
+  font-family: $f-body;
+  font-size: 15px;
+  font-weight: 600;
+  transition: transform $duration-fast $ease-default,
+    background-color $duration-fast $ease-default;
+
+  &:hover {
+    background: $p-700;
+    transform: translateY(-1px);
+  }
+}
+
+.heroPrimaryIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: $a-300;
+  color: $n-900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heroSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 22px;
+  border-radius: $r-full;
+  border: 1px solid $n-300;
+  background: $n-0;
+  color: $n-900;
+  text-decoration: none;
+  font-family: $f-body;
+  font-size: 15px;
+  font-weight: 500;
+  transition: border-color $duration-fast $ease-default,
+    color $duration-fast $ease-default;
+
+  &:hover {
+    border-color: $p-700;
+    color: $p-700;
+  }
+}
+
+// --- Stats de confianza ---
+.trust {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.trustItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.trustNumber {
+  font-family: $f-display;
+  font-size: 32px;
+  font-weight: 600;
+  color: $n-900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.trustNumberAccent {
+  color: $p-700;
+}
+
+.trustLabel {
+  font-family: $f-body;
+  font-size: 12px;
+  color: $n-600;
+  line-height: 1.3;
+}
+
+.trustDivider {
+  width: 1px;
+  height: 40px;
+  background: $n-300;
+}
+
+// --- Visual derecho: sello + cards flotantes ---
+.heroVisual {
+  position: relative;
+  height: 560px;
+  display: none; // ocultamos en móvil para no compitir con el title
+
+  @include responsive-lg {
+    display: block;
+  }
+}
+
+.heroSealWrap {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  animation: heroFloat 9s ease-in-out infinite;
 }
 
 .heroSeal {
-  width: 100%;
-  max-width: 420px;
-  height: auto;
+  display: block;
   filter: drop-shadow(0 12px 32px rgba(26, 38, 34, 0.18));
 }
 
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+
+@keyframes heroFloatA {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50%      { transform: translateY(-8px) rotate(-1deg); }
+}
+
+@keyframes heroFloatB {
+  0%, 100% { transform: translateY(0) rotate(1deg); }
+  50%      { transform: translateY(-10px) rotate(1deg); }
+}
+
+// Card 1: próximo curso (luz)
+.floatCard1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 280px;
+  background: $n-0;
+  border: 1px solid $n-200;
+  border-radius: $r-2xl;
+  padding: 18px 20px;
+  box-shadow: 0 12px 32px rgba(26, 38, 34, 0.10);
+  animation: heroFloatA 7s ease-in-out infinite;
+}
+
+// Card 2: diploma verificado (oscuro, marca)
+.floatCard2 {
+  position: absolute;
+  bottom: 80px;
+  left: 20px;
+  width: 260px;
+  background: $p-700;
+  color: $a-100;
+  border-radius: $r-2xl;
+  padding: 18px 20px;
+  box-shadow: 0 18px 44px rgba(20, 56, 40, 0.32);
+  animation: heroFloatB 8s ease-in-out infinite 1s;
+}
+
+.floatCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.floatCardIconLight {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: $p-50;
+  color: $p-700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.floatCardIconDark {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(216, 200, 151, 0.2);
+  color: $a-300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.floatCardEyebrow {
+  font-family: $f-body;
+  font-size: 11px;
+  color: $n-500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+.floatCardEyebrowDark {
+  font-family: $f-body;
+  font-size: 11px;
+  color: $a-300;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+.floatCardTitle {
+  font-family: $f-body;
+  font-size: 14px;
+  font-weight: 600;
+  color: $n-900;
+}
+
+.floatCardTitleDark {
+  font-family: $f-body;
+  font-size: 14px;
+  font-weight: 600;
+  color: $a-100;
+}
+
+.floatCardDays {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.dayPill {
+  flex: 1;
+  padding: 8px 6px;
+  background: $n-100;
+  border-radius: $r-md;
+  text-align: center;
+}
+
+.dayPillDay {
+  font-family: $f-display;
+  font-size: 20px;
+  font-weight: 600;
+  color: $p-700;
+  line-height: 1;
+}
+
+.dayPillMonth {
+  font-family: $f-body;
+  font-size: 9px;
+  color: $n-500;
+  letter-spacing: 0.1em;
+  margin-top: 2px;
+}
+
+.diplomaCode {
+  font-family: $f-mono;
+  font-size: 13px;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: $r-md;
+  letter-spacing: 0.1em;
+  text-align: center;
+  color: $a-100;
+}
+
+.diplomaStatus {
+  font-family: $f-body;
+  font-size: 11px;
+  color: $a-300;
+  margin-top: 8px;
+  text-align: center;
+}
+
 // ============================================================
-// Secciones
+// Secciones (Cómo funciona / Por qué SES) — sin cambios respecto a v1
 // ============================================================
 .section,
 .sectionAlt {
@@ -131,6 +461,13 @@
   display: flex;
   justify-content: center;
   margin-top: $space-4;
+}
+
+.eyebrow {
+  @include text-label;
+  color: $color-text-brand;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
 }
 
 // ============================================================

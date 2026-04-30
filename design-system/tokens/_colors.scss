@@ -80,3 +80,57 @@ $color-border-focus:    $color-primary-700;
 
 $color-brand:           $color-primary-700;
 $color-brand-accent:    $color-accent-400;
+
+
+// ============================================================
+// Aliases cortos (compatibilidad con el handoff de rediseño v3)
+// ============================================================
+// El handoff de claude.ai (`docs/design-brief-for-claude.md`) y los .jsx
+// de referencia usan nombres tipo `$p-700` o `$brand`. Para no obligar
+// a tocar todo cuando se traslada un mockup a SCSS Modules, exponemos
+// estos aliases que apuntan al token canónico. NO duplican valores.
+
+$p-50:  $color-primary-50;
+$p-100: $color-primary-100;
+$p-200: $color-primary-200;
+$p-300: $color-primary-300;
+$p-400: $color-primary-400;
+$p-500: $color-primary-500;
+$p-600: $color-primary-600;
+$p-700: $color-primary-700;
+$p-800: $color-primary-800;
+$p-900: $color-primary-900;
+$p-950: $color-primary-950;
+
+$a-50:  $color-accent-50;
+$a-100: $color-accent-100;
+$a-200: $color-accent-200;
+$a-300: $color-accent-300;
+$a-400: $color-accent-400;
+$a-500: $color-accent-500;
+$a-600: $color-accent-600;
+$a-700: $color-accent-700;
+$a-800: $color-accent-800;
+$a-900: $color-accent-900;
+
+$n-0:   $color-neutral-0;
+$n-50:  $color-neutral-50;
+$n-100: $color-neutral-100;
+$n-200: $color-neutral-200;
+$n-300: $color-neutral-300;
+$n-400: $color-neutral-400;
+$n-500: $color-neutral-500;
+$n-600: $color-neutral-600;
+$n-700: $color-neutral-700;
+$n-800: $color-neutral-800;
+$n-900: $color-neutral-900;
+
+$brand:           $color-brand;
+$bg-page:         $color-bg-page;
+$bg-surface:      $color-bg-surface;
+$bg-subtle:       $color-bg-subtle;
+$text-primary:    $color-text-primary;
+$text-secondary:  $color-text-secondary;
+$text-muted:      $color-text-muted;
+$text-brand:      $color-text-brand;
+$border-default:  $color-border-default;

@@ -1,0 +1,148 @@
+@use '../../design-system/tokens/colors' as *;
+@use '../../design-system/tokens/typography' as *;
+@use '../../design-system/tokens/spacing-shadows' as *;
+
+.wrapper {
+  position: sticky;
+  top: 20px;
+  z-index: 50;
+  padding: 0 $space-6;
+  // Margin negativo para que el Hero suba debajo del header sin gap.
+  margin-bottom: -72px;
+}
+
+.header {
+  max-width: $space-page-max;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(214, 210, 197, 0.6);
+  border-radius: $r-full;
+  padding: 10px 14px 10px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-4;
+  box-shadow:
+    0 12px 40px rgba(26, 38, 34, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.8) inset;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.logo {
+  display: block;
+}
+
+.brandName {
+  font-family: $f-display;
+  font-weight: 600;
+  font-size: 18px;
+  color: $n-900;
+  letter-spacing: -0.01em;
+
+  // En móvil ocultamos el nombre, solo logo.
+  display: none;
+  @include responsive-md {
+    display: inline;
+  }
+}
+
+.brandItalic {
+  font-style: italic;
+  color: $p-700;
+}
+
+.nav {
+  display: none;
+  gap: 6px;
+  padding: 4px;
+  background: rgba(232, 229, 220, 0.5);
+  border-radius: $r-full;
+
+  @include responsive-lg {
+    display: flex;
+  }
+}
+
+.navLink {
+  padding: 8px 14px;
+  border-radius: $r-full;
+  color: $n-700;
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  background: transparent;
+  transition: background-color $duration-fast $ease-default,
+    color $duration-fast $ease-default;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.6);
+  }
+}
+
+.navLinkActive {
+  background: $p-700;
+  color: $n-0;
+
+  &:hover {
+    background: $p-800;
+    color: $n-0;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: $space-2;
+  align-items: center;
+}
+
+.verifyLink {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  color: $n-700;
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  border-radius: $r-full;
+  transition: color $duration-fast $ease-default;
+
+  &:hover {
+    color: $p-700;
+  }
+
+  @include responsive-md {
+    display: inline-flex;
+  }
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  padding: 10px 18px;
+  border-radius: $r-full;
+  background: $n-900;
+  color: $n-0;
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color $duration-fast $ease-default,
+    transform $duration-fast $ease-default;
+
+  &:hover {
+    background: $p-700;
+    transform: translateY(-1px);
+  }
+}
