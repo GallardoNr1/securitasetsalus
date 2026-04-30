@@ -11,9 +11,8 @@
   position: relative;
   padding: 120px $space-6 80px;
   background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(143, 196, 168, 0.30), transparent 60%),
-    radial-gradient(800px 400px at 0% 20%, rgba(201, 184, 122, 0.22), transparent 65%),
-    $bg-page;
+    radial-gradient(1200px 600px at 80% -10%, rgba(143, 196, 168, 0.3), transparent 60%),
+    radial-gradient(800px 400px at 0% 20%, rgba(201, 184, 122, 0.22), transparent 65%), $bg-page;
   overflow: hidden;
 
   @include responsive-md {
@@ -156,7 +155,8 @@
   font-family: $f-body;
   font-size: 15px;
   font-weight: 600;
-  transition: transform $duration-fast $ease-default,
+  transition:
+    transform $duration-fast $ease-default,
     background-color $duration-fast $ease-default;
 
   &:hover {
@@ -189,7 +189,8 @@
   font-family: $f-body;
   font-size: 15px;
   font-weight: 500;
-  transition: border-color $duration-fast $ease-default,
+  transition:
+    border-color $duration-fast $ease-default,
     color $duration-fast $ease-default;
 
   &:hover {
@@ -262,18 +263,33 @@
 }
 
 @keyframes heroFloat {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-12px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
 }
 
 @keyframes heroFloatA {
-  0%, 100% { transform: translateY(0) rotate(-1deg); }
-  50%      { transform: translateY(-8px) rotate(-1deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-1deg);
+  }
 }
 
 @keyframes heroFloatB {
-  0%, 100% { transform: translateY(0) rotate(1deg); }
-  50%      { transform: translateY(-10px) rotate(1deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(1deg);
+  }
 }
 
 // Card 1: próximo curso (luz)
@@ -286,7 +302,7 @@
   border: 1px solid $n-200;
   border-radius: $r-2xl;
   padding: 18px 20px;
-  box-shadow: 0 12px 32px rgba(26, 38, 34, 0.10);
+  box-shadow: 0 12px 32px rgba(26, 38, 34, 0.1);
   animation: heroFloatA 7s ease-in-out infinite;
 }
 
@@ -525,24 +541,16 @@
   transform: translateX(-50%);
   width: 2px;
   height: $space-10;
-  background: linear-gradient(
-    to bottom,
-    $color-primary-700 0%,
-    $color-primary-400 100%
-  );
+  background: linear-gradient(to bottom, $color-primary-700 0%, $color-primary-400 100%);
   z-index: 0;
 
   @include responsive-md {
     top: 32px;
-    left: calc(50% + 40px);
+    left: calc(50% + 50px);
     transform: none;
     width: calc(100% - 80px);
     height: 2px;
-    background: linear-gradient(
-      to right,
-      $color-primary-700 0%,
-      $color-primary-400 100%
-    );
+    background: linear-gradient(to right, $color-primary-700 0%, $color-primary-400 100%);
   }
 }
 
