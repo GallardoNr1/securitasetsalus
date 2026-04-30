@@ -2,236 +2,422 @@
 @use '../../../../../design-system/tokens/typography' as *;
 @use '../../../../../design-system/tokens/spacing-shadows' as *;
 
-.page {
-  max-width: $space-page-max;
-  margin: 0 auto;
-  padding: $space-section-sm $space-page-gutter;
-  display: flex;
-  flex-direction: column;
-  gap: $space-6;
+// ============================================================
+// Detalle de curso público
+// Layout: 2 columnas en desktop (main + sticky sidebar), 1 en móvil.
+// ============================================================
 
-  @include responsive-md {
-    padding: $space-section-md $space-8;
-  }
+.page {
+  min-height: 100%;
+  background: $bg-page;
 }
 
-.breadcrumb {
-  a {
-    @include text-body-sm;
-    color: $color-text-secondary;
-    text-decoration: none;
+.heroBg {
+  background:
+    radial-gradient(1000px 500px at 50% 0%, rgba(143, 196, 168, 0.20), transparent 60%),
+    $bg-page;
+  padding: 56px $space-6 96px;
 
-    &:hover {
-      color: $color-text-brand;
-    }
+  @include responsive-md {
+    padding: 80px $space-8 120px;
   }
 }
 
 .layout {
+  max-width: $space-page-max;
+  margin: 0 auto;
   display: grid;
-  gap: $space-10;
+  gap: $space-8;
   grid-template-columns: 1fr;
 
   @include responsive-lg {
-    grid-template-columns: 1.7fr 1fr;
+    grid-template-columns: 1fr 360px;
     gap: $space-12;
+    align-items: start;
   }
 }
 
-// ============================================================
-// Columna principal
-// ============================================================
+// --- Main column ---
 .main {
   display: flex;
   flex-direction: column;
-  gap: $space-10;
+  gap: $space-6;
 }
 
-.header {
-  display: flex;
-  flex-direction: column;
-  gap: $space-3;
+.breadcrumb {
+  font-family: $f-body;
+  font-size: 13px;
+  color: $n-600;
+  text-decoration: none;
+  font-weight: 500;
+  align-self: flex-start;
+  margin-bottom: $space-2;
+  transition: color $duration-fast $ease-default;
 
-  h1 {
-    @include text-display-lg;
-    color: $color-text-primary;
-    margin: 0;
+  &:hover {
+    color: $p-700;
   }
 }
 
-.tags {
+.tagsRow {
   display: flex;
+  gap: 6px;
   flex-wrap: wrap;
-  gap: $space-2;
+}
+
+.tagBrand {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: $r-full;
+  background: $p-700;
+  color: $n-0;
+  font-family: $f-mono;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.tagAccent {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: $r-full;
+  background: $a-100;
+  color: $a-700;
+  font-family: $f-body;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.tagNeutral {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: $r-full;
+  background: $n-100;
+  color: $n-700;
+  border: 1px solid $n-300;
+  font-family: $f-body;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.title {
+  font-family: $f-display;
+  font-size: clamp(36px, 6vw, 64px);
+  margin: $space-2 0 0;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  color: $n-900;
 }
 
 .lead {
-  @include text-body-lg;
-  color: $color-text-secondary;
+  font-family: $f-body;
+  font-size: 18px;
+  color: $n-600;
+  margin: 0 0 $space-4;
+  line-height: 1.55;
   max-width: 60ch;
-  margin: 0;
 }
 
+// --- Sections ---
 .section {
   display: flex;
   flex-direction: column;
-  gap: $space-4;
+  gap: $space-3;
+  padding: $space-6 0;
+  border-top: 1px solid $n-200;
+
+  &:first-of-type {
+    border-top: none;
+  }
 
   h2 {
-    @include text-heading-lg;
-    color: $color-text-primary;
+    font-family: $f-display;
+    font-size: 24px;
+    color: $n-900;
     margin: 0;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  > p {
+    font-family: $f-body;
+    font-size: 15px;
+    color: $n-600;
+    margin: 0;
+    line-height: 1.6;
   }
 }
 
-.syllabus {
-  @include text-body-md;
-  font-family: $font-body;
-  white-space: pre-wrap;
-  background-color: $color-bg-subtle;
-  border-radius: $radius-lg;
-  padding: $space-6;
-  color: $color-text-primary;
-  margin: 0;
-  overflow-x: auto;
+.eyebrow {
+  font-family: $f-body;
+  font-size: 11px;
+  color: $p-700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
 }
 
-.sessions {
-  list-style: none;
-  padding: 0;
+.markdown {
+  font-family: $f-body;
+  font-size: 15px;
+  color: $n-700;
+  line-height: 1.65;
   margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: transparent;
+  padding: 0;
+  border: 0;
+}
+
+.prereqList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: $space-2;
+}
 
-  li {
-    display: flex;
-    flex-direction: column;
-    gap: $space-1;
-    padding: $space-4;
-    background-color: $color-bg-surface;
-    border: 1px solid $color-border-default;
-    border-radius: $radius-md;
+.prereqList li {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: 12px 16px;
+  background: $n-0;
+  border: 1px solid $n-200;
+  border-radius: $r-md;
+  font-family: $f-body;
+  font-size: 14px;
+  color: $n-900;
+}
 
-    @include responsive-sm {
-      flex-direction: row;
-      align-items: center;
-      gap: $space-4;
-    }
-  }
+.prereqCode {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: $r-full;
+  background: $p-700;
+  color: $n-0;
+  font-family: $f-mono;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+// --- Sessions ---
+.sessions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.sessionItem {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2 $space-4;
+  padding: $space-3 $space-4;
+  background: $n-0;
+  border: 1px solid $n-200;
+  border-radius: $r-md;
 }
 
 .sessionNumber {
-  @include text-label;
-  color: $color-text-brand;
+  font-family: $f-body;
+  font-size: 11px;
+  color: $p-700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  letter-spacing: $letter-spacing-widest;
+  font-weight: 700;
   flex-shrink: 0;
-
-  @include responsive-sm {
-    width: 100px;
-  }
+  min-width: 90px;
 }
 
 .sessionDate {
-  @include text-body-md;
-  color: $color-text-primary;
+  font-family: $f-body;
+  font-size: 14px;
+  color: $n-900;
+  font-weight: 500;
 }
 
-.instructor {
-  padding: $space-6;
-  background-color: $color-bg-subtle;
-  border-radius: $radius-lg;
-  border-left: 3px solid $color-brand-accent;
+// --- Instructor ---
+.instructorCard {
+  display: flex;
+  gap: $space-4;
+  align-items: flex-start;
+  padding: $space-5;
+  background: $n-0;
+  border: 1px solid $n-200;
+  border-radius: $r-2xl;
+}
+
+.instructorBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 
   h3 {
-    @include text-heading-md;
-    color: $color-text-primary;
-    margin: 0 0 $space-2;
+    font-family: $f-display;
+    font-size: 20px;
+    color: $n-900;
+    margin: 0;
+    letter-spacing: -0.01em;
   }
 
   p {
-    @include text-body-md;
-    color: $color-text-secondary;
+    font-family: $f-body;
+    font-size: 14px;
+    color: $n-600;
     margin: 0;
+    line-height: 1.55;
   }
 }
 
-// ============================================================
-// Sidebar / CTA
-// ============================================================
+// --- Sidebar ---
 .sidebar {
-  position: relative;
-
   @include responsive-lg {
     position: sticky;
-    top: calc(72px + #{$space-6});
-    align-self: start;
+    top: 88px; // por debajo del SiteHeader sticky
   }
 }
 
 .card {
-  background-color: $color-bg-surface;
-  border: 1px solid $color-border-default;
-  border-radius: $radius-xl;
-  box-shadow: $shadow-md;
-  padding: $space-6;
+  background: $n-0;
+  border: 1px solid $n-200;
+  border-radius: $r-2xl;
+  padding: 32px 28px;
   display: flex;
   flex-direction: column;
-  gap: $space-4;
+  gap: $space-5;
+  box-shadow: 0 12px 32px rgba(26, 38, 34, 0.06);
 }
 
-.price {
-  @include text-display-md;
-  color: $color-text-brand;
-  font-weight: $font-weight-bold;
-  margin: 0;
+.cardPriceBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: $space-4;
+  border-bottom: 1px solid $n-200;
 }
 
-.priceSubtext {
-  @include text-body-sm;
-  color: $color-text-muted;
-  margin: 0;
+.cardPriceLabel {
+  font-family: $f-body;
+  font-size: 11px;
+  color: $n-500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.cardPrice {
+  font-family: $f-display;
+  font-size: 40px;
+  font-weight: 700;
+  color: $n-900;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.cardPriceNote {
+  font-family: $f-body;
+  font-size: 13px;
+  color: $n-600;
+  margin-top: 4px;
 }
 
 .cardMeta {
-  list-style: none;
-  padding: 0;
-  margin: 0;
   display: flex;
   flex-direction: column;
   gap: $space-3;
-  padding-top: $space-4;
-  border-top: 1px solid $color-border-default;
+  margin: 0;
 
-  li {
+  div {
     display: flex;
     flex-direction: column;
-    gap: $space-1;
-    @include text-body-sm;
-    color: $color-text-primary;
+    gap: 2px;
+  }
+
+  dt {
+    font-family: $f-body;
+    font-size: 11px;
+    color: $n-500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  dd {
+    font-family: $f-body;
+    font-size: 14px;
+    color: $n-900;
+    margin: 0;
+    font-weight: 500;
   }
 }
 
-.cardMetaLabel {
-  @include text-caption;
-  color: $color-text-muted;
-  text-transform: uppercase;
-  letter-spacing: $letter-spacing-wider;
-}
-
 .seatsLow {
-  color: $color-warning-dark;
-  font-weight: $font-weight-semibold;
+  color: $color-warning-dark !important;
+  font-weight: 600 !important;
 }
 
 .seatsFull {
-  color: $color-danger-dark;
-  font-weight: $font-weight-semibold;
+  color: $color-danger !important;
+  font-weight: 600 !important;
+}
+
+.cardCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-radius: $r-full;
+  background: $n-900;
+  color: $n-0;
+  text-decoration: none;
+  font-family: $f-body;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color $duration-fast $ease-default,
+    transform $duration-fast $ease-default;
+
+  &:hover {
+    background: $p-700;
+    transform: translateY(-1px);
+  }
+}
+
+.cardCtaDisabled {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  border-radius: $r-full;
+  background: $n-200;
+  color: $n-500;
+  border: none;
+  cursor: not-allowed;
+  font-family: $f-body;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .cardNote {
-  @include text-caption;
-  color: $color-text-muted;
+  font-family: $f-body;
+  font-size: 12px;
+  color: $n-500;
   margin: 0;
+  line-height: 1.5;
 }

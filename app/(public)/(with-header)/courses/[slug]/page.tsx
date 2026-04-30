@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Button } from '@/components/ui/Button';
-import { Tag } from '@/components/ui/Tag';
+import { Avatar } from '@/components/ui/Avatar';
 import { getPublishedCourseBySlug, listPublishedCourses } from '@/lib/queries/courses';
 import {
   CLAVERO_SKILL_LABELS,
@@ -19,9 +18,6 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-  // Pre-renderizamos los slugs de cursos publicados al hacer build.
-  // Cuando se publica/edita un curso, revalidatePath('/courses/[slug]') en
-  // las actions de admin invalida el cache y se regenera bajo demanda.
   const courses = await listPublishedCourses();
   return courses.map((c) => ({ slug: c.slug }));
 }
@@ -51,150 +47,211 @@ export default async function CoursePage({ params }: Props) {
         course.claveroSkillSuffix as ClaveroSkillSuffix | null,
       )
     : null;
+  const isFull = seatsLeft === 0;
+  const isLow = seatsLeft > 0 && seatsLeft <= 3;
 
   return (
     <main className={styles.page}>
-      <nav aria-label="Migaja de pan" className={styles.breadcrumb}>
-        <Link href="/courses">← Volver al catálogo</Link>
-      </nav>
+      <div className={styles.heroBg}>
+        <div className={styles.layout}>
+          {/* ---- Columna principal ---- */}
+          <article className={styles.main}>
+            <Link href="/courses" className={styles.breadcrumb}>
+              ← Catálogo de cursos
+            </Link>
 
-      <div className={styles.layout}>
-        <article className={styles.main}>
-          <header className={styles.header}>
-            <div className={styles.tags}>
+            <div className={styles.tagsRow}>
               {course.claveroSkillCode ? (
-                <Tag tone="brand">
-                  {CLAVERO_SKILL_LABELS[course.claveroSkillCode as ClaveroSkillCode]}
-                  {course.claveroSkillSuffix ? ` ${course.claveroSkillSuffix}` : ''}
-                </Tag>
+                <span className={styles.tagBrand}>
+                  {course.claveroSkillCode}
+                  {course.claveroSkillSuffix
+                    ? ` (${course.claveroSkillSuffix})`
+                    : ''}
+                </span>
               ) : null}
-              {course.senceEligible ? <Tag tone="accent">Franquicia SENCE</Tag> : null}
-              {claveroLabel ? <Tag tone="neutral">Aplica a Clavero</Tag> : null}
+              {course.senceEligible ? (
+                <span className={styles.tagAccent}>Franquicia SENCE</span>
+              ) : null}
+              {claveroLabel ? (
+                <span className={styles.tagNeutral}>Aplica a Clavero</span>
+              ) : null}
             </div>
-            <h1>{course.title}</h1>
+
+            <h1 className={styles.title}>{course.title}</h1>
             <p className={styles.lead}>{course.shortDescription}</p>
-          </header>
 
-          <section className={styles.section}>
-            <h2>Temario completo</h2>
-            <pre className={styles.syllabus}>{course.fullSyllabus}</pre>
-          </section>
-
-          {course.includedKit ? (
             <section className={styles.section}>
-              <h2>Kit incluido</h2>
-              <pre className={styles.syllabus}>{course.includedKit}</pre>
+              <h2>
+                <span className={styles.eyebrow}>Contenido</span>
+                Temario completo
+              </h2>
+              <pre className={styles.markdown}>{course.fullSyllabus}</pre>
             </section>
-          ) : null}
 
-          {course.prerequisiteSkillCodes.length > 0 ? (
+            {course.includedKit ? (
+              <section className={styles.section}>
+                <h2>
+                  <span className={styles.eyebrow}>Material</span>
+                  Kit incluido
+                </h2>
+                <pre className={styles.markdown}>{course.includedKit}</pre>
+              </section>
+            ) : null}
+
+            {course.prerequisiteSkillCodes.length > 0 ? (
+              <section className={styles.section}>
+                <h2>
+                  <span className={styles.eyebrow}>Requisitos</span>
+                  Prerrequisitos
+                </h2>
+                <p>
+                  Para inscribirte a este curso debes acreditar previamente las
+                  siguientes habilidades:
+                </p>
+                <ul className={styles.prereqList}>
+                  {course.prerequisiteSkillCodes.map((code) => (
+                    <li key={code}>
+                      <span className={styles.prereqCode}>{code}</span>
+                      <span>
+                        {CLAVERO_SKILL_LABELS[code as ClaveroSkillCode] ?? code}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+
             <section className={styles.section}>
-              <h2>Prerrequisitos</h2>
-              <p>
-                Para inscribirte a este curso debes acreditar previamente las siguientes
-                habilidades de SES:
-              </p>
-              <ul className={styles.prereqList}>
-                {course.prerequisiteSkillCodes.map((code) => (
-                  <li key={code}>
-                    {CLAVERO_SKILL_LABELS[code as ClaveroSkillCode] ?? code}
+              <h2>
+                <span className={styles.eyebrow}>Calendario</span>
+                Sesiones del curso
+              </h2>
+              <ul className={styles.sessions}>
+                {course.sessions.map((session) => (
+                  <li key={session.id} className={styles.sessionItem}>
+                    <span className={styles.sessionNumber}>
+                      Sesión {session.sessionNumber}
+                    </span>
+                    <span className={styles.sessionDate}>
+                      {formatDateRange(session.startsAt, session.endsAt)}
+                    </span>
                   </li>
                 ))}
               </ul>
             </section>
-          ) : null}
 
-          <section className={styles.section}>
-            <h2>Calendario de sesiones</h2>
-            <ul className={styles.sessions}>
-              {course.sessions.map((session) => (
-                <li key={session.id}>
-                  <span className={styles.sessionNumber}>Sesión {session.sessionNumber}</span>
-                  <span className={styles.sessionDate}>
-                    {formatDateRange(session.startsAt, session.endsAt)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </section>
+            <section className={styles.section}>
+              <h2>
+                <span className={styles.eyebrow}>Quien lo imparte</span>
+                Tu instructor
+              </h2>
+              <div className={styles.instructorCard}>
+                <Avatar
+                  name={course.instructor.name ?? 'Instructor'}
+                  userId={course.instructor.id}
+                  avatarKey={course.instructor.avatarKey}
+                  size="lg"
+                />
+                <div className={styles.instructorBody}>
+                  <h3>{course.instructor.name}</h3>
+                  <p>
+                    Instructor cualificado de SecuritasEtSalus con experiencia real
+                    en taller. Cada cohorte se mantiene pequeña para que tengas
+                    atención personalizada.
+                  </p>
+                </div>
+              </div>
+            </section>
+          </article>
 
-          <section className={styles.section}>
-            <h2>Tu instructor</h2>
-            <div className={styles.instructor}>
-              <h3>{course.instructor.name}</h3>
-              <p className={styles.instructorBio}>
-                Instructor cualificado de SecuritasEtSalus.
+          {/* ---- Sidebar de inscripción (sticky en desktop) ---- */}
+          <aside className={styles.sidebar}>
+            <div className={styles.card}>
+              <div className={styles.cardPriceBlock}>
+                <span className={styles.cardPriceLabel}>Inscripción</span>
+                <span className={styles.cardPrice}>
+                  {formatPrice(course.price, course.currency)}
+                </span>
+                <span className={styles.cardPriceNote}>
+                  Pago único — incluye material y diploma.
+                </span>
+              </div>
+
+              <dl className={styles.cardMeta}>
+                <div>
+                  <dt>Duración</dt>
+                  <dd>{course.durationHours} horas lectivas</dd>
+                </div>
+                <div>
+                  <dt>Sesiones</dt>
+                  <dd>{course.sessions.length}</dd>
+                </div>
+                {firstSession && lastSession ? (
+                  <div>
+                    <dt>Fechas</dt>
+                    <dd>
+                      {formatDate(firstSession.startsAt, 'short')} –{' '}
+                      {formatDate(lastSession.endsAt, 'short')}
+                    </dd>
+                  </div>
+                ) : null}
+                <div>
+                  <dt>Sede</dt>
+                  <dd>
+                    {course.venueName ?? 'Por definir'}
+                    {subdivisionName ? `, ${subdivisionName}` : ''}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Cupos</dt>
+                  <dd
+                    className={
+                      isFull
+                        ? styles.seatsFull
+                        : isLow
+                          ? styles.seatsLow
+                          : undefined
+                    }
+                  >
+                    {isFull
+                      ? 'Curso lleno'
+                      : seatsLeft === 1
+                        ? 'Último cupo disponible'
+                        : `${seatsLeft} de ${course.capacity} disponibles`}
+                  </dd>
+                </div>
+              </dl>
+
+              {isFull ? (
+                <button type="button" className={styles.cardCtaDisabled} disabled>
+                  Curso lleno
+                </button>
+              ) : (
+                <Link href="/login" className={styles.cardCta}>
+                  Inscribirme y pagar
+                  <svg
+                    viewBox="0 0 24 24"
+                    width={14}
+                    height={14}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={1.6}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                  >
+                    <path d="M5 12h14M13 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              )}
+
+              <p className={styles.cardNote}>
+                Necesitas una cuenta verificada para inscribirte. El pago se procesa
+                con Stripe; recibirás confirmación inmediata por correo.
               </p>
             </div>
-          </section>
-        </article>
-
-        <aside className={styles.sidebar}>
-          <div className={styles.card}>
-            <p className={styles.price}>{formatPrice(course.price, course.currency)}</p>
-            <p className={styles.priceSubtext}>Pago único — incluye material y diploma.</p>
-
-            <ul className={styles.cardMeta}>
-              <li>
-                <span className={styles.cardMetaLabel}>Duración</span>
-                <span>{course.durationHours} horas lectivas</span>
-              </li>
-              <li>
-                <span className={styles.cardMetaLabel}>Sesiones</span>
-                <span>{course.sessions.length}</span>
-              </li>
-              {firstSession && lastSession ? (
-                <li>
-                  <span className={styles.cardMetaLabel}>Fechas</span>
-                  <span>
-                    {formatDate(firstSession.startsAt, 'short')} –{' '}
-                    {formatDate(lastSession.endsAt, 'short')}
-                  </span>
-                </li>
-              ) : null}
-              <li>
-                <span className={styles.cardMetaLabel}>Sede</span>
-                <span>
-                  {course.venueName ?? 'Por definir'}
-                  {subdivisionName ? `, ${subdivisionName}` : ''}
-                </span>
-              </li>
-              <li>
-                <span className={styles.cardMetaLabel}>Cupos</span>
-                <span
-                  className={
-                    seatsLeft === 0
-                      ? styles.seatsFull
-                      : seatsLeft <= 3
-                        ? styles.seatsLow
-                        : undefined
-                  }
-                >
-                  {seatsLeft === 0
-                    ? 'Curso lleno'
-                    : seatsLeft === 1
-                      ? 'Último cupo disponible'
-                      : `${seatsLeft} de ${course.capacity} disponibles`}
-                </span>
-              </li>
-            </ul>
-
-            {seatsLeft > 0 ? (
-              <Button href="/login" variant="primary" size="lg" fullWidth>
-                Inscribirme y pagar
-              </Button>
-            ) : (
-              <Button variant="secondary" size="lg" fullWidth disabled>
-                Curso lleno
-              </Button>
-            )}
-
-            <p className={styles.cardNote}>
-              Necesitas una cuenta verificada para inscribirte. El pago se procesa con Stripe;
-              recibirás confirmación inmediata por correo.
-            </p>
-          </div>
-        </aside>
+          </aside>
+        </div>
       </div>
     </main>
   );
