@@ -2,32 +2,51 @@
 @use '../../../../design-system/tokens/typography' as *;
 @use '../../../../design-system/tokens/spacing-shadows' as *;
 
-.page {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: $space-section-sm $space-page-gutter;
+// ============================================================
+// Páginas legales (privacy + terms) — mismo lenguaje editorial
+// del rediseño: hero con gradiente sutil, eyebrow primario,
+// display fluido, prosa con secciones claras.
+// ============================================================
 
-  @include responsive-md {
-    padding: $space-section-md $space-8;
-  }
+.page {
+  min-height: 100%;
+  background: $bg-page;
+}
+
+// --- Hero suave ---
+.page::before {
+  content: '';
+  display: block;
+  height: 0;
 }
 
 .article {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px $space-page-gutter 96px;
   display: flex;
   flex-direction: column;
-  gap: $space-8;
+  gap: $space-10;
 
-  header {
+  @include responsive-md {
+    padding: 88px $space-8 120px;
+  }
+
+  > header {
     display: flex;
     flex-direction: column;
     gap: $space-3;
-    padding-bottom: $space-6;
-    border-bottom: 1px solid $color-border-default;
+    padding-bottom: $space-8;
+    border-bottom: 1px solid $n-200;
 
     h1 {
-      @include text-display-md;
-      color: $color-text-primary;
-      margin: 0;
+      font-family: $f-display;
+      font-size: clamp(36px, 6vw, 64px);
+      margin: $space-1 0 0;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      font-weight: 700;
+      color: $n-900;
     }
   }
 
@@ -37,43 +56,78 @@
     gap: $space-3;
 
     h2 {
-      @include text-heading-md;
-      color: $color-text-primary;
-      margin: 0;
+      font-family: $f-display;
+      font-size: clamp(20px, 2.6vw, 24px);
+      color: $n-900;
+      margin: 0 0 $space-2;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      font-weight: 600;
     }
 
     p,
     li {
-      @include text-body-md;
-      color: $color-text-secondary;
+      font-family: $f-body;
+      font-size: 16px;
+      color: $n-600;
       margin: 0;
+      line-height: 1.65;
     }
 
     ul {
-      list-style: disc;
-      padding-left: $space-6;
+      list-style: none;
+      padding-left: 0;
       display: flex;
       flex-direction: column;
       gap: $space-2;
+      margin: 0;
+
+      li {
+        position: relative;
+        padding-left: $space-5;
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0.7em;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: $p-500;
+        }
+      }
     }
 
     a {
-      color: $color-text-brand;
-      font-weight: $font-weight-semibold;
+      color: $p-700;
+      font-weight: 600;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(44, 95, 74, 0.3);
+      transition: border-color $duration-fast $ease-default;
+
+      &:hover {
+        border-bottom-color: $p-700;
+      }
     }
   }
 }
 
 .eyebrow {
-  @include text-label;
-  color: $color-text-brand;
+  font-family: $f-body;
+  font-size: 11px;
+  color: $p-700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  letter-spacing: $letter-spacing-widest;
+  font-weight: 600;
 }
 
 .lead {
-  @include text-body-md;
-  color: $color-text-muted;
+  font-family: $f-body;
+  font-size: 15px !important;
+  color: $n-500 !important;
   font-style: italic;
-  margin: 0;
+  margin: $space-2 0 0 !important;
+  line-height: 1.55 !important;
+  max-width: 60ch;
 }
