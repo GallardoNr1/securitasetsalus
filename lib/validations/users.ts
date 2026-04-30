@@ -68,32 +68,17 @@ export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type CreateUserFormInput = z.input<typeof createUserSchema>;
 
 // ---------- Editar usuario ----------
+//
+// El admin SOLO puede cambiar el rol del usuario. Los datos personales
+// (nombre, RUT, teléfono, región...) son responsabilidad del propio
+// usuario desde /profile. Esto se alinea con la Ley 19.628 chilena y
+// con la 21.719 (vigor 2026) sobre protección de datos personales: el
+// titular consiente y mantiene sus datos. Además protege la integridad
+// histórica del diploma (RUT/nombre firmados en el PDF).
 
-export const updateUserSchema = z
-  .object({
-    name: z
-      .string()
-      .trim()
-      .min(2, { message: 'El nombre debe tener al menos 2 caracteres.' })
-      .max(120),
-    role: z.enum(ROLES, { message: 'Selecciona un rol.' }),
-    region: z.enum(SUPPORTED_REGIONS, { message: 'Selecciona un país.' }),
-    subdivision: subdivisionField,
-    phone: optionalTrimmed(40),
-    rut: optionalTrimmed(20).refine((v) => !v || RUT_REGEX.test(v), {
-      message: 'El RUT no tiene un formato válido.',
-    }),
-  })
-  .superRefine((data, ctx) => {
-    if (!data.subdivision) return;
-    if (!isValidSubdivisionForCountry(data.subdivision, data.region)) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['subdivision'],
-        message: 'La subdivisión seleccionada no corresponde al país elegido.',
-      });
-    }
-  });
+export const updateUserSchema = z.object({
+  role: z.enum(ROLES, { message: 'Selecciona un rol.' }),
+});
 
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
 

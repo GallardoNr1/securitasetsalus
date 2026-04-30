@@ -31,7 +31,8 @@ export default async function NewUserPage() {
         <p>
           Crea un instructor manualmente para que pueda iniciar sesión y gestionar cursos.
           Los usuarios creados desde aquí quedan pre-verificados — no necesitan confirmar el
-          email.
+          email. Una vez creado, podrá editar sus datos personales desde su perfil; tú solo
+          podrás cambiarle el rol.
         </p>
       </header>
 

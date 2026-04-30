@@ -122,12 +122,7 @@ export async function updateUserAction(
   }
 
   const parsed = updateUserSchema.safeParse({
-    name: formData.get('name'),
     role: formData.get('role'),
-    region: formData.get('region'),
-    subdivision: formData.get('subdivision'),
-    phone: formData.get('phone'),
-    rut: formData.get('rut'),
   });
 
   if (!parsed.success) {
@@ -155,19 +150,12 @@ export async function updateUserAction(
 
   await db.user.update({
     where: { id: userId },
-    data: {
-      name: parsed.data.name,
-      role: parsed.data.role,
-      region: parsed.data.region,
-      subdivision: parsed.data.subdivision ?? null,
-      phone: parsed.data.phone ?? null,
-      rut: parsed.data.rut ?? null,
-    },
+    data: { role: parsed.data.role },
   });
 
   revalidatePath('/admin/users');
   revalidatePath(`/admin/users/${userId}`);
-  return { ok: true, message: 'Usuario actualizado.' };
+  return { ok: true, message: 'Rol actualizado.' };
 }
 
 // ---------- Acción navegacional para "Ver perfil" (redirect del cliente) ----------
