@@ -2,92 +2,390 @@
 @use '../../../../../design-system/tokens/typography' as *;
 @use '../../../../../design-system/tokens/spacing-shadows' as *;
 
+// ============================================================
+// Verify VIGENTE / REVOKED / NOT_FOUND / INVALID_FORMAT
+// Tarjeta tipo "pasaporte" con sello a la derecha.
+// ============================================================
+
 .page {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: $space-section-sm $space-page-gutter;
+  min-height: 100%;
+  background: $bg-page;
+}
+
+.hero {
+  position: relative;
+  padding: 64px $space-6 80px;
+  background:
+    radial-gradient(1000px 500px at 50% 0%, rgba(143, 196, 168, 0.30), transparent 60%),
+    $bg-page;
 
   @include responsive-md {
-    padding: $space-section-md $space-8;
+    padding: 88px $space-8 100px;
   }
 }
 
+.heroInner {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+// --- Status pill ---
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 8px 8px 18px;
+  background: $n-0;
+  border: 1px solid $p-300;
+  border-radius: $r-full;
+  margin-bottom: 24px;
+  box-shadow: $sh-sm;
+  flex-wrap: wrap;
+}
+
+.statusPillWarning {
+  border-color: $color-warning;
+  background: $n-0;
+}
+
+.statusPillDanger {
+  border-color: $color-danger;
+  background: $n-0;
+}
+
+.statusDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: $p-500;
+  box-shadow: 0 0 0 4px rgba(90, 155, 123, 0.2);
+  animation: verifyPulse 2s ease-in-out infinite;
+}
+
+.statusDotWarning {
+  background: $color-warning;
+  box-shadow: 0 0 0 4px rgba(201, 137, 58, 0.2);
+}
+
+.statusDotDanger {
+  background: $color-danger;
+  box-shadow: 0 0 0 4px rgba(166, 66, 66, 0.2);
+}
+
+@keyframes verifyPulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(90, 155, 123, 0.2); }
+  50%      { box-shadow: 0 0 0 9px rgba(90, 155, 123, 0.05); }
+}
+
+.statusText {
+  font-family: $f-body;
+  font-size: 13px;
+  color: $n-700;
+  font-weight: 500;
+}
+
+.statusBadge {
+  padding: 4px 10px;
+  background: $p-700;
+  color: $n-0;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.statusBadgeWarning {
+  background: $color-warning;
+}
+
+.statusBadgeDanger {
+  background: $color-danger;
+}
+
+// --- Display name ---
+.studentName {
+  font-family: $f-display;
+  font-size: clamp(40px, 7vw, 96px);
+  margin: 0 0 16px;
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+  color: $n-900;
+}
+
+.studentNameItalic {
+  font-style: italic;
+  color: $p-700;
+  font-weight: 500;
+}
+
+.studentNameItalicWarning {
+  color: $color-warning;
+}
+
+.studentNameItalicDanger {
+  color: $color-danger;
+}
+
+.intro {
+  font-family: $f-body;
+  font-size: 18px;
+  color: $n-600;
+  margin: 0 0 48px;
+  line-height: 1.55;
+  max-width: 600px;
+}
+
+// --- Card principal (VIGENTE) ---
 .card {
-  background-color: $color-bg-surface;
-  border: 1px solid $color-border-default;
-  border-radius: $radius-xl;
-  box-shadow: $shadow-md;
-  padding: $space-8;
-  display: flex;
-  flex-direction: column;
-  gap: $space-4;
+  background: $n-0;
+  border-radius: $r-2xl;
+  border: 1px solid $n-200;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(26, 38, 34, 0.08);
+  display: grid;
+  grid-template-columns: 1fr;
+
+  @include responsive-md {
+    grid-template-columns: 1fr 280px;
+  }
 }
 
-.eyebrow {
-  @include text-label;
-  color: $color-text-brand;
+.cardLeft {
+  padding: 32px 28px;
+
+  @include responsive-md {
+    padding: 40px 44px;
+  }
+}
+
+.cardEyebrow {
+  font-family: $f-body;
+  font-size: 11px;
+  color: $n-500;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  letter-spacing: $letter-spacing-widest;
+  font-weight: 600;
+  margin-bottom: 8px;
 }
 
-.codeLabel {
-  @include text-caption;
-  color: $color-text-muted;
-  text-transform: uppercase;
-  letter-spacing: $letter-spacing-wider;
-  margin: 0;
-}
-
-.code {
-  @include text-mono;
-  font-size: $font-size-2xl;
-  color: $color-text-primary;
-  background-color: $color-bg-subtle;
-  border: 1px solid $color-border-default;
-  border-radius: $radius-md;
-  padding: $space-3 $space-4;
-  font-weight: $font-weight-semibold;
+.cardCode {
+  font-family: $f-mono;
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 700;
+  color: $n-900;
+  letter-spacing: 0.08em;
+  margin-bottom: 32px;
   word-break: break-all;
-  margin: 0;
 }
 
-.placeholder {
-  display: flex;
-  flex-direction: column;
-  gap: $space-3;
-  padding: $space-6;
-  background-color: $color-accent-50;
-  border-left: 3px solid $color-brand-accent;
-  border-radius: $radius-md;
-  margin-top: $space-3;
+.meta {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px 32px;
+  margin: 0;
 
-  h1 {
-    @include text-heading-md;
-    color: $color-text-primary;
+  @include responsive-md {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.field {
+  margin: 0;
+
+  dt {
+    font-family: $f-body;
+    font-size: 11px;
+    color: $n-500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  dd {
+    font-family: $f-body;
+    font-size: 15px;
+    color: $n-900;
+    font-weight: 500;
     margin: 0;
   }
+}
+
+.cardNote {
+  margin-top: 36px;
+  padding: 18px 22px;
+  background: $n-100;
+  border-radius: $r-md;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
 
   p {
-    @include text-body-md;
-    color: $color-text-secondary;
+    font-family: $f-body;
+    font-size: 13px;
+    color: $n-700;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  a {
+    color: $p-700;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.cardNoteWarning {
+  margin-top: 24px;
+  padding: 16px 20px;
+  background: $color-warning-light;
+  border-radius: $r-md;
+
+  p {
+    font-family: $f-body;
+    font-size: 13px;
+    color: $color-warning-dark;
+    line-height: 1.55;
     margin: 0;
   }
 }
 
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: $space-3;
-  margin-top: $space-3;
+.shieldIcon {
+  color: $p-700;
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
-.homeLink {
-  @include text-body-sm;
-  color: $color-text-secondary;
+// --- Card columna derecha (sello) ---
+.cardRight {
+  background: linear-gradient(160deg, $p-700, $p-800);
+  color: $a-100;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  @include responsive-md {
+    padding: 40px 32px;
+  }
+}
+
+.cardSeal {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 180px;
+}
+
+.cardSig {
+  text-align: center;
+}
+
+.cardSigEyebrow {
+  font-family: $f-body;
+  font-size: 11px;
+  color: $a-300;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.cardSigHash {
+  font-family: $f-mono;
+  font-size: 11px;
+  color: $a-200;
+  letter-spacing: 0.06em;
+  line-height: 1.7;
+}
+
+// --- Card de estado de error ---
+.errorCard {
+  background: $n-0;
+  border-radius: $r-2xl;
+  border: 1px solid $n-200;
+  padding: 36px 32px;
+  text-align: center;
+  margin-bottom: 24px;
+
+  @include responsive-md {
+    padding: 48px 40px;
+  }
+}
+
+.errorCardEyebrow {
+  font-family: $f-body;
+  font-size: 11px;
+  color: $n-500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.errorCardCode {
+  font-family: $f-mono;
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 700;
+  color: $n-700;
+  letter-spacing: 0.08em;
+  margin-bottom: 24px;
+  word-break: break-all;
+}
+
+.errorCardCodeStrike {
+  text-decoration: line-through;
+}
+
+.errorCardHelp {
+  font-family: $f-body;
+  font-size: 14px;
+  color: $n-600;
+  margin: 0 auto;
+  max-width: 480px;
+  line-height: 1.55;
+
+  strong {
+    color: $n-900;
+    font-family: $f-mono;
+  }
+}
+
+// --- Acciones ---
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+.actionLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: $r-full;
+  background: $n-0;
+  border: 1px solid $n-300;
+  color: $n-900;
   text-decoration: none;
+  font-family: $f-body;
+  font-size: 13px;
+  font-weight: 500;
+  transition: border-color $duration-fast $ease-default,
+    color $duration-fast $ease-default;
 
   &:hover {
-    color: $color-text-brand;
+    border-color: $p-700;
+    color: $p-700;
   }
 }

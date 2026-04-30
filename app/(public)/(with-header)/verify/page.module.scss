@@ -2,114 +2,252 @@
 @use '../../../../design-system/tokens/typography' as *;
 @use '../../../../design-system/tokens/spacing-shadows' as *;
 
+// ============================================================
+// Verify form (búsqueda por código)
+// ============================================================
+
 .page {
-  max-width: $space-page-max;
-  margin: 0 auto;
-  padding: $space-section-sm $space-page-gutter;
-  display: grid;
-  gap: $space-10;
-  grid-template-columns: 1fr;
+  min-height: 100%;
+  background: $bg-page;
+}
+
+.hero {
+  position: relative;
+  padding: 64px $space-6 80px;
+  background:
+    radial-gradient(1000px 500px at 50% 0%, rgba(143, 196, 168, 0.30), transparent 60%),
+    $bg-page;
+  overflow: hidden;
 
   @include responsive-md {
-    padding: $space-section-md $space-8;
-    grid-template-columns: 1.4fr 1fr;
-    gap: $space-12;
+    padding: 88px $space-8 100px;
   }
 }
 
-.card {
-  background-color: $color-bg-surface;
-  border: 1px solid $color-border-default;
-  border-radius: $radius-xl;
-  box-shadow: $shadow-md;
-  padding: $space-8;
-  display: flex;
-  flex-direction: column;
-  gap: $space-4;
-
-  h1 {
-    @include text-display-md;
-    color: $color-text-primary;
-    margin: 0;
-  }
-
-  p {
-    @include text-body-md;
-    color: $color-text-secondary;
-    margin: 0;
-  }
+.heroInner {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 .eyebrow {
-  @include text-label;
-  color: $color-text-brand;
+  display: inline-block;
+  font-family: $f-body;
+  font-size: 12px;
+  color: $p-700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  letter-spacing: $letter-spacing-widest;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-family: $f-display;
+  font-size: clamp(40px, 7vw, 88px);
+  margin: 0 0 16px;
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+  color: $n-900;
+}
+
+.titleItalic {
+  font-style: italic;
+  color: $p-700;
+  font-weight: 500;
+}
+
+.lead {
+  font-family: $f-body;
+  font-size: 18px;
+  color: $n-600;
+  margin: 0 0 36px;
+  line-height: 1.55;
+  max-width: 580px;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: $space-3;
-  margin-top: $space-3;
+  gap: 12px;
+  max-width: 520px;
 }
 
 .label {
-  @include text-label;
-  color: $color-text-primary;
+  font-family: $f-body;
+  font-size: 13px;
+  color: $n-700;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.inputRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .input {
-  width: 100%;
-  padding: $space-3 $space-4;
-  border: 2px solid $color-border-default;
-  border-radius: $radius-md;
-  background-color: $color-bg-surface;
-  color: $color-text-primary;
-  font-family: $font-mono;
-  font-size: $font-size-md;
-  letter-spacing: $letter-spacing-wider;
-  transition: border-color $duration-fast $ease-default;
-
-  &:focus {
-    outline: none;
-    border-color: $color-border-focus;
-  }
+  flex: 1;
+  min-width: 200px;
+  padding: 14px 18px;
+  border-radius: $r-full;
+  border: 1px solid $n-300;
+  background: $n-0;
+  font-family: $f-mono;
+  font-size: 16px;
+  color: $n-900;
+  letter-spacing: 0.06em;
+  outline: none;
+  transition: border-color $duration-fast $ease-default,
+    box-shadow $duration-fast $ease-default;
 
   &::placeholder {
-    color: $color-text-muted;
-    font-family: $font-mono;
+    color: $n-400;
+    letter-spacing: 0.04em;
+  }
+
+  &:focus {
+    border-color: $p-700;
+    box-shadow: 0 0 0 3px rgba(44, 95, 74, 0.15);
   }
 }
 
-.help {
-  @include text-body-sm;
-  color: $color-text-muted;
-  margin: 0;
+.submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-radius: $r-full;
+  background: $n-900;
+  color: $n-0;
+  border: none;
+  cursor: pointer;
+  font-family: $f-body;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color $duration-fast $ease-default,
+    transform $duration-fast $ease-default;
+
+  &:hover {
+    background: $p-700;
+    transform: translateY(-1px);
+  }
 }
 
-.aside {
-  background-color: $color-bg-subtle;
-  border-radius: $radius-xl;
-  padding: $space-6;
-  display: flex;
-  flex-direction: column;
-  gap: $space-3;
+.formHint {
+  font-family: $f-body;
+  font-size: 12px;
+  color: $n-500;
+  margin: 0;
+
+  code {
+    font-family: $f-mono;
+    color: $n-700;
+  }
+}
+
+// Sello decorativo flotante (solo desktop, fuera del grid del form)
+.sealWrap {
+  display: none;
+  position: absolute;
+  top: 60px;
+  right: -60px;
+  opacity: 0.5;
+  pointer-events: none;
+  filter: drop-shadow(0 12px 32px rgba(26, 38, 34, 0.08));
+
+  @include responsive-lg {
+    display: block;
+  }
+}
+
+.seal {
+  display: block;
+}
+
+// --- Sección "Sobre los diplomas SES" ---
+.about {
+  padding: 64px $space-6 96px;
+
+  @include responsive-md {
+    padding: 80px $space-8 120px;
+  }
+}
+
+.aboutInner {
+  max-width: $space-page-max;
+  margin: 0 auto;
 
   h2 {
-    @include text-heading-md;
-    color: $color-text-primary;
+    font-family: $f-display;
+    font-size: clamp(28px, 4vw, 40px);
+    margin: 0 0 32px;
+    color: $n-900;
+    letter-spacing: -0.02em;
+  }
+}
+
+.aboutGrid {
+  display: grid;
+  gap: $space-6;
+  grid-template-columns: 1fr;
+
+  @include responsive-md {
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-8;
+  }
+
+  article {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+    background: $n-0;
+    border: 1px solid $n-200;
+    border-radius: $r-2xl;
+  }
+
+  h3 {
+    font-family: $f-display;
+    font-size: 20px;
     margin: 0;
+    color: $n-900;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
   }
 
   p {
-    @include text-body-md;
-    color: $color-text-secondary;
+    font-family: $f-body;
+    font-size: 14px;
+    color: $n-600;
+    line-height: 1.55;
     margin: 0;
+  }
+
+  code {
+    font-family: $f-mono;
+    color: $n-900;
+    font-size: 13px;
   }
 }
 
+.aboutEyebrow {
+  font-family: $f-body;
+  font-size: 11px;
+  color: $p-700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
 .externalLink {
-  color: $color-text-brand;
-  font-weight: $font-weight-semibold;
+  color: $p-700;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
