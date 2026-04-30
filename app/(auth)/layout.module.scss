@@ -3,42 +3,67 @@
 @use '../../design-system/tokens/spacing-shadows' as *;
 
 .header {
-  padding: $space-4 $space-page-gutter;
-  border-bottom: 1px solid rgba($color-border-default, 0.5);
-  background-color: rgba($color-bg-page, 0.92);
-  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-3 $space-page-gutter;
+  border-bottom: 1px solid $n-200;
+  background-color: $bg-page;
+
+  @include responsive-md {
+    padding: $space-3 $space-8;
+  }
 }
 
-.logo {
+.brand {
   display: inline-flex;
   align-items: center;
   gap: $space-3;
   text-decoration: none;
-  color: $color-text-primary;
-
-  &:hover {
-    color: $color-text-brand;
-  }
+  color: inherit;
 }
 
 .logoMark {
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
+  display: block;
 }
 
-.logoText {
-  font-family: $font-display;
-  font-weight: $font-weight-bold;
-  font-size: $font-size-lg;
+.brandName {
+  font-family: $f-display;
+  font-weight: 600;
+  font-size: 17px;
+  color: $n-900;
+  letter-spacing: -0.01em;
+
+  display: none;
+  @include responsive-sm {
+    display: inline;
+  }
+}
+
+.brandItalic {
+  font-style: italic;
+  color: $p-700;
+}
+
+.backLink {
+  font-family: $f-body;
+  font-size: 13px;
+  color: $n-600;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color $duration-fast $ease-default;
+
+  &:hover {
+    color: $p-700;
+  }
 }
 
 .main {
   min-height: calc(100vh - 24rem);
   padding-block: $space-12 $space-section-sm;
   background:
-    radial-gradient(ellipse at top, rgba($color-primary-700, 0.06), transparent 50%),
-    $color-bg-page;
+    radial-gradient(1000px 500px at 50% 0%, rgba(143, 196, 168, 0.20), transparent 60%),
+    $bg-page;
   display: flex;
   align-items: flex-start;
   justify-content: center;
