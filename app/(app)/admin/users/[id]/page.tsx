@@ -8,6 +8,7 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { SUPPORTED_REGIONS, type SupportedRegion } from '@/lib/regions';
 import { formatDate } from '@/lib/format';
 import { UserForm } from '../UserForm';
+import { SuspensionPanel } from './SuspensionPanel';
 import styles from './page.module.scss';
 
 export const metadata: Metadata = {
@@ -51,7 +52,11 @@ export default async function EditUserPage({ params }: Props) {
           <h1>{user.name}</h1>
           <p className={styles.email}>{user.email}</p>
           <div className={styles.badges}>
-            {user.emailVerifiedAt ? (
+            {user.suspendedAt ? (
+              <Badge status="cancelled" showDot={false}>
+                Suspendida
+              </Badge>
+            ) : user.emailVerifiedAt ? (
               <Badge status="confirmed" showDot={false}>
                 Email verificado
               </Badge>
@@ -79,6 +84,14 @@ export default async function EditUserPage({ params }: Props) {
           phone: user.phone,
           rut: user.rut,
         }}
+      />
+
+      <SuspensionPanel
+        userId={user.id}
+        userName={user.name}
+        isSelf={session.user.id === user.id}
+        suspendedAt={user.suspendedAt}
+        suspendedReason={user.suspendedReason}
       />
     </div>
   );

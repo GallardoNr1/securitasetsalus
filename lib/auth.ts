@@ -18,6 +18,14 @@ export class EmailNotVerifiedError extends CredentialsSignin {
 }
 
 /**
+ * Error para cuenta suspendida por el admin. El usuario no puede
+ * iniciar sesión hasta que se reactive.
+ */
+export class AccountSuspendedError extends CredentialsSignin {
+  override code = 'account-suspended';
+}
+
+/**
  * Configuración completa de NextAuth v5 (runtime Node).
  *
  * El middleware (proxy.ts) usa solo `authConfig` del fichero raíz
@@ -31,6 +39,44 @@ export class EmailNotVerifiedError extends CredentialsSignin {
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   adapter: PrismaAdapter(db),
+  callbacks: {
+    ...authConfig.callbacks,
+    /**
+     * Bloquea el sign-in de cuentas suspendidas para CUALQUIER provider
+     * (Credentials lo cubre además via `authorize`, pero esto blinda
+     * Magic Link y futuras integraciones OAuth).
+     */
+    async signIn({ user }) {
+      if (!user.id) return true;
+      const dbUser = await db.user.findUnique({
+        where: { id: user.id },
+        select: { suspendedAt: true },
+      });
+      if (dbUser?.suspendedAt) return false;
+      return true;
+    },
+    /**
+     * Re-evalúa la suspensión en cada llamada a `auth()` server-side. Si el
+     * admin suspendió la cuenta DESPUÉS de que el usuario hubiera iniciado
+     * sesión, esta call lo deja sin sesión activa al próximo navegador
+     * roundtrip.
+     *
+     * Coste: una query indexada por id en cada server component que llame
+     * a `auth()`. Para SES (low-traffic, alta sensibilidad) compensa.
+     */
+    async jwt(args) {
+      const baseToken = await authConfig.callbacks.jwt(args);
+      if (!baseToken || typeof baseToken !== 'object') return baseToken;
+      const id = (baseToken as { id?: string }).id;
+      if (!id) return baseToken;
+      const dbUser = await db.user.findUnique({
+        where: { id },
+        select: { suspendedAt: true },
+      });
+      if (dbUser?.suspendedAt) return null;
+      return baseToken;
+    },
+  },
   providers: [
     Credentials({
       credentials: {
@@ -48,6 +94,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const valid = await verifyPassword(parsed.data.password, user.passwordHash);
         if (!valid) return null;
+
+        // Bloqueo de cuenta suspendida — el admin la inhabilitó.
+        if (user.suspendedAt) {
+          throw new AccountSuspendedError();
+        }
 
         // Bloqueo de email no verificado solo para STUDENT (los demás roles
         // los crea el admin manualmente y se asume su identidad garantizada).

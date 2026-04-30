@@ -69,6 +69,11 @@ model User {
   rut             String?   // RUT chileno cuando se usa franquicia SENCE
   avatarKey       String?   // Key en R2 (bucket ses-avatars) si subió foto
   emailVerifiedAt DateTime?
+  // Suspensión de cuenta (acción admin). Si está rellena, el usuario
+  // no puede iniciar sesión y la próxima validación de su sesión la
+  // invalida. La fila no se borra para preservar diplomas históricos.
+  suspendedAt     DateTime?
+  suspendedReason String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 

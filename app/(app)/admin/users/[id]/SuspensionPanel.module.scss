@@ -1,0 +1,164 @@
+@use '../../../../../design-system/tokens/colors' as *;
+@use '../../../../../design-system/tokens/typography' as *;
+@use '../../../../../design-system/tokens/spacing-shadows' as *;
+
+.panel {
+  background: $n-0;
+  border: 1px solid $n-200;
+  border-radius: $r-2xl;
+  padding: $space-6;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  box-shadow: 0 4px 12px rgba(26, 38, 34, 0.04);
+}
+
+.panelDanger {
+  background: $color-danger-light;
+  border-color: rgba(166, 66, 66, 0.25);
+}
+
+.panelMuted {
+  background: $n-50;
+  border-style: dashed;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.eyebrow {
+  font-family: $f-body;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: $p-700;
+}
+
+.eyebrowDanger {
+  color: $color-danger;
+}
+
+.title {
+  font-family: $f-display;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  color: $n-900;
+  margin: 0;
+}
+
+.body {
+  font-family: $f-body;
+  font-size: 14px;
+  color: $n-700;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  margin: 0;
+  padding: $space-3 $space-4;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: $r-md;
+}
+
+.metaRow {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  dt {
+    font-family: $f-body;
+    font-size: 11px;
+    color: $color-danger;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  dd {
+    font-family: $f-body;
+    font-size: 14px;
+    color: $color-danger-dark;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.error {
+  padding: $space-3 $space-4;
+  background: $color-danger-light;
+  color: $color-danger-dark;
+  border: 1px solid rgba(166, 66, 66, 0.3);
+  border-radius: $r-md;
+  font-family: $f-body;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+// Botón rojo para abrir la confirmación.
+.dangerButton {
+  align-self: flex-start;
+  padding: 10px 18px;
+  background: transparent;
+  color: $color-danger;
+  border: 1px solid $color-danger;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background $duration-fast $ease-default,
+    color $duration-fast $ease-default;
+
+  &:hover {
+    background: $color-danger;
+    color: $n-0;
+  }
+}
+
+.confirmForm {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-4;
+  background: $n-50;
+  border: 1px solid $n-200;
+  border-radius: $r-md;
+}
+
+.confirmActions {
+  display: flex;
+  gap: $space-3;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cancelButton {
+  background: transparent;
+  border: none;
+  color: $n-600;
+  font-family: $f-body;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 12px;
+
+  &:hover:not(:disabled) {
+    color: $n-900;
+    text-decoration: underline;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

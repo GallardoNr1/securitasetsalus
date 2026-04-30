@@ -79,6 +79,8 @@ export async function getUserById(id: string) {
       rut: true,
       avatarKey: true,
       emailVerifiedAt: true,
+      suspendedAt: true,
+      suspendedReason: true,
       createdAt: true,
     },
   });
