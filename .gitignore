@@ -50,3 +50,6 @@ prisma/*.db-journal
 .turbo/
 
 .vercel
+
+# Claude Code local files
+.claude/
