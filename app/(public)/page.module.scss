@@ -514,8 +514,9 @@
   }
 }
 
-// Línea conectora entre pasos (dashed, primary-200).
-// Mobile: vertical en el gap; desktop: horizontal entre círculos.
+// Línea conectora entre pasos: sólida en color primary-300/400 con un
+// gradiente sutil que va de un círculo al siguiente. Mobile: vertical en
+// el gap; desktop: horizontal entre círculos.
 .step:not(:last-child)::after {
   content: '';
   position: absolute;
@@ -524,15 +525,11 @@
   transform: translateX(-50%);
   width: 2px;
   height: $space-10;
-  background-image: linear-gradient(
+  background: linear-gradient(
     to bottom,
-    $color-primary-200 0,
-    $color-primary-200 6px,
-    transparent 6px,
-    transparent 12px
+    $color-primary-700 0%,
+    $color-primary-400 100%
   );
-  background-size: 2px 12px;
-  background-repeat: repeat-y;
   z-index: 0;
 
   @include responsive-md {
@@ -541,15 +538,11 @@
     transform: none;
     width: calc(100% - 80px);
     height: 2px;
-    background-image: linear-gradient(
+    background: linear-gradient(
       to right,
-      $color-primary-200 0,
-      $color-primary-200 6px,
-      transparent 6px,
-      transparent 12px
+      $color-primary-700 0%,
+      $color-primary-400 100%
     );
-    background-size: 12px 2px;
-    background-repeat: repeat-x;
   }
 }
 
