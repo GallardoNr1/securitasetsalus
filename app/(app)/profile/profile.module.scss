@@ -7,31 +7,46 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: $space-10;
+  gap: $space-8;
 }
 
 .section {
   display: flex;
   flex-direction: column;
   gap: $space-4;
-  background-color: $color-bg-surface;
-  border: 1px solid $color-border-default;
-  border-radius: $radius-xl;
-  padding: $space-8;
-  box-shadow: $shadow-sm;
+  background: $n-0;
+  border: 1px solid $n-200;
+  border-radius: $r-2xl;
+  padding: 32px 28px;
+
+  @include responsive-md {
+    padding: 40px 36px;
+  }
 }
 
 .sectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: $space-3;
+  border-bottom: 1px solid $n-200;
+  margin-bottom: $space-2;
+
   h2 {
-    @include text-heading-lg;
-    color: $color-text-primary;
-    margin: 0 0 $space-2;
+    font-family: $f-display;
+    font-size: 24px;
+    color: $n-900;
+    margin: 0;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
   }
 
   p {
-    @include text-body-sm;
-    color: $color-text-secondary;
+    font-family: $f-body;
+    font-size: 14px;
+    color: $n-600;
     margin: 0;
+    line-height: 1.55;
   }
 }
 
@@ -52,25 +67,31 @@
 }
 
 .hint {
-  @include text-caption;
-  color: $color-text-muted;
+  font-family: $f-body;
+  font-size: 12px;
+  color: $n-500;
   margin: 0;
+  line-height: 1.5;
 }
 
 .success {
   padding: $space-3 $space-4;
-  background-color: $color-success-light;
+  background: $color-success-light;
   color: $color-success-dark;
   border: 1px solid rgba($color-success, 0.3);
-  border-radius: $radius-md;
-  @include text-body-sm;
+  border-radius: $r-md;
+  font-family: $f-body;
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 .error {
   padding: $space-3 $space-4;
-  background-color: $color-danger-light;
+  background: $color-danger-light;
   color: $color-danger-dark;
   border: 1px solid rgba($color-danger, 0.3);
-  border-radius: $radius-md;
-  @include text-body-sm;
+  border-radius: $r-md;
+  font-family: $f-body;
+  font-size: 14px;
+  line-height: 1.45;
 }
