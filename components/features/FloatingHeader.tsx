@@ -32,21 +32,6 @@ export function FloatingHeader() {
           </span>
         </Link>
 
-        <nav className={styles.nav} aria-label="Navegación principal">
-          <Link href="/courses" className={styles.navLink}>
-            Cursos
-          </Link>
-          <Link href="/#como-funciona" className={styles.navLink}>
-            Cómo funciona
-          </Link>
-          <Link href="/#sedes" className={styles.navLink}>
-            Sedes
-          </Link>
-          <Link href="/#contacto" className={styles.navLink}>
-            Contacto
-          </Link>
-        </nav>
-
         <div className={styles.actions}>
           <Link href="/verify" className={styles.verifyLink}>
             <svg

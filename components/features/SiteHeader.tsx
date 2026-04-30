@@ -1,31 +1,21 @@
-'use client';
-
 import Link from 'next/link';
 import Image from 'next/image';
-import type { Route } from 'next';
-import { usePathname } from 'next/navigation';
 import styles from './SiteHeader.module.scss';
 
 /**
  * Header sólido sticky para todas las páginas públicas que NO son la
  * landing. La landing usa `FloatingHeader` (glass sobre el Hero); este
- * usa el mismo lenguaje visual (wordmark Fraunces con 'Et' italic, nav
- * en píldora con activo dinámico, CTAs en píldora negra) pero sin el
- * efecto glass ni margen negativo — funciona sobre cualquier fondo.
+ * usa el mismo lenguaje visual (wordmark Fraunces con 'Et' italic,
+ * acciones en píldora) pero sin el efecto glass ni margen negativo —
+ * funciona sobre cualquier fondo.
  *
- * Es client component porque usa `usePathname()` para marcar el item
- * activo del nav. La sticky position no requiere JS.
+ * Sin nav central por decisión deliberada: el nav central con mezcla
+ * de links a páginas y anclas a la landing era inconsistente. Las
+ * secciones de información (cómo funciona, sedes, contacto, etc.) viven
+ * en el footer; el header es solo logo + actions de conversión.
  */
 
-const NAV_ITEMS: Array<{ href: Route; label: string; matchPrefixes: string[] }> = [
-  { href: '/courses', label: 'Cursos', matchPrefixes: ['/courses'] },
-  { href: '/#como-funciona' as Route, label: 'Cómo funciona', matchPrefixes: [] },
-  { href: '/#contacto' as Route, label: 'Contacto', matchPrefixes: [] },
-];
-
 export function SiteHeader() {
-  const pathname = usePathname() ?? '/';
-
   return (
     <header className={styles.wrapper}>
       <div className={styles.inner}>
@@ -42,21 +32,6 @@ export function SiteHeader() {
             Securitas<span className={styles.brandItalic}>Et</span>Salus
           </span>
         </Link>
-
-        <nav className={styles.nav} aria-label="Navegación principal">
-          {NAV_ITEMS.map((item) => {
-            const isActive = item.matchPrefixes.some((p) => pathname.startsWith(p));
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
 
         <div className={styles.actions}>
           <Link href="/verify" className={styles.verifyLink}>
