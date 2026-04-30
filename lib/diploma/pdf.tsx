@@ -60,9 +60,10 @@ const styles = StyleSheet.create({
   },
 
   // --- Marca de agua ---
-  // Sello grande, semi-transparente, desplazado hacia la esquina
-  // superior derecha para que entre solo media figura. Da peso
-  // visual sin pelearse con el texto del centro.
+  // Sello grande, semi-transparente, anclado a la esquina inferior
+  // derecha. Solo entra la mitad superior de la figura — la cabeza
+  // del águila queda a la altura del meta-row, dando peso visual al
+  // lado derecho sin pelearse con el texto.
   //
   // Mantener width/height ≤ 595pt (altura A4 horizontal) — si nos
   // pasamos, react-pdf manda la imagen a su propia página.
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 560,
     height: 560,
-    top: -120,
+    bottom: 0,
     right: -160,
     opacity: 0.09,
   },
