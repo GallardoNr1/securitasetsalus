@@ -10,37 +10,47 @@
   gap: $space-8;
 }
 
+// --- Header del dashboard ---
 .header {
   display: flex;
   flex-direction: column;
   gap: $space-2;
-  padding-bottom: $space-4;
-  border-bottom: 1px solid $color-border-default;
-
-  h1 {
-    @include text-display-md;
-    color: $color-text-primary;
-    margin: $space-1 0 $space-2;
-  }
-
-  p {
-    @include text-body-md;
-    color: $color-text-secondary;
-    max-width: 60ch;
-    margin: 0;
-  }
+  padding: $space-2 0 $space-5;
+  border-bottom: 1px solid $n-200;
 }
 
 .eyebrow {
-  @include text-label;
-  color: $color-text-brand;
+  font-family: $f-body;
+  font-size: 11px;
+  color: $p-700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  letter-spacing: $letter-spacing-widest;
+  font-weight: 600;
 }
 
+.header h1 {
+  font-family: $f-display;
+  font-size: clamp(32px, 5vw, 48px);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  font-weight: 700;
+  color: $n-900;
+  margin: 4px 0 8px;
+}
+
+.header p {
+  font-family: $f-body;
+  font-size: 16px;
+  color: $n-600;
+  max-width: 60ch;
+  margin: 0;
+  line-height: 1.55;
+}
+
+// --- Grid de tarjetas ---
 .cards {
   display: grid;
-  gap: $space-6;
+  gap: $space-5;
   grid-template-columns: 1fr;
 
   @include responsive-md {
@@ -49,25 +59,38 @@
 }
 
 .card {
-  background-color: $color-bg-surface;
-  border: 1px solid $color-border-default;
-  border-radius: $radius-xl;
-  padding: $space-6;
+  background: $n-0;
+  border: 1px solid $n-200;
+  border-radius: $r-2xl;
+  padding: 28px 24px;
   display: flex;
   flex-direction: column;
   gap: $space-3;
-  box-shadow: $shadow-sm;
+  transition: transform $duration-fast $ease-default,
+    box-shadow $duration-fast $ease-default,
+    border-color $duration-fast $ease-default;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 36px rgba(26, 38, 34, 0.08);
+    border-color: $p-300;
+  }
 
   h2 {
-    @include text-heading-md;
-    color: $color-text-primary;
+    font-family: $f-display;
+    font-size: 22px;
+    color: $n-900;
     margin: 0;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
   }
 
   p {
-    @include text-body-md;
-    color: $color-text-secondary;
+    font-family: $f-body;
+    font-size: 14px;
+    color: $n-600;
     margin: 0;
+    line-height: 1.55;
     flex: 1;
   }
 }
@@ -77,8 +100,10 @@
 }
 
 .muted {
-  @include text-caption;
-  color: $color-text-muted;
+  font-family: $f-body;
+  font-size: 12px;
+  color: $n-500;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  letter-spacing: $letter-spacing-wider;
+  font-weight: 500;
 }
