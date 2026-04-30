@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { MobileMenu } from './MobileMenu';
 import styles from './FloatingHeader.module.scss';
 
 /**
@@ -71,6 +72,7 @@ export function FloatingHeader() {
               <path d="M5 12h14M13 5l7 7-7 7" />
             </svg>
           </Link>
+          <MobileMenu user={null} />
         </div>
       </header>
     </div>

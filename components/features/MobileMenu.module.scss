@@ -1,0 +1,207 @@
+@use '../../design-system/tokens/colors' as *;
+@use '../../design-system/tokens/typography' as *;
+@use '../../design-system/tokens/spacing-shadows' as *;
+
+// Botón hamburguesa visible solo en móvil/tablet.
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: $n-700;
+  cursor: pointer;
+  border-radius: $r-full;
+  transition: background-color $duration-fast $ease-default;
+
+  &:hover {
+    background: $n-100;
+  }
+
+  // En desktop el drawer no se usa — el header tiene su propia nav.
+  @include responsive-lg {
+    display: none;
+  }
+}
+
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: $n-900;
+  color: $n-0;
+  display: flex;
+  flex-direction: column;
+  animation: drawerFadeIn 200ms $ease-default;
+}
+
+@keyframes drawerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo {
+  display: block;
+  filter: brightness(0) invert(1);
+  opacity: 0.95;
+}
+
+.brandName {
+  font-family: $f-display;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.close {
+  background: transparent;
+  border: none;
+  color: $n-0;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: $r-full;
+  transition: background-color $duration-fast $ease-default;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.userBlock {
+  padding: 22px 22px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.userEyebrow {
+  font-family: $f-mono;
+  font-size: 10px;
+  color: $a-400;
+  letter-spacing: 0.16em;
+  margin-bottom: 8px;
+}
+
+.userRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.userAvatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $p-700, $a-700);
+  color: $n-0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $f-display;
+  font-weight: 600;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.userName {
+  font-family: $f-display;
+  font-size: 16px;
+  font-weight: 600;
+  color: $n-0;
+}
+
+.userEmail {
+  font-family: $f-body;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 2px;
+}
+
+.userRole {
+  font-family: $f-body;
+  font-size: 10px;
+  color: $a-300;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  padding: 14px 22px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: $f-body;
+  font-size: 15px;
+  font-weight: 500;
+  background: transparent;
+  border-left: 3px solid transparent;
+  transition: background-color $duration-fast $ease-default,
+    color $duration-fast $ease-default,
+    border-color $duration-fast $ease-default;
+}
+
+.navItemActive {
+  color: $n-0;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.05);
+  border-left-color: $a-400;
+}
+
+.logoutForm {
+  margin: 0;
+  padding: 18px 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.logoutItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: $f-body;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  transition: color $duration-fast $ease-default;
+
+  &:hover {
+    color: $color-danger;
+  }
+}

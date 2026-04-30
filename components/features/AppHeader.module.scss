@@ -59,3 +59,9 @@
   font-style: italic;
   color: $p-700;
 }
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}

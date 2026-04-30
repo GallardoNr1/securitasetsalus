@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { isBucketConfigured } from '@/lib/r2-config';
 import { AppNav } from './AppNav';
+import { MobileMenu } from './MobileMenu';
 import { UserMenu } from './UserMenu';
 import styles from './AppHeader.module.scss';
 
@@ -15,6 +16,10 @@ import styles from './AppHeader.module.scss';
  * SiteHeader y el FloatingHeader (Fraunces wordmark con 'Et' italic en
  * verde marca, pill nav, sticky), pero con un nav distinto: aquí los
  * items dependen del rol del usuario (ver AppNav).
+ *
+ * En móvil/tablet (<lg) la AppNav central se oculta y aparece un
+ * MobileMenu hamburguesa con los mismos items + bloque de usuario y
+ * cerrar sesión.
  */
 export async function AppHeader() {
   const session = await auth();
@@ -51,14 +56,25 @@ export async function AppHeader() {
 
         {user ? <AppNav role={user.role} /> : <span aria-hidden />}
 
-        {user && user.name ? (
-          <UserMenu
-            user={{ id: user.id, name: user.name, role: user.role }}
-            avatarKey={avatarKey}
-          />
-        ) : (
-          <span aria-hidden />
-        )}
+        <div className={styles.right}>
+          {user && user.name ? (
+            <>
+              <UserMenu
+                user={{ id: user.id, name: user.name, role: user.role }}
+                avatarKey={avatarKey}
+              />
+              <MobileMenu
+                user={{
+                  name: user.name,
+                  email: user.email ?? '',
+                  role: user.role,
+                }}
+              />
+            </>
+          ) : (
+            <MobileMenu user={null} />
+          )}
+        </div>
       </div>
     </header>
   );
