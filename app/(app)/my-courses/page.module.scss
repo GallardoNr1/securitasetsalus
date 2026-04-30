@@ -2,144 +2,319 @@
 @use '../../../design-system/tokens/typography' as *;
 @use '../../../design-system/tokens/spacing-shadows' as *;
 
+// ============================================================
+// /my-courses — listado de inscripciones del alumno
+// Mismo lenguaje del rediseño: header display fluido, status
+// pill al estilo /verify, cards con hover y sub-bloque de
+// diploma cuando aplica.
+// ============================================================
+
 .page {
-  max-width: 800px;
+  max-width: 920px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: $space-6;
+  gap: $space-8;
 }
 
+// --- Header ---
 .header {
   display: flex;
   flex-direction: column;
   gap: $space-2;
-  padding-bottom: $space-4;
-  border-bottom: 1px solid $color-border-default;
-
-  h1 {
-    @include text-display-md;
-    color: $color-text-primary;
-    margin: $space-1 0 $space-2;
-  }
-
-  p {
-    @include text-body-md;
-    color: $color-text-secondary;
-    max-width: 60ch;
-    margin: 0;
-  }
+  padding: $space-2 0 $space-5;
+  border-bottom: 1px solid $n-200;
 }
 
 .eyebrow {
-  @include text-label;
-  color: $color-text-brand;
+  font-family: $f-body;
+  font-size: 11px;
+  color: $p-700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  letter-spacing: $letter-spacing-widest;
+  font-weight: 600;
 }
 
+.title {
+  font-family: $f-display;
+  font-size: clamp(36px, 6vw, 64px);
+  margin: $space-1 0 $space-3;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  color: $n-900;
+}
+
+.titleItalic {
+  font-style: italic;
+  color: $p-700;
+  font-weight: 500;
+}
+
+.lead {
+  font-family: $f-body;
+  font-size: 16px;
+  color: $n-600;
+  max-width: 60ch;
+  margin: 0 0 $space-4;
+  line-height: 1.55;
+}
+
+.metaRow {
+  display: flex;
+  gap: $space-2;
+  flex-wrap: wrap;
+}
+
+.metaPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: $n-0;
+  border: 1px solid $p-300;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 13px;
+  color: $n-700;
+  font-weight: 500;
+  box-shadow: $sh-sm;
+}
+
+.metaDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $p-500;
+  box-shadow: 0 0 0 4px rgba(90, 155, 123, 0.18);
+}
+
+// --- Empty state ---
 .empty {
-  padding: $space-12 $space-6;
-  background-color: $color-bg-subtle;
-  border-radius: $radius-xl;
+  padding: 64px 32px;
   text-align: center;
+  background: $n-0;
+  border: 1px dashed $n-300;
+  border-radius: $r-2xl;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: $space-3;
 
   h2 {
-    @include text-heading-md;
-    color: $color-text-primary;
+    font-family: $f-display;
+    font-size: 24px;
+    color: $n-900;
     margin: 0;
+    letter-spacing: -0.02em;
   }
 
   p {
-    @include text-body-md;
-    color: $color-text-secondary;
-    max-width: 50ch;
+    font-family: $f-body;
+    font-size: 15px;
+    color: $n-600;
     margin: 0 0 $space-2;
+    line-height: 1.55;
+    max-width: 56ch;
   }
 }
 
+// --- Lista de inscripciones ---
 .list {
   list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: $space-4;
+  gap: $space-5;
 }
 
 .item {
-  padding: $space-6;
-  background-color: $color-bg-surface;
-  border: 1px solid $color-border-default;
-  border-radius: $radius-xl;
-  box-shadow: $shadow-sm;
+  background: $n-0;
+  border: 1px solid $n-200;
+  border-radius: $r-2xl;
+  padding: 28px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  transition: transform $duration-fast $ease-default,
+    box-shadow $duration-fast $ease-default,
+    border-color $duration-fast $ease-default;
 
-  h2 {
-    @include text-heading-md;
-    margin: $space-2 0 $space-3;
+  @include responsive-md {
+    padding: 36px 36px 28px;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 36px rgba(26, 38, 34, 0.08);
+    border-color: $p-300;
   }
 }
 
 .itemHeader {
   display: flex;
-  flex-wrap: wrap;
-  gap: $space-3;
   align-items: center;
+  flex-wrap: wrap;
+  gap: $space-3 $space-4;
+  justify-content: space-between;
+}
+
+// --- Status pill (mismo lenguaje que /verify) ---
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 6px 6px 14px;
+  background: $n-0;
+  border: 1px solid $p-300;
+  border-radius: $r-full;
+  flex-wrap: wrap;
+  box-shadow: $sh-sm;
+}
+
+.pill-pending {
+  border-color: $color-warning;
+}
+.pill-cancelled,
+.pill-failed {
+  border-color: $color-danger;
+}
+.pill-completed {
+  border-color: $a-400;
+}
+
+.statusDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: $p-500;
+  box-shadow: 0 0 0 3px rgba(90, 155, 123, 0.2);
+}
+
+.dot-pending {
+  background: $color-warning;
+  box-shadow: 0 0 0 3px rgba(201, 137, 58, 0.2);
+}
+.dot-cancelled,
+.dot-failed {
+  background: $color-danger;
+  box-shadow: 0 0 0 3px rgba(166, 66, 66, 0.2);
+}
+.dot-completed {
+  background: $a-600;
+  box-shadow: 0 0 0 3px rgba(201, 184, 122, 0.25);
+}
+
+.statusText {
+  font-family: $f-body;
+  font-size: 12px;
+  color: $n-700;
+  font-weight: 500;
+}
+
+.statusBadge {
+  padding: 4px 10px;
+  background: $p-700;
+  color: $n-0;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.badge-pending {
+  background: $color-warning;
+}
+.badge-cancelled,
+.badge-failed {
+  background: $color-danger;
+}
+.badge-completed {
+  background: $a-600;
 }
 
 .muted {
-  @include text-caption;
-  color: $color-text-muted;
+  font-family: $f-body;
+  font-size: 12px;
+  color: $n-500;
 }
 
-.title {
-  color: $color-text-primary;
+// --- Título del curso ---
+.titleLink {
   text-decoration: none;
+  color: inherit;
+  display: block;
 
-  &:hover {
-    color: $color-text-brand;
+  &:hover .itemTitle {
+    color: $p-700;
   }
 }
 
+.itemTitle {
+  font-family: $f-display;
+  font-size: clamp(22px, 3.4vw, 28px);
+  color: $n-900;
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  transition: color $duration-fast $ease-default;
+}
+
+// --- Meta grid ---
 .meta {
   display: grid;
   grid-template-columns: 1fr;
-  gap: $space-3;
+  gap: $space-4;
   margin: 0;
 
   @include responsive-sm {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  dt {
-    @include text-caption;
-    color: $color-text-muted;
-    text-transform: uppercase;
-    letter-spacing: $letter-spacing-wider;
-  }
-
-  dd {
-    @include text-body-sm;
-    color: $color-text-primary;
-    margin: $space-1 0 0;
+  @include responsive-md {
+    grid-template-columns: repeat(4, 1fr);
+    gap: $space-5;
   }
 }
 
+.field {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  dt {
+    font-family: $f-body;
+    font-size: 11px;
+    color: $n-500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  dd {
+    font-family: $f-body;
+    font-size: 14px;
+    color: $n-900;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.4;
+  }
+}
+
+// --- Bloque de diploma emitido ---
 .diploma {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: $space-3;
-  margin-top: $space-3;
-  padding: $space-3 $space-4;
-  background: $color-success-light;
-  border: 1px solid $color-success;
-  border-radius: $radius-md;
+  gap: $space-4;
+  padding: 18px 22px;
+  background: linear-gradient(135deg, rgba(143, 196, 168, 0.18), rgba(143, 196, 168, 0.08));
+  border: 1px solid $p-300;
+  border-radius: $r-xl;
 }
 
 .diplomaInfo {
@@ -149,51 +324,82 @@
 }
 
 .diplomaEyebrow {
-  @include text-caption;
-  color: $color-success-dark;
+  font-family: $f-body;
+  font-size: 10px;
+  color: $p-700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  letter-spacing: 1px;
   font-weight: 600;
 }
 
 .diplomaCode {
-  @include text-body-md;
-  font-family: monospace;
-  color: $color-text-primary;
+  font-family: $f-mono;
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: 1px;
+  color: $n-900;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
 }
 
 .diplomaIssued {
-  @include text-body-sm;
-  color: $color-text-secondary;
+  font-family: $f-body;
+  font-size: 12px;
+  color: $n-600;
+  margin-top: 2px;
 }
 
 .diplomaActions {
   display: flex;
   align-items: center;
   gap: $space-3;
+  flex-wrap: wrap;
 }
 
 .diplomaButton {
-  @include text-body-sm;
-  padding: $space-2 $space-3;
-  background: $color-brand;
-  color: $color-text-inverse;
-  border-radius: $radius-md;
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 16px;
+  background: $p-700;
+  color: $n-0;
+  border-radius: $r-full;
   text-decoration: none;
+  font-family: $f-body;
+  font-size: 13px;
   font-weight: 600;
+  transition: background $duration-fast $ease-default;
 
   &:hover {
-    background: $color-primary-800;
+    background: $p-800;
   }
 }
 
 .diplomaSecondary {
-  @include text-body-sm;
-  color: $color-text-brand;
+  font-family: $f-body;
+  font-size: 13px;
+  color: $p-700;
   text-decoration: none;
   font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// --- Footer del card ---
+.itemFooter {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: $space-3;
+  border-top: 1px solid $n-200;
+}
+
+.detailLink {
+  font-family: $f-body;
+  font-size: 13px;
+  color: $p-700;
+  font-weight: 600;
+  text-decoration: none;
+  transition: gap $duration-fast $ease-default;
 
   &:hover {
     text-decoration: underline;
