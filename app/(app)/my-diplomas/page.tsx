@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { Badge } from '@/components/ui/Badge';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Button } from '@/components/ui/Button';
 import { formatDate } from '@/lib/format';
@@ -39,10 +39,13 @@ export default async function MyDiplomasPage() {
           durationHours: true,
           venueName: true,
           claveroSkillCode: true,
+          claveroSkillSuffix: true,
         },
       },
     },
   });
+
+  const activeCount = diplomas.filter((d) => d.status === 'ACTIVE').length;
 
   return (
     <div className={styles.page}>
@@ -54,12 +57,27 @@ export default async function MyDiplomasPage() {
       />
       <header className={styles.header}>
         <span className={styles.eyebrow}>Tus diplomas</span>
-        <h1>Mis diplomas</h1>
-        <p>
-          Todos los diplomas que has obtenido en SES. Cada uno lleva un código de verificación
-          público — cualquiera puede comprobar su autenticidad introduciéndolo en{' '}
-          <code>/verify</code>.
+        <h1 className={styles.title}>
+          Mis <span className={styles.titleItalic}>diplomas.</span>
+        </h1>
+        <p className={styles.lead}>
+          Cada diploma lleva un código de verificación pública — cualquiera puede comprobar su
+          autenticidad introduciéndolo en{' '}
+          <Link href="/verify" className={styles.leadLink}>
+            /verify
+          </Link>
+          .
         </p>
+        <div className={styles.metaRow}>
+          <span className={styles.metaPill}>
+            <span className={styles.metaDot} aria-hidden />
+            {diplomas.length === 0
+              ? 'Sin diplomas todavía'
+              : activeCount === diplomas.length
+                ? `${diplomas.length} ${diplomas.length === 1 ? 'diploma vigente' : 'diplomas vigentes'}`
+                : `${activeCount} de ${diplomas.length} ${diplomas.length === 1 ? 'vigente' : 'vigentes'}`}
+          </span>
+        </div>
       </header>
 
       {diplomas.length === 0 ? (
@@ -77,66 +95,114 @@ export default async function MyDiplomasPage() {
         <ul className={styles.list}>
           {diplomas.map((d) => {
             const isActive = d.status === 'ACTIVE';
+            const skill = d.course.claveroSkillCode
+              ? `${d.course.claveroSkillCode}${
+                  d.course.claveroSkillSuffix ? ` (${d.course.claveroSkillSuffix})` : ''
+                }`
+              : null;
+
             return (
-              <li key={d.id} className={styles.item}>
-                <header className={styles.itemHeader}>
-                  <Badge
-                    status={isActive ? 'active' : 'revoked'}
-                    showDot={false}
+              <li
+                key={d.id}
+                className={`${styles.item} ${isActive ? '' : styles.itemRevoked}`}
+              >
+                <div className={styles.itemLeft}>
+                  <div
+                    className={`${styles.statusPill} ${
+                      isActive ? '' : styles.statusPillDanger
+                    }`}
                   >
-                    {isActive ? 'Vigente' : 'Revocado'}
-                  </Badge>
-                  <span className={styles.muted}>
-                    Emitido el {formatDate(d.issuedAt, 'long')}
-                  </span>
-                </header>
-
-                <h2>{d.course.title}</h2>
-
-                <dl className={styles.meta}>
-                  <div>
-                    <dt>Código</dt>
-                    <dd className={styles.code}>{d.code}</dd>
+                    <span
+                      className={`${styles.statusDot} ${
+                        isActive ? '' : styles.statusDotDanger
+                      }`}
+                      aria-hidden
+                    />
+                    <span className={styles.statusText}>
+                      {isActive ? 'Diploma vigente' : 'Diploma revocado'}
+                    </span>
+                    <span
+                      className={`${styles.statusBadge} ${
+                        isActive ? '' : styles.statusBadgeDanger
+                      }`}
+                    >
+                      {isActive ? 'VIGENTE' : 'REVOCADO'}
+                    </span>
                   </div>
-                  <div>
-                    <dt>Duración</dt>
-                    <dd>{d.course.durationHours} h lectivas</dd>
+
+                  <div className={styles.courseEyebrow}>Curso acreditado</div>
+                  <h2 className={styles.courseTitle}>{d.course.title}</h2>
+
+                  <div className={styles.codeBlock}>
+                    <div className={styles.codeEyebrow}>Código de verificación</div>
+                    <div className={styles.code}>{d.code}</div>
                   </div>
-                  {d.course.venueName ? (
-                    <div>
-                      <dt>Sede</dt>
-                      <dd>{d.course.venueName}</dd>
+
+                  <dl className={styles.meta}>
+                    <div className={styles.field}>
+                      <dt>Duración</dt>
+                      <dd>{d.course.durationHours} horas lectivas</dd>
+                    </div>
+                    <div className={styles.field}>
+                      <dt>Emitido</dt>
+                      <dd>{formatDate(d.issuedAt, 'long')}</dd>
+                    </div>
+                    {d.course.venueName ? (
+                      <div className={styles.field}>
+                        <dt>Sede</dt>
+                        <dd>{d.course.venueName}</dd>
+                      </div>
+                    ) : null}
+                    {skill ? (
+                      <div className={styles.field}>
+                        <dt>Skill Clavero</dt>
+                        <dd className={styles.fieldMono}>{skill}</dd>
+                      </div>
+                    ) : null}
+                  </dl>
+
+                  {!isActive && d.revocationReason ? (
+                    <div className={styles.revocationNote}>
+                      <p>
+                        <strong>Motivo de revocación:</strong> {d.revocationReason}
+                      </p>
                     </div>
                   ) : null}
-                  {d.course.claveroSkillCode ? (
-                    <div>
-                      <dt>Skill acreditado (Clavero)</dt>
-                      <dd>{d.course.claveroSkillCode}</dd>
+
+                  {isActive ? (
+                    <div className={styles.actions}>
+                      {d.pdfKey ? (
+                        <a
+                          href={`/api/diplomas/${d.code}/download`}
+                          className={styles.primary}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Ver diploma →
+                        </a>
+                      ) : null}
+                      <Link href={`/verify/${d.code}`} className={styles.secondary}>
+                        <QrIcon /> Verificación pública
+                      </Link>
                     </div>
                   ) : null}
-                </dl>
-
-                {!isActive && d.revocationReason ? (
-                  <p className={styles.revocation}>
-                    Motivo de revocación: {d.revocationReason}
-                  </p>
-                ) : null}
+                </div>
 
                 {isActive ? (
-                  <div className={styles.actions}>
-                    {d.pdfKey ? (
-                      <a
-                        href={`/api/diplomas/${d.code}/download`}
-                        className={styles.primary}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Ver diploma →
-                      </a>
-                    ) : null}
-                    <Link href={`/verify/${d.code}`} className={styles.secondary}>
-                      Página de verificación
-                    </Link>
+                  <div className={styles.itemRight} aria-hidden>
+                    <Image
+                      src="/brand/logo-seal.png"
+                      alt=""
+                      width={140}
+                      height={140}
+                      className={styles.seal}
+                    />
+                    <div className={styles.sigEyebrow}>Sello SES</div>
+                    <div className={styles.sigText}>
+                      Acredita formación
+                      <br />
+                      No caduca
+                    </div>
                   </div>
                 ) : null}
               </li>
@@ -145,5 +211,25 @@ export default async function MyDiplomasPage() {
         </ul>
       )}
     </div>
+  );
+}
+
+function QrIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={14}
+      height={14}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x={3} y={3} width={7} height={7} />
+      <rect x={14} y={3} width={7} height={7} />
+      <rect x={3} y={14} width={7} height={7} />
+      <path d="M14 14h3v3h-3zM20 14v3M14 20h3" />
+    </svg>
   );
 }

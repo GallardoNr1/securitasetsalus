@@ -2,173 +2,443 @@
 @use '../../../design-system/tokens/typography' as *;
 @use '../../../design-system/tokens/spacing-shadows' as *;
 
+// ============================================================
+// /my-diplomas — galería de diplomas del alumno.
+// Cards al estilo "pasaporte" del rediseño de /verify pero en
+// formato compacto y multi-item: izquierda con info y código,
+// derecha con sello en gradiente verde.
+// ============================================================
+
 .page {
-  max-width: $space-page-max;
+  max-width: 920px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: $space-6;
 }
 
+// --- Header ---
 .header {
   display: flex;
   flex-direction: column;
   gap: $space-2;
-  padding-bottom: $space-4;
-  border-bottom: 1px solid $color-border-default;
+  padding: $space-2 0 $space-5;
+  border-bottom: 1px solid $n-200;
 }
 
 .eyebrow {
-  @include text-caption;
-  color: $color-text-muted;
+  font-family: $f-body;
+  font-size: 11px;
+  color: $p-700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  letter-spacing: $letter-spacing-wider;
+  font-weight: 600;
 }
 
-.header h1 {
-  @include text-display-md;
-  color: $color-text-primary;
-  margin: $space-1 0 0;
+.title {
+  font-family: $f-display;
+  font-size: clamp(36px, 6vw, 64px);
+  margin: $space-1 0 $space-3;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  color: $n-900;
 }
 
-.header p {
-  @include text-body-md;
-  color: $color-text-secondary;
-  margin: 0;
-  max-width: 70ch;
+.titleItalic {
+  font-style: italic;
+  color: $p-700;
+  font-weight: 500;
 }
 
+.lead {
+  font-family: $f-body;
+  font-size: 16px;
+  color: $n-600;
+  max-width: 60ch;
+  margin: 0 0 $space-4;
+  line-height: 1.55;
+}
+
+.leadLink {
+  color: $p-700;
+  font-weight: 600;
+  text-decoration: none;
+  font-family: $f-mono;
+  font-size: 14px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.metaRow {
+  display: flex;
+  gap: $space-2;
+  flex-wrap: wrap;
+}
+
+.metaPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: $n-0;
+  border: 1px solid $p-300;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 13px;
+  color: $n-700;
+  font-weight: 500;
+  box-shadow: $sh-sm;
+}
+
+.metaDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $p-500;
+  box-shadow: 0 0 0 4px rgba(90, 155, 123, 0.18);
+}
+
+// --- Empty state ---
 .empty {
-  padding: $space-6;
-  border: 1px dashed $color-border-default;
-  border-radius: $radius-md;
+  padding: 64px 32px;
   text-align: center;
+  background: $n-0;
+  border: 1px dashed $n-300;
+  border-radius: $r-2xl;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: $space-3;
 
   h2 {
-    @include text-heading-md;
-    color: $color-text-primary;
+    font-family: $f-display;
+    font-size: 24px;
+    color: $n-900;
     margin: 0;
+    letter-spacing: -0.02em;
   }
 
   p {
-    @include text-body-md;
-    color: $color-text-secondary;
-    margin: 0;
-    max-width: 50ch;
+    font-family: $f-body;
+    font-size: 15px;
+    color: $n-600;
+    margin: 0 0 $space-2;
+    line-height: 1.55;
+    max-width: 56ch;
   }
 }
 
+// --- Lista ---
 .list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: $space-3;
+  gap: $space-5;
 }
 
 .item {
+  background: $n-0;
+  border: 1px solid $n-200;
+  border-radius: $r-2xl;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr;
+  box-shadow: 0 4px 12px rgba(26, 38, 34, 0.04);
+  transition: transform $duration-fast $ease-default,
+    box-shadow $duration-fast $ease-default;
+
+  @include responsive-md {
+    grid-template-columns: 1fr 240px;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 40px rgba(26, 38, 34, 0.1);
+  }
+}
+
+.itemRevoked {
+  background: $n-50;
+  border-color: $n-300;
+
+  &:hover {
+    transform: none;
+    box-shadow: 0 4px 12px rgba(26, 38, 34, 0.04);
+  }
+}
+
+.itemLeft {
+  padding: 28px 28px 24px;
   display: flex;
   flex-direction: column;
   gap: $space-3;
-  padding: $space-4 $space-5;
-  background: $color-bg-surface;
-  border: 1px solid $color-border-default;
-  border-radius: $radius-md;
-  box-shadow: $shadow-sm;
 
-  h2 {
-    @include text-heading-md;
-    color: $color-text-primary;
-    margin: 0;
+  @include responsive-md {
+    padding: 36px 36px 32px;
   }
 }
 
-.itemHeader {
-  display: flex;
+// --- Status pill ---
+.statusPill {
+  display: inline-flex;
   align-items: center;
-  gap: $space-3;
+  gap: 12px;
+  padding: 6px 6px 6px 14px;
+  background: $n-0;
+  border: 1px solid $p-300;
+  border-radius: $r-full;
   flex-wrap: wrap;
+  box-shadow: $sh-sm;
+  align-self: flex-start;
 }
 
-.muted {
-  @include text-body-sm;
-  color: $color-text-muted;
+.statusPillDanger {
+  border-color: $color-danger;
 }
 
-.meta {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: $space-3;
+.statusDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: $p-500;
+  box-shadow: 0 0 0 3px rgba(90, 155, 123, 0.2);
+}
+
+.statusDotDanger {
+  background: $color-danger;
+  box-shadow: 0 0 0 3px rgba(166, 66, 66, 0.2);
+}
+
+.statusText {
+  font-family: $f-body;
+  font-size: 12px;
+  color: $n-700;
+  font-weight: 500;
+}
+
+.statusBadge {
+  padding: 4px 10px;
+  background: $p-700;
+  color: $n-0;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.statusBadgeDanger {
+  background: $color-danger;
+}
+
+// --- Curso ---
+.courseEyebrow {
+  font-family: $f-body;
+  font-size: 10px;
+  color: $n-500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: $space-2;
+}
+
+.courseTitle {
+  font-family: $f-display;
+  font-size: clamp(22px, 3.4vw, 28px);
+  color: $n-900;
   margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
 
-  div {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
+// --- Bloque del código ---
+.codeBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 20px;
+  background: $n-50;
+  border: 1px solid $n-200;
+  border-radius: $r-md;
+  margin-top: $space-2;
+}
 
-  dt {
-    @include text-caption;
-    color: $color-text-muted;
-    text-transform: uppercase;
-    letter-spacing: $letter-spacing-wider;
-  }
-
-  dd {
-    @include text-body-md;
-    color: $color-text-primary;
-    margin: 0;
-    font-weight: $font-weight-semibold;
-  }
+.codeEyebrow {
+  font-family: $f-body;
+  font-size: 10px;
+  color: $n-500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .code {
-  font-family: monospace;
-  letter-spacing: 1px;
+  font-family: $f-mono;
+  font-size: clamp(20px, 3.2vw, 26px);
+  font-weight: 700;
+  color: $n-900;
+  letter-spacing: 0.08em;
+  word-break: break-all;
 }
 
-.revocation {
-  @include text-body-sm;
-  color: $color-danger;
-  background: $color-danger-light;
-  padding: $space-2 $space-3;
-  border-radius: $radius-md;
+// --- Meta grid ---
+.meta {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-4;
+  margin: $space-2 0 0;
+
+  @include responsive-sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.field {
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  dt {
+    font-family: $f-body;
+    font-size: 11px;
+    color: $n-500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  dd {
+    font-family: $f-body;
+    font-size: 14px;
+    color: $n-900;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.4;
+  }
 }
 
+.fieldMono {
+  font-family: $f-mono !important;
+  letter-spacing: 0.06em;
+}
+
+// --- Revocación ---
+.revocationNote {
+  margin-top: $space-2;
+  padding: 14px 18px;
+  background: $color-danger-light;
+  border: 1px solid rgba(166, 66, 66, 0.25);
+  border-radius: $r-md;
+
+  p {
+    font-family: $f-body;
+    font-size: 13px;
+    color: $color-danger-dark;
+    line-height: 1.55;
+    margin: 0;
+
+    strong {
+      font-weight: 600;
+    }
+  }
+}
+
+// --- Acciones ---
 .actions {
   display: flex;
-  gap: $space-3;
   align-items: center;
+  gap: $space-3;
   flex-wrap: wrap;
+  margin-top: $space-3;
 }
 
 .primary {
-  @include text-body-sm;
-  padding: $space-2 $space-3;
-  background: $color-brand;
-  color: $color-text-inverse;
-  border-radius: $radius-md;
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 18px;
+  background: $p-700;
+  color: $n-0;
+  border-radius: $r-full;
   text-decoration: none;
-  font-weight: $font-weight-semibold;
+  font-family: $f-body;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background $duration-fast $ease-default;
 
   &:hover {
-    background: $color-primary-800;
+    background: $p-800;
   }
 }
 
 .secondary {
-  @include text-body-sm;
-  color: $color-text-brand;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: $r-full;
+  background: transparent;
+  border: 1px solid $n-300;
+  color: $n-900;
   text-decoration: none;
-  font-weight: $font-weight-medium;
+  font-family: $f-body;
+  font-size: 13px;
+  font-weight: 500;
+  transition: border-color $duration-fast $ease-default,
+    color $duration-fast $ease-default;
 
   &:hover {
-    text-decoration: underline;
+    border-color: $p-700;
+    color: $p-700;
   }
+}
+
+// --- Columna derecha (sello) ---
+.itemRight {
+  background: linear-gradient(160deg, $p-700, $p-800);
+  color: $a-100;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-3;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  @include responsive-md {
+    border-top: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+.seal {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 140px;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
+}
+
+.sigEyebrow {
+  font-family: $f-body;
+  font-size: 10px;
+  color: $a-300;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: $space-2;
+}
+
+.sigText {
+  font-family: $f-body;
+  font-size: 12px;
+  color: $a-200;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
 }
