@@ -20,7 +20,6 @@ import styles from './SiteHeader.module.scss';
 const NAV_ITEMS: Array<{ href: Route; label: string; matchPrefixes: string[] }> = [
   { href: '/courses', label: 'Cursos', matchPrefixes: ['/courses'] },
   { href: '/#como-funciona' as Route, label: 'Cómo funciona', matchPrefixes: [] },
-  { href: '/verify', label: 'Diplomas', matchPrefixes: ['/verify'] },
   { href: '/#contacto' as Route, label: 'Contacto', matchPrefixes: [] },
 ];
 

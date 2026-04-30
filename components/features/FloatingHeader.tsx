@@ -33,14 +33,11 @@ export function FloatingHeader() {
         </Link>
 
         <nav className={styles.nav} aria-label="Navegación principal">
-          <Link href="/courses" className={`${styles.navLink} ${styles.navLinkActive}`}>
+          <Link href="/courses" className={styles.navLink}>
             Cursos
           </Link>
           <Link href="/#como-funciona" className={styles.navLink}>
             Cómo funciona
-          </Link>
-          <Link href="/verify" className={styles.navLink}>
-            Diplomas
           </Link>
           <Link href="/#sedes" className={styles.navLink}>
             Sedes
@@ -69,6 +66,9 @@ export function FloatingHeader() {
               <path d="M14 14h3v3h-3zM20 14v3M14 20h3" />
             </svg>
             Verificar
+          </Link>
+          <Link href="/login" className={styles.loginLink}>
+            Iniciar sesión
           </Link>
           <Link href="/courses" className={styles.cta}>
             Inscribirme

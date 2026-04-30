@@ -126,6 +126,27 @@
   }
 }
 
+.loginLink {
+  display: none;
+  align-items: center;
+  padding: 10px 14px;
+  color: $n-700;
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  border-radius: $r-full;
+  white-space: nowrap;
+  transition: color $duration-fast $ease-default;
+
+  &:hover {
+    color: $p-700;
+  }
+
+  @include responsive-md {
+    display: inline-flex;
+  }
+}
+
 .cta {
   display: inline-flex;
   align-items: center;
