@@ -15,36 +15,55 @@ export default async function CoursesPage() {
 
   return (
     <main className={styles.page}>
-      <header className={styles.header}>
-        <span className={styles.eyebrow}>Catálogo</span>
-        <h1>Cursos disponibles</h1>
-        <p>
-          Cursos presenciales con cupos limitados. Inscríbete pagando directamente desde la web,
-          recibe confirmación inmediata y descarga tu diploma al finalizar.
-        </p>
-      </header>
-
-      {courses.length === 0 ? (
-        <div className={styles.empty}>
-          <h2>Aún no hay cursos publicados</h2>
-          <p>
-            Estamos preparando los próximos cursos. Vuelve pronto o escríbenos a{' '}
-            <a href="mailto:contacto@ses.agsint.cl">contacto@ses.agsint.cl</a> si quieres que
-            te avisemos cuando abramos inscripciones.
+      <section className={styles.hero}>
+        <div className={styles.heroInner}>
+          <span className={styles.eyebrow}>Catálogo</span>
+          <h1 className={styles.title}>
+            Cursos<br />
+            <span className={styles.titleItalic}>presenciales.</span>
+          </h1>
+          <p className={styles.lead}>
+            Cohortes pequeñas, instructores con experiencia real, diplomas
+            verificables. Inscríbete directamente desde la web.
           </p>
-          <Link href="/" className={styles.emptyLink}>
-            Volver al inicio
-          </Link>
+
+          {courses.length > 0 ? (
+            <div className={styles.metaRow}>
+              <span className={styles.metaPill}>
+                <span className={styles.metaDot} aria-hidden />
+                {courses.length}{' '}
+                {courses.length === 1 ? 'curso disponible' : 'cursos disponibles'}
+              </span>
+            </div>
+          ) : null}
         </div>
-      ) : (
-        <ul className={styles.grid}>
-          {courses.map((course) => (
-            <li key={course.id}>
-              <CourseCard course={course} />
-            </li>
-          ))}
-        </ul>
-      )}
+      </section>
+
+      <section className={styles.list}>
+        <div className={styles.listInner}>
+          {courses.length === 0 ? (
+            <div className={styles.empty}>
+              <h2>Aún no hay cursos publicados</h2>
+              <p>
+                Estamos preparando los próximos cursos. Vuelve pronto o escríbenos a{' '}
+                <a href="mailto:dev@securitasetsalus.cl">dev@securitasetsalus.cl</a> si
+                quieres que te avisemos cuando abramos inscripciones.
+              </p>
+              <Link href="/" className={styles.emptyLink}>
+                Volver al inicio
+              </Link>
+            </div>
+          ) : (
+            <ul className={styles.grid}>
+              {courses.map((course) => (
+                <li key={course.id}>
+                  <CourseCard course={course} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
     </main>
   );
 }
