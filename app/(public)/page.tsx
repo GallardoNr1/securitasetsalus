@@ -187,25 +187,31 @@ export default async function HomePage() {
               </p>
             </header>
 
-            <ol className={styles.steps}>
-              <li>
-                <span className={styles.stepNumber}>01</span>
+            <ol className={styles.stepper} aria-label="Pasos para certificarte">
+              <li className={styles.step}>
+                <div className={styles.stepCircle} aria-hidden>
+                  <span className={styles.stepNumber}>1</span>
+                </div>
                 <h3>Elige tu curso</h3>
                 <p>
                   Explora el catálogo con cursos por categoría, sede y fecha.
                   Inscríbete pagando directamente desde la web — sin intermediarios.
                 </p>
               </li>
-              <li>
-                <span className={styles.stepNumber}>02</span>
+              <li className={styles.step}>
+                <div className={styles.stepCircle} aria-hidden>
+                  <span className={styles.stepNumber}>2</span>
+                </div>
                 <h3>Asiste y aprueba</h3>
                 <p>
                   Cursos 100% presenciales en sedes acreditadas. Asistencia, examen y
                   evaluación cualitativa son requisitos para obtener el diploma.
                 </p>
               </li>
-              <li>
-                <span className={styles.stepNumber}>03</span>
+              <li className={styles.step}>
+                <div className={styles.stepCircle} aria-hidden>
+                  <span className={styles.stepNumber}>3</span>
+                </div>
                 <h3>Recibe tu diploma verificable</h3>
                 <p>
                   Diploma PDF con código único y QR público. Cualquiera puede
