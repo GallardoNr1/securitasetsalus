@@ -27,25 +27,10 @@ const ROLE_LABELS: Record<Role, string> = {
 
 type MenuItem = { href: Route; label: string };
 
-const MENU_ITEMS: Record<Role, MenuItem[]> = {
-  SUPER_ADMIN: [
-    { href: '/admin', label: 'Panel admin' },
-    { href: '/admin/users', label: 'Usuarios' },
-    { href: '/admin/courses', label: 'Cursos' },
-    { href: '/profile', label: 'Mi perfil' },
-  ],
-  INSTRUCTOR: [
-    { href: '/instructor', label: 'Panel instructor' },
-    { href: '/instructor/courses', label: 'Mis cursos' },
-    { href: '/profile', label: 'Mi perfil' },
-  ],
-  STUDENT: [
-    { href: '/dashboard', label: 'Mi panel' },
-    { href: '/my-courses', label: 'Mis cursos' },
-    { href: '/my-diplomas', label: 'Mis diplomas' },
-    { href: '/profile', label: 'Mi perfil' },
-  ],
-};
+// Solo items relacionados con la cuenta del USUARIO. La navegación del
+// sitio (Panel, Cursos, Mis diplomas, etc.) vive en AppNav central — aquí
+// no se duplica para evitar dos sitios donde decidir lo mismo.
+const ACCOUNT_ITEMS: MenuItem[] = [{ href: '/profile', label: 'Mi perfil' }];
 
 export function UserMenu({ user, avatarKey }: Props) {
   const [open, setOpen] = useState(false);
@@ -79,7 +64,7 @@ export function UserMenu({ user, avatarKey }: Props) {
     return () => document.removeEventListener('keydown', handler);
   }, [open]);
 
-  const items = MENU_ITEMS[user.role];
+  const items = ACCOUNT_ITEMS;
 
   return (
     <div ref={containerRef} className={styles.container}>
