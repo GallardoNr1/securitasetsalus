@@ -60,23 +60,19 @@ const styles = StyleSheet.create({
   },
 
   // --- Marca de agua ---
-  // Sello grande, semi-transparente, rotado y desplazado para que
-  // entre solo media figura por la esquina derecha. Da peso visual
-  // sin pelearse con el texto del centro.
+  // Sello grande, semi-transparente, desplazado hacia la esquina
+  // superior derecha para que entre solo media figura. Da peso
+  // visual sin pelearse con el texto del centro.
   //
-  // El tamaño base (440) se calcula para que la bounding box DESPUÉS
-  // de rotar 18° no exceda la altura de página A4 horizontal (595pt).
-  // 440 * (cos(18°) + sin(18°)) ≈ 555pt → cabe con margen de seguridad.
-  // Si crecemos el sello, react-pdf lo manda a una página propia y
-  // rompe el layout del diploma.
+  // Mantener width/height ≤ 595pt (altura A4 horizontal) — si nos
+  // pasamos, react-pdf manda la imagen a su propia página.
   watermark: {
     position: 'absolute',
-    width: 440,
-    height: 440,
-    top: -60,
-    right: -100,
+    width: 560,
+    height: 560,
+    top: -120,
+    right: -160,
     opacity: 0.09,
-    transform: 'rotate(18deg)',
   },
 
   // --- Marco interior ---
