@@ -3,11 +3,168 @@
 @use '../../../design-system/tokens/spacing-shadows' as *;
 
 .page {
-  max-width: 720px;
+  max-width: 1080px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: $space-8;
+  gap: $space-6;
+}
+
+// --- Header del perfil ---
+.pageHeader {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding-bottom: $space-3;
+}
+
+.pageEyebrow {
+  font-family: $f-body;
+  font-size: 11px;
+  color: $p-700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.pageTitle {
+  font-family: $f-display;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  color: $n-900;
+  margin: 0;
+}
+
+.pageTitleItalic {
+  font-style: italic;
+  color: $p-700;
+  font-weight: 500;
+}
+
+// --- Layout 2 col: sidebar + main ---
+.layout {
+  display: grid;
+  gap: $space-6;
+  grid-template-columns: 1fr;
+  align-items: flex-start;
+
+  @include responsive-md {
+    grid-template-columns: 240px 1fr;
+    gap: $space-8;
+  }
+}
+
+.sidebarWrap {
+  position: relative;
+
+  @include responsive-md {
+    position: sticky;
+    top: $space-6;
+  }
+}
+
+// --- Sidebar nav ---
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-4;
+  background: $n-0;
+  border: 1px solid $n-200;
+  border-radius: $r-2xl;
+  box-shadow: 0 4px 12px rgba(26, 38, 34, 0.04);
+}
+
+.sidebarEyebrow {
+  font-family: $f-body;
+  font-size: 10px;
+  color: $n-500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 0 $space-2;
+}
+
+.sidebarList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebarItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: $r-md;
+  font-family: $f-body;
+  text-decoration: none;
+  color: $n-700;
+  cursor: pointer;
+  transition: background-color $duration-fast $ease-default,
+    color $duration-fast $ease-default;
+
+  &:hover {
+    background: $n-50;
+    color: $n-900;
+  }
+}
+
+.sidebarItemLabel {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.sidebarItemHint {
+  font-size: 11.5px;
+  color: $n-500;
+  font-weight: 400;
+}
+
+.sidebarItemActive {
+  background: $p-50;
+  color: $p-900;
+
+  .sidebarItemHint {
+    color: $p-700;
+  }
+
+  &:hover {
+    background: $p-50;
+    color: $p-900;
+  }
+}
+
+.sidebarItemDanger {
+  color: $color-danger;
+
+  .sidebarItemHint {
+    color: rgba(166, 66, 66, 0.65);
+  }
+
+  &:hover {
+    background: $color-danger-light;
+    color: $color-danger-dark;
+  }
+
+  &.sidebarItemActive {
+    background: $color-danger-light;
+    color: $color-danger-dark;
+  }
+}
+
+// --- Main column ---
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+  min-width: 0;
 }
 
 .section {
@@ -94,4 +251,70 @@
   font-family: $f-body;
   font-size: 14px;
   line-height: 1.45;
+}
+
+// --- Placeholders (Notificaciones / Pagos / Eliminar) ---
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-4;
+  background: $n-50;
+  border: 1px dashed $n-300;
+  border-radius: $r-md;
+
+  p {
+    font-family: $f-body;
+    font-size: 13.5px;
+    color: $n-600;
+    margin: 0;
+    line-height: 1.55;
+  }
+}
+
+.placeholderTag {
+  align-self: flex-start;
+  font-family: $f-body;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $n-500;
+  background: $n-0;
+  border: 1px solid $n-200;
+  padding: 3px 8px;
+  border-radius: $r-full;
+}
+
+// --- Sección de peligro ---
+.dangerSection {
+  border-color: rgba(166, 66, 66, 0.25);
+  background: $color-danger-light;
+
+  .sectionHeader {
+    border-bottom-color: rgba(166, 66, 66, 0.18);
+
+    h2 {
+      color: $color-danger-dark;
+    }
+
+    p {
+      color: $color-danger-dark;
+      opacity: 0.85;
+    }
+  }
+}
+
+.dangerButton {
+  align-self: flex-start;
+  padding: 10px 18px;
+  background: transparent;
+  color: $color-danger;
+  border: 1px solid $color-danger;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: not-allowed;
+  opacity: 0.65;
 }

@@ -251,45 +251,132 @@ export default async function HomePage() {
           </section>
         ) : null}
 
-        {/* ---------- Por qué SES ---------- */}
+        {/* ---------- Por qué SES — bento ---------- */}
         <section className={styles.section}>
           <div className={styles.sectionInner}>
-            <header className={styles.sectionHeader}>
-              <span className={styles.eyebrow}>Por qué SecuritasEtSalus</span>
-              <h2>Una escuela seria, no un cursillo cualquiera</h2>
+            <header className={`${styles.sectionHeader} ${styles.bentoHeader}`}>
+              <span className={styles.eyebrow}>Por qué SES</span>
+              <h2 className={styles.bentoH2}>
+                Una escuela seria,
+                <br />
+                <span className={styles.bentoH2Italic}>no un cursillo cualquiera.</span>
+              </h2>
             </header>
 
-            <div className={styles.featuresGrid}>
-              <article className={styles.feature}>
-                <h3>Instructores con oficio</h3>
-                <p>
-                  Todos nuestros profesores son cerrajeros en activo con más de 10
-                  años de experiencia. Aprendes del oficio real, no de manuales
-                  teóricos.
+            <div className={styles.bento}>
+              {/* Card grande — instructor con oficio */}
+              <article className={`${styles.bentoCard} ${styles.bentoMain}`}>
+                <Image
+                  src="/brand/logo-seal.png"
+                  alt=""
+                  width={320}
+                  height={320}
+                  aria-hidden
+                  className={styles.bentoMainSeal}
+                />
+                <span className={styles.bentoMainEyebrow}>El instructor que conoces</span>
+                <h3 className={styles.bentoMainTitle}>
+                  Cada cohorte la enseña alguien que vive del{' '}
+                  <span className={styles.bentoMainItalic}>oficio.</span>
+                </h3>
+                <p className={styles.bentoMainBody}>
+                  Mínimo 10 años de taller — cerrajeros en activo, no aulas teóricas.
+                  Instructor en franquicia comercial: gente que abre cerraduras toda la
+                  semana.
                 </p>
               </article>
-              <article className={styles.feature}>
-                <h3>Diplomas verificables</h3>
-                <p>
-                  Cada diploma lleva un código único y QR público. Cualquier cliente o
-                  autoridad puede comprobar su autenticidad en segundos.
+
+              {/* QR firmado — top right */}
+              <article className={`${styles.bentoCard} ${styles.bentoSmall} ${styles.bentoQr}`}>
+                <div className={styles.bentoSmallIcon} aria-hidden>
+                  <QrIcon />
+                </div>
+                <h3 className={styles.bentoSmallTitle}>QR firmado</h3>
+                <p className={styles.bentoSmallBody}>
+                  Cada diploma con código único, verificable en cualquier dispositivo.
                 </p>
               </article>
-              <article className={styles.feature}>
-                <h3>Franquicia SENCE disponible</h3>
-                <p>
-                  Cursos elegibles para franquicia tributaria SENCE: tu empleador
-                  puede deducir el coste y tú no pagas nada de tu bolsillo.
+
+              {/* Franquicia SENCE — middle right (cream) */}
+              <article className={`${styles.bentoCard} ${styles.bentoCream} ${styles.bentoSence}`}>
+                <div className={styles.bentoCreamIcon} aria-hidden>
+                  <BadgeIcon />
+                </div>
+                <h3 className={styles.bentoCreamTitle}>Franquicia SENCE</h3>
+                <p className={styles.bentoCreamBody}>
+                  Cursos elegibles vía OTEC — tu empleador deduce el coste.
                 </p>
               </article>
-              <article className={styles.feature}>
-                <h3>Sin grupos masificados</h3>
-                <p>
-                  Cupos limitados (6 a 12 alumnos por curso) para que el instructor
-                  pueda acompañarte caso por caso.
+
+              {/* Cohortes de diez — bottom left */}
+              <article className={`${styles.bentoCard} ${styles.bentoSmall} ${styles.bentoCohortes}`}>
+                <div className={styles.bentoSmallIcon} aria-hidden>
+                  <UsersIcon />
+                </div>
+                <h3 className={styles.bentoSmallTitle}>Cohortes de diez</h3>
+                <p className={styles.bentoSmallBody}>
+                  Cupos limitados, atención uno-a-uno garantizada.
                 </p>
+              </article>
+
+              {/* Mapeo Clavero — bottom wide (dark) */}
+              <article className={`${styles.bentoCard} ${styles.bentoDark} ${styles.bentoClavero}`}>
+                <div className={styles.bentoDarkIcon} aria-hidden>
+                  <MapIcon />
+                </div>
+                <div className={styles.bentoDarkContent}>
+                  <h3 className={styles.bentoDarkTitle}>Mapeo automático a Clavero</h3>
+                  <p className={styles.bentoDarkBody}>
+                    Cada diploma SES se mapea a una skill del registro Clavero.
+                  </p>
+                </div>
+                <Link href="/courses" className={styles.bentoDarkLink}>
+                  Saber más
+                  <ArrowIcon />
+                </Link>
               </article>
             </div>
+
+            {/* CTA card — próxima cohorte */}
+            {nextCourse && nextSession ? (
+              <div className={styles.cohorteCta}>
+                <Image
+                  src="/brand/logo-seal.png"
+                  alt=""
+                  width={320}
+                  height={320}
+                  aria-hidden
+                  className={styles.cohorteCtaSeal}
+                />
+                <div className={styles.cohorteCtaLeft}>
+                  <span className={styles.cohorteCtaEyebrow}>Próxima cohorte</span>
+                  <h3 className={styles.cohorteCtaTitle}>
+                    Tu próxima cohorte arranca el{' '}
+                    <span className={styles.cohorteCtaItalic}>
+                      {formatCohorteDate(nextSession.startsAt)}.
+                    </span>
+                  </h3>
+                  <p className={styles.cohorteCtaBody}>
+                    Cohorte de {nextCourse.title}
+                    {nextCourse.venueName ? ` en ${nextCourse.venueName}` : ''}, paga con
+                    Stripe si vas por tu cuenta o vía SENCE si pagas a través de empresa.
+                  </p>
+                </div>
+                <div className={styles.cohorteCtaRight}>
+                  <Link
+                    href={{ pathname: `/courses/${nextCourse.slug}` }}
+                    className={styles.cohorteCtaPrimary}
+                  >
+                    Inscríbete a pagar
+                    <ArrowIcon />
+                  </Link>
+                  <Link href="/courses" className={styles.cohorteCtaSecondary}>
+                    Ver el catálogo completo
+                    <ArrowIcon />
+                  </Link>
+                </div>
+              </div>
+            ) : null}
           </div>
         </section>
 
@@ -324,6 +411,15 @@ function buildShortDates(d: Date) {
     day3: String(day3),
     month: monthNames[d.getMonth()] ?? '',
   };
+}
+
+// "6 de mayo" — formato corto para el título de la CTA card.
+function formatCohorteDate(d: Date) {
+  const monthNames = [
+    'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
+  ];
+  return `${d.getDate()} de ${monthNames[d.getMonth()] ?? ''}`;
 }
 
 function DayPill({ day, month }: { day: string; month: string }) {
@@ -370,6 +466,34 @@ function ShieldIcon() {
     <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" />
       <path d="M9 12l2 2 4-5" />
+    </svg>
+  );
+}
+
+function BadgeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2l2.5 2.5L18 4l1 3.5L21.5 10 20 13l1.5 3-3 1.5L18 20l-3.5-.5L12 22l-2.5-2.5L6 20l-1-3.5L2.5 14 4 11 2.5 8l3-1.5L6 4l3.5.5z" />
+      <path d="M9 12l2 2 4-5" />
+    </svg>
+  );
+}
+
+function UsersIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx={9} cy={7} r={4} />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+
+function MapIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+      <circle cx={12} cy={10} r={3} />
+      <path d="M12 21s7-7 7-12a7 7 0 1 0-14 0c0 5 7 12 7 12z" />
     </svg>
   );
 }

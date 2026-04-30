@@ -58,18 +58,11 @@
   }
 }
 
+// El AuthShell se encarga de su propio layout split — aquí sólo
+// damos altura mínima y dejamos que ocupe todo el ancho.
 .main {
-  min-height: calc(100vh - 24rem);
-  padding-block: $space-12 $space-section-sm;
-  background:
-    radial-gradient(1000px 500px at 50% 0%, rgba(143, 196, 168, 0.20), transparent 60%),
-    $bg-page;
+  min-height: calc(100vh - 200px);
+  background-color: $bg-page;
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-inline: $space-page-gutter;
-
-  @include responsive-md {
-    padding-block: $space-section-md;
-  }
+  flex-direction: column;
 }

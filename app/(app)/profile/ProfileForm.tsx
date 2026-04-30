@@ -106,7 +106,7 @@ export function ProfileForm({ initial }: Props) {
   return (
     <>
       {/* Sección 1 — datos de perfil */}
-      <section className={styles.section}>
+      <section id="datos" className={styles.section}>
         <header className={styles.sectionHeader}>
           <h2>Datos personales</h2>
           <p>Actualiza la información de tu cuenta.</p>
@@ -222,9 +222,9 @@ export function ProfileForm({ initial }: Props) {
       </section>
 
       {/* Sección 2 — cambiar contraseña */}
-      <section className={styles.section}>
+      <section id="seguridad" className={styles.section}>
         <header className={styles.sectionHeader}>
-          <h2>Cambiar contraseña</h2>
+          <h2>Cuenta y seguridad</h2>
           <p>Solo aplica si tu cuenta tiene contraseña. Las cuentas con Magic Link no la usan.</p>
         </header>
 

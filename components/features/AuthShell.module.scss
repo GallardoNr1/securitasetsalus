@@ -1,0 +1,174 @@
+@use '../../design-system/tokens/colors' as *;
+@use '../../design-system/tokens/typography' as *;
+@use '../../design-system/tokens/spacing-shadows' as *;
+
+// ============================================================
+// AuthShell — split layout para login/signup/recover.
+// Form a la izquierda, panel marca con sello a la derecha.
+// En mobile (<lg) el panel derecho se oculta.
+// ============================================================
+
+.shell {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: calc(100vh - 200px);
+
+  @include responsive-lg {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+// --- Lado del formulario ---
+.formSide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+
+  @include responsive-md {
+    padding: 64px 48px;
+  }
+
+  @include responsive-lg {
+    padding: 64px 80px;
+  }
+}
+
+.formInner {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.title {
+  font-family: $f-display;
+  font-size: clamp(40px, 6vw, 56px);
+  margin: 0;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: $n-900;
+  font-weight: 700;
+}
+
+.subtitle {
+  font-family: $f-body;
+  font-size: 16px;
+  color: $n-600;
+  margin: 0 0 $space-5;
+  line-height: 1.5;
+}
+
+.banner {
+  margin-bottom: $space-3;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+}
+
+// --- Lado de marca ---
+.brandSide {
+  display: none;
+  position: relative;
+  overflow: hidden;
+  padding: 64px 56px;
+  flex-direction: column;
+  justify-content: space-between;
+  color: $a-100;
+  background: linear-gradient(160deg, $p-700, $p-900);
+
+  @include responsive-lg {
+    display: flex;
+  }
+}
+
+// Variantes de gradiente por side.
+.brandSide-login {
+  background: linear-gradient(160deg, $p-700, $p-900);
+}
+
+.brandSide-signup {
+  background: linear-gradient(160deg, $p-700, $p-950);
+}
+
+.brandSide-recover {
+  background: linear-gradient(160deg, $a-400, $a-700);
+  color: $p-900;
+
+  .eyebrowPill {
+    background: rgba(20, 56, 40, 0.18);
+    color: $p-900;
+  }
+
+  .brandTitle {
+    color: $p-900;
+  }
+
+  .italic {
+    color: $a-100;
+  }
+
+  .brandBody {
+    color: $p-900;
+    opacity: 0.85;
+  }
+}
+
+// Sello grande, semi-transparente, en la esquina superior derecha.
+.sealBg {
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  opacity: 0.18;
+  width: 420px;
+  height: 420px;
+  pointer-events: none;
+}
+
+.eyebrowPill {
+  position: relative;
+  display: inline-block;
+  align-self: flex-start;
+  padding: 6px 14px;
+  background: rgba(216, 200, 151, 0.18);
+  color: $a-300;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.brandFooter {
+  position: relative;
+  z-index: 1;
+}
+
+.brandTitle {
+  font-family: $f-display;
+  font-size: 36px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  color: $a-100;
+  margin: 0 0 14px;
+}
+
+.italic {
+  font-style: italic;
+  color: $a-300;
+}
+
+.brandBody {
+  font-family: $f-body;
+  font-size: 14px;
+  color: $a-200;
+  max-width: 380px;
+  line-height: 1.55;
+  margin: 0;
+}

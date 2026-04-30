@@ -2,34 +2,24 @@
 @use '../../design-system/tokens/typography' as *;
 @use '../../design-system/tokens/spacing-shadows' as *;
 
-// Card centrada del rediseño v3 — auth pages.
-.card {
-  width: 100%;
-  max-width: 480px;
-  background-color: $n-0;
-  border: 1px solid $n-200;
-  border-radius: $r-2xl;
-  box-shadow: 0 12px 32px rgba(26, 38, 34, 0.06);
-  padding: 40px 36px;
+// Wrapper del cuerpo del form dentro de AuthShell — sin card, sin
+// padding ni border, porque el shell ya hace de marco. Solo apila el
+// contenido (banners, form, footer link) con espaciado consistente.
+.body {
   display: flex;
   flex-direction: column;
   gap: $space-5;
 
-  @include responsive-md {
-    padding: 48px 44px;
-  }
-
-  h1 {
+  h2 {
     font-family: $f-display;
-    font-size: clamp(28px, 5vw, 40px);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    font-weight: 700;
+    font-size: 22px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-weight: 600;
     color: $n-900;
     margin: 0;
   }
 
-  // El subtítulo (primer <p> del card) — más sobrio.
   > p {
     font-family: $f-body;
     font-size: 15px;

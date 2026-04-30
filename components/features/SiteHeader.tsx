@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { MobileMenu } from './MobileMenu';
+import { PublicNav } from './PublicNav';
 import styles from './SiteHeader.module.scss';
 
 /**
@@ -10,10 +11,8 @@ import styles from './SiteHeader.module.scss';
  * acciones en píldora) pero sin el efecto glass ni margen negativo —
  * funciona sobre cualquier fondo.
  *
- * Sin nav central por decisión deliberada: el nav central con mezcla
- * de links a páginas y anclas a la landing era inconsistente. Las
- * secciones de información (cómo funciona, sedes, contacto, etc.) viven
- * en el footer; el header es solo logo + actions de conversión.
+ * Nav central con links a páginas reales (Inicio / Cursos / Contacto) —
+ * sin anclas a la landing, para que el active state sea predecible.
  */
 
 export function SiteHeader() {
@@ -33,6 +32,8 @@ export function SiteHeader() {
             Securitas<span className={styles.brandItalic}>Et</span>Salus
           </span>
         </Link>
+
+        <PublicNav />
 
         <div className={styles.actions}>
           <Link href="/verify" className={styles.verifyLink}>

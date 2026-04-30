@@ -14,6 +14,7 @@
 | 7 | Emails transaccionales | ⬜ Pendiente |
 | 8 | Material de curso (post-pago) | ⬜ Pendiente |
 | 9 | Tests, observabilidad y lanzamiento | ⬜ Pendiente |
+| — | Rediseño visual v3 | ✅ [Cerrado 2026-04-30](phases/redesign-v3-done.md) |
 
 **Estimación inicial total:** ~6-8 semanas a tiempo parcial, asumiendo reaprovechamiento agresivo de Clavero.
 

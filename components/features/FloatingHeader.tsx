@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { MobileMenu } from './MobileMenu';
+import { PublicNav } from './PublicNav';
 import styles from './FloatingHeader.module.scss';
 
 /**
@@ -32,6 +33,8 @@ export function FloatingHeader() {
             Securitas<span className={styles.brandItalic}>Et</span>Salus
           </span>
         </Link>
+
+        <PublicNav />
 
         <div className={styles.actions}>
           <Link href="/verify" className={styles.verifyLink}>

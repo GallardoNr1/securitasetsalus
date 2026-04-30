@@ -1,0 +1,440 @@
+@use '../../../../design-system/tokens/colors' as *;
+@use '../../../../design-system/tokens/typography' as *;
+@use '../../../../design-system/tokens/spacing-shadows' as *;
+
+// ============================================================
+// /contact — público.
+// Hero con sello como marca de agua + bloque split form/info.
+// ============================================================
+.page {
+  background: $bg-page;
+}
+
+// --- Hero ---
+.hero {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(1200px 600px at 80% 0%, rgba(143, 196, 168, 0.22), transparent 65%),
+    $bg-page;
+  padding: 80px $space-page-gutter 64px;
+  border-bottom: 1px solid $n-200;
+
+  @include responsive-md {
+    padding: 120px $space-8 96px;
+  }
+}
+
+.heroSeal {
+  position: absolute;
+  top: -120px;
+  right: -160px;
+  width: 520px;
+  height: auto;
+  opacity: 0.1;
+  pointer-events: none;
+  transform: rotate(15deg);
+}
+
+.heroInner {
+  position: relative;
+  max-width: $space-page-max;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.eyebrow {
+  align-self: flex-start;
+  display: inline-block;
+  padding: 6px 14px;
+  background: rgba(20, 56, 40, 0.06);
+  color: $p-700;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.title {
+  font-family: $f-display;
+  font-size: clamp(40px, 7vw, 72px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  color: $n-900;
+  margin: $space-2 0 0;
+}
+
+.titleItalic {
+  font-style: italic;
+  font-weight: 500;
+  color: $p-700;
+}
+
+.lead {
+  font-family: $f-body;
+  font-size: 17px;
+  color: $n-600;
+  max-width: 60ch;
+  margin: $space-3 0 0;
+  line-height: 1.55;
+}
+
+// --- Body ---
+.body {
+  padding: $space-section-sm $space-page-gutter;
+
+  @include responsive-md {
+    padding: $space-section-md $space-8;
+  }
+}
+
+.bodyInner {
+  max-width: $space-page-max;
+  margin: 0 auto;
+  display: grid;
+  gap: $space-8;
+  grid-template-columns: 1fr;
+
+  @include responsive-lg {
+    grid-template-columns: 1.5fr 1fr;
+    gap: $space-10;
+    align-items: flex-start;
+  }
+}
+
+// --- Form side ---
+.formSide {
+  background: $n-0;
+  border: 1px solid $n-200;
+  border-radius: $r-2xl;
+  padding: $space-6;
+  box-shadow: 0 12px 32px rgba(26, 38, 34, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+
+  @include responsive-md {
+    padding: $space-8;
+  }
+}
+
+.formHeader {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.formEyebrow {
+  font-family: $f-body;
+  font-size: 11px;
+  color: $p-700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.formTitle {
+  font-family: $f-display;
+  font-size: clamp(22px, 3vw, 28px);
+  color: $n-900;
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  font-weight: 600;
+}
+
+.formLead {
+  font-family: $f-body;
+  font-size: 14px;
+  color: $n-600;
+  margin: 0;
+  line-height: 1.55;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.formRow {
+  display: grid;
+  gap: $space-4;
+  grid-template-columns: 1fr;
+
+  @include responsive-sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.formNote {
+  font-family: $f-body;
+  font-size: 12px;
+  color: $n-500;
+  margin: 0;
+  line-height: 1.55;
+}
+
+.formNoteLink {
+  color: $p-700;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// --- Success ---
+.successBox {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space-3;
+  padding: $space-6;
+  background: $color-success-light;
+  border: 1px solid rgba(46, 115, 81, 0.25);
+  border-radius: $r-2xl;
+}
+
+.successIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: $p-700;
+  color: $n-0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.successTitle {
+  font-family: $f-display;
+  font-size: 22px;
+  color: $color-success-dark;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.successBody {
+  font-family: $f-body;
+  font-size: 14px;
+  color: $color-success-dark;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.successResetButton {
+  margin-top: $space-2;
+  background: transparent;
+  border: 1px solid $p-700;
+  color: $p-700;
+  padding: 8px 16px;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background $duration-fast $ease-default,
+    color $duration-fast $ease-default;
+
+  &:hover {
+    background: $p-700;
+    color: $n-0;
+  }
+}
+
+// --- Info side ---
+.infoSide {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.infoCard {
+  background: $n-0;
+  border: 1px solid $n-200;
+  border-radius: $r-2xl;
+  padding: $space-5;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  h3 {
+    font-family: $f-display;
+    font-size: 17px;
+    color: $n-900;
+    margin: $space-1 0 0;
+    letter-spacing: -0.01em;
+    font-weight: 600;
+  }
+
+  p {
+    font-family: $f-body;
+    font-size: 13px;
+    color: $n-600;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.infoIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: $r-md;
+  background: $p-50;
+  color: $p-700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.infoLink {
+  margin-top: 6px;
+  font-family: $f-mono;
+  font-size: 13.5px;
+  color: $p-700;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// --- Card oscura: empresas / SENCE ---
+.infoCardDark {
+  background: linear-gradient(160deg, $p-700, $p-900);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: $a-100;
+
+  h3 {
+    color: $a-100;
+  }
+
+  p {
+    color: $a-200;
+  }
+}
+
+.infoIconDark {
+  width: 38px;
+  height: 38px;
+  border-radius: $r-md;
+  background: rgba(216, 200, 151, 0.18);
+  color: $a-300;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.infoLinkDark {
+  margin-top: 6px;
+  font-family: $f-mono;
+  font-size: 13.5px;
+  color: $a-300;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// --- Sedes ---
+.venuesCard {
+  background: $n-0;
+  border: 1px solid $n-200;
+  border-radius: $r-2xl;
+  padding: $space-5;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.venuesEyebrow {
+  font-family: $f-body;
+  font-size: 11px;
+  color: $p-700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.venuesTitle {
+  font-family: $f-display;
+  font-size: 18px;
+  color: $n-900;
+  margin: 0;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+}
+
+.venuesList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.venueItem {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.venueDot {
+  margin-top: 7px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $p-500;
+  box-shadow: 0 0 0 4px rgba(90, 155, 123, 0.18);
+  flex-shrink: 0;
+}
+
+.venueText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: $f-body;
+  font-size: 13px;
+  line-height: 1.5;
+
+  strong {
+    color: $n-900;
+    font-weight: 600;
+  }
+
+  span {
+    color: $n-600;
+  }
+}
+
+.venuesNote {
+  font-family: $f-body;
+  font-size: 12px;
+  color: $n-500;
+  margin: $space-2 0 0;
+  line-height: 1.5;
+}
+
+.venuesLink {
+  color: $p-700;
+  font-weight: 600;
+  font-family: $f-mono;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

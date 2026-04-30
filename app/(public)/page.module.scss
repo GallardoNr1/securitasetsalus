@@ -608,33 +608,436 @@
 }
 
 // ============================================================
-// Features (por qué SES)
+// Por qué SES — bento grid
+// Layout asimétrico estilo "pasaporte": una card grande verde con
+// el sello como marca de agua, dos pequeñas a la derecha y una
+// fila inferior con un mini card + un wide oscuro con CTA.
 // ============================================================
-.featuresGrid {
+.bentoHeader {
+  text-align: center;
+  align-items: center;
+  align-self: center;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.bentoH2 {
+  font-family: $f-display;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  color: $n-900;
+  margin: 0;
+}
+
+.bentoH2Italic {
+  font-style: italic;
+  font-weight: 500;
+  color: $p-700;
+}
+
+.bento {
   display: grid;
-  gap: $space-6;
+  gap: $space-3;
   grid-template-columns: 1fr;
 
   @include responsive-md {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-areas:
+      'main main qr'
+      'main main sence'
+      'cohortes clavero clavero';
+    gap: 12px;
+  }
+}
+
+.bentoCard {
+  position: relative;
+  border-radius: $r-2xl;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: $space-5;
+  box-shadow: 0 4px 12px rgba(26, 38, 34, 0.04);
+  transition: transform $duration-fast $ease-default,
+    box-shadow $duration-fast $ease-default;
+
+  @include responsive-md {
+    padding: $space-6;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 40px rgba(26, 38, 34, 0.08);
+  }
+}
+
+// Card grande — verde profundo con sello como marca de agua.
+.bentoMain {
+  grid-area: main;
+  background: linear-gradient(160deg, $p-700, $p-900);
+  color: $a-100;
+  min-height: 320px;
+  justify-content: flex-end;
+
+  @include responsive-md {
+    min-height: 380px;
+    padding: $space-8;
+  }
+}
+
+.bentoMainSeal {
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 320px;
+  height: auto;
+  opacity: 0.14;
+  pointer-events: none;
+}
+
+.bentoMainEyebrow {
+  position: relative;
+  align-self: flex-start;
+  display: inline-block;
+  padding: 6px 14px;
+  background: rgba(216, 200, 151, 0.18);
+  color: $a-300;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: $space-4;
+}
+
+.bentoMainTitle {
+  position: relative;
+  font-family: $f-display;
+  font-size: clamp(24px, 3.4vw, 32px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  color: $a-100;
+  margin: 0 0 $space-3;
+}
+
+.bentoMainItalic {
+  font-style: italic;
+  color: $a-300;
+  font-weight: 500;
+}
+
+.bentoMainBody {
+  position: relative;
+  font-family: $f-body;
+  font-size: 14px;
+  color: $a-200;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 48ch;
+}
+
+// Cards pequeñas claras (QR firmado, Cohortes de diez).
+.bentoSmall {
+  background: $n-0;
+  border: 1px solid $n-200;
+  color: $n-900;
+}
+
+.bentoSmallIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: $r-md;
+  background: $p-50;
+  color: $p-700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $space-3;
+}
+
+.bentoSmallTitle {
+  font-family: $f-display;
+  font-size: 17px;
+  font-weight: 600;
+  color: $n-900;
+  margin: 0 0 6px;
+  letter-spacing: -0.01em;
+}
+
+.bentoSmallBody {
+  font-family: $f-body;
+  font-size: 13px;
+  color: $n-600;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.bentoQr {
+  grid-area: qr;
+}
+
+.bentoCohortes {
+  grid-area: cohortes;
+}
+
+// Card crema (Franquicia SENCE).
+.bentoCream {
+  grid-area: sence;
+  background: linear-gradient(160deg, $a-100, $a-200);
+  border: 1px solid rgba(216, 200, 151, 0.5);
+  color: $p-900;
+}
+
+.bentoCreamIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: $r-md;
+  background: rgba(216, 200, 151, 0.5);
+  color: $p-900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $space-3;
+}
+
+.bentoCreamTitle {
+  font-family: $f-display;
+  font-size: 17px;
+  font-weight: 600;
+  color: $p-900;
+  margin: 0 0 6px;
+  letter-spacing: -0.01em;
+}
+
+.bentoCreamBody {
+  font-family: $f-body;
+  font-size: 13px;
+  color: rgba(20, 56, 40, 0.78);
+  line-height: 1.5;
+  margin: 0;
+}
+
+// Card oscura wide (Mapeo Clavero) — con CTA inline.
+.bentoDark {
+  grid-area: clavero;
+  background: $n-900;
+  color: $a-100;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: grid;
+  gap: $space-3;
+  align-items: center;
+  grid-template-columns: auto 1fr;
+  align-content: center;
+
+  @include responsive-md {
+    grid-template-columns: auto 1fr auto;
+  }
+}
+
+.bentoDarkIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: $r-md;
+  background: rgba(216, 200, 151, 0.16);
+  color: $a-300;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bentoDarkContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.bentoDarkTitle {
+  font-family: $f-display;
+  font-size: 17px;
+  font-weight: 600;
+  color: $a-100;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.bentoDarkBody {
+  font-family: $f-body;
+  font-size: 13px;
+  color: rgba(232, 222, 192, 0.72);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.bentoDarkLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: $r-full;
+  background: $a-300;
+  color: $n-900;
+  text-decoration: none;
+  font-family: $f-body;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  justify-self: end;
+  grid-column: 1 / -1;
+  width: fit-content;
+  transition: background $duration-fast $ease-default;
+
+  @include responsive-md {
+    grid-column: auto;
+  }
+
+  &:hover {
+    background: $a-400;
+  }
+}
+
+// ============================================================
+// Cohorte CTA card — banner verde con sello como marca de agua,
+// título grande con la fecha en cursiva crema, dos CTAs a la derecha.
+// ============================================================
+.cohorteCta {
+  position: relative;
+  margin-top: $space-3;
+  background: linear-gradient(160deg, $p-700, $p-900);
+  color: $a-100;
+  border-radius: $r-2xl;
+  padding: $space-6;
+  overflow: hidden;
+  display: grid;
+  gap: $space-5;
+  grid-template-columns: 1fr;
+  align-items: center;
+  box-shadow: 0 12px 32px rgba(26, 38, 34, 0.12);
+
+  @include responsive-md {
+    grid-template-columns: 1.4fr 1fr;
+    padding: $space-8 $space-10;
     gap: $space-8;
   }
 }
 
-.feature {
-  padding: $space-6;
-  border-left: 3px solid $color-brand;
+.cohorteCtaSeal {
+  position: absolute;
+  top: -40px;
+  right: -60px;
+  width: 320px;
+  height: auto;
+  opacity: 0.14;
+  pointer-events: none;
+}
 
-  h3 {
-    @include text-heading-md;
-    color: $color-text-primary;
-    margin: 0 0 $space-2;
+.cohorteCtaLeft {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.cohorteCtaEyebrow {
+  align-self: flex-start;
+  display: inline-block;
+  padding: 6px 14px;
+  background: rgba(216, 200, 151, 0.18);
+  color: $a-300;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cohorteCtaTitle {
+  font-family: $f-display;
+  font-size: clamp(28px, 4vw, 38px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  color: $a-100;
+  margin: 0;
+}
+
+.cohorteCtaItalic {
+  font-style: italic;
+  color: $a-300;
+  font-weight: 500;
+}
+
+.cohorteCtaBody {
+  font-family: $f-body;
+  font-size: 14px;
+  color: $a-200;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 56ch;
+}
+
+.cohorteCtaRight {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  align-items: stretch;
+
+  @include responsive-md {
+    align-items: flex-end;
   }
+}
 
-  p {
-    @include text-body-md;
-    color: $color-text-secondary;
-    margin: 0;
+.cohorteCtaPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  padding: 14px 22px;
+  background: $a-300;
+  color: $n-900;
+  border-radius: $r-full;
+  text-decoration: none;
+  font-family: $f-body;
+  font-size: 15px;
+  font-weight: 600;
+  transition: background $duration-fast $ease-default,
+    transform $duration-fast $ease-default;
+  min-width: 240px;
+
+  &:hover {
+    background: $a-400;
+    transform: translateY(-1px);
+  }
+}
+
+.cohorteCtaSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  padding: 14px 22px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(216, 200, 151, 0.28);
+  color: $a-100;
+  border-radius: $r-full;
+  text-decoration: none;
+  font-family: $f-body;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background $duration-fast $ease-default,
+    border-color $duration-fast $ease-default;
+  min-width: 240px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: $a-300;
   }
 }
 

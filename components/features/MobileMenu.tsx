@@ -51,7 +51,9 @@ const ITEMS_BY_ROLE: Record<Role, MenuItem[]> = {
 };
 
 const PUBLIC_ITEMS: MenuItem[] = [
-  { href: '/courses', label: 'Catálogo de cursos' },
+  { href: '/', label: 'Inicio' },
+  { href: '/courses', label: 'Cursos' },
+  { href: '/contact', label: 'Contacto' },
   { href: '/verify', label: 'Verificar diploma' },
 ];
 
