@@ -3,9 +3,19 @@ import Image from 'next/image';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { isBucketConfigured } from '@/lib/r2-config';
+import { AppNav } from './AppNav';
 import { UserMenu } from './UserMenu';
 import styles from './AppHeader.module.scss';
 
+/**
+ * Header de la zona logueada.
+ *
+ * Layout: logo+wordmark a la izquierda · nav central por rol · UserMenu
+ * (avatar + dropdown) a la derecha. Comparte lenguaje visual con el
+ * SiteHeader y el FloatingHeader (Fraunces wordmark con 'Et' italic en
+ * verde marca, pill nav, sticky), pero con un nav distinto: aquí los
+ * items dependen del rol del usuario (ver AppNav).
+ */
 export async function AppHeader() {
   const session = await auth();
   const user = session?.user;
@@ -23,25 +33,32 @@ export async function AppHeader() {
   }
 
   return (
-    <header className={styles.header}>
+    <header className={styles.wrapper}>
       <div className={styles.inner}>
-        <Link href="/" className={styles.brand}>
+        <Link href="/" className={styles.brand} aria-label="Inicio — SecuritasEtSalus">
           <Image
             src="/brand/logo-mark.png"
             alt=""
-            width={32}
-            height={32}
+            width={34}
+            height={34}
             className={styles.logo}
+            priority
           />
-          <span className={styles.name}>SecuritasEtSalus</span>
+          <span className={styles.brandName}>
+            Securitas<span className={styles.brandItalic}>Et</span>Salus
+          </span>
         </Link>
+
+        {user ? <AppNav role={user.role} /> : <span aria-hidden />}
 
         {user && user.name ? (
           <UserMenu
             user={{ id: user.id, name: user.name, role: user.role }}
             avatarKey={avatarKey}
           />
-        ) : null}
+        ) : (
+          <span aria-hidden />
+        )}
       </div>
     </header>
   );

@@ -1,0 +1,46 @@
+@use '../../design-system/tokens/colors' as *;
+@use '../../design-system/tokens/typography' as *;
+@use '../../design-system/tokens/spacing-shadows' as *;
+
+// Pill nav central de la zona logueada.
+// Misma personalidad que el FloatingHeader / SiteHeader.
+
+.nav {
+  display: none;
+  gap: 6px;
+  padding: 4px;
+  background: rgba(232, 229, 220, 0.5);
+  border-radius: $r-full;
+
+  @include responsive-lg {
+    display: flex;
+  }
+}
+
+.navLink {
+  padding: 8px 14px;
+  border-radius: $r-full;
+  color: $n-700;
+  text-decoration: none;
+  font-family: $f-body;
+  font-size: 13.5px;
+  font-weight: 500;
+  background: transparent;
+  white-space: nowrap;
+  transition: background-color $duration-fast $ease-default,
+    color $duration-fast $ease-default;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.6);
+  }
+}
+
+.navLinkActive {
+  background: $p-700;
+  color: $n-0;
+
+  &:hover {
+    background: $p-800;
+    color: $n-0;
+  }
+}
