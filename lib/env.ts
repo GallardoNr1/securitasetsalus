@@ -54,10 +54,12 @@ const envSchema = z.object({
   CRON_SECRET: z.string().min(16).optional(),
 
   // Upstash Redis para rate limiting del endpoint público de verify
-  // (`/api/diplomas/[code]/verify`). Si faltan, el rate limit se
-  // degrada a no-op con un debug log — esto evita romper dev local.
-  UPSTASH_REDIS_REST_URL: z.url().optional(),
-  UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
+  // (`/api/diplomas/[code]/verify`). La integración Vercel-Upstash inyecta
+  // estos nombres automáticamente al conectar la base. Si faltan, el
+  // rate limit se degrada a no-op con un debug log — esto evita romper
+  // dev local.
+  KV_REST_API_URL: z.url().optional(),
+  KV_REST_API_TOKEN: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

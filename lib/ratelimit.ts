@@ -35,8 +35,12 @@ const NOOP_RESULT: LimitResult = {
 
 let cachedRedis: Redis | null = null;
 function getRedis(): Redis | null {
-  const url = env.UPSTASH_REDIS_REST_URL;
-  const token = env.UPSTASH_REDIS_REST_TOKEN;
+  // La integración Vercel-Upstash inyecta `KV_REST_API_URL` y
+  // `KV_REST_API_TOKEN` automáticamente — son los mismos valores que el
+  // dashboard de Upstash llamaría `UPSTASH_REDIS_REST_*` pero con el
+  // prefijo legacy de Vercel KV.
+  const url = env.KV_REST_API_URL;
+  const token = env.KV_REST_API_TOKEN;
   if (!url || !token) return null;
   if (cachedRedis) return cachedRedis;
   cachedRedis = new Redis({ url, token });
