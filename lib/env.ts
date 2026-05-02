@@ -69,7 +69,14 @@ const envSchema = z.object({
   SES_LEGAL_RUT: z.string().optional(),
 });
 
-const parsed = envSchema.safeParse(process.env);
+// Pre-procesamos: variables con string vacío `""` se tratan como
+// undefined para que `.optional()` actúe sobre ellas. Si no, una env
+// declarada en `.env.local` sin valor (`R2_PUBLIC_URL=`) revienta
+// `z.url()` aunque la queramos opcional.
+const normalizedEnv = Object.fromEntries(
+  Object.entries(process.env).map(([k, v]) => [k, v === '' ? undefined : v]),
+);
+const parsed = envSchema.safeParse(normalizedEnv);
 
 if (!parsed.success) {
   console.error('❌ Variables de entorno inválidas:');

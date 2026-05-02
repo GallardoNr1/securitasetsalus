@@ -53,3 +53,10 @@ prisma/*.db-journal
 
 # Claude Code local files
 .claude/
+
+# Word/Google Docs lock files
+~$*
+
+# Outputs de scripts/copy-review (regenerables, ~2 MB juntos)
+docs/copy-review.html
+docs/copy-review.docx
