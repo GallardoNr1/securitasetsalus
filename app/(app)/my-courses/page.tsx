@@ -105,7 +105,10 @@ export default async function MyCoursesPage() {
             const meta = STATUS_META[status];
             const firstSession = e.course.sessions[0];
             const lastSession = e.course.sessions[e.course.sessions.length - 1];
-            const hasDiploma = e.diploma && e.diploma.status === 'ACTIVE';
+            // Narrow `diploma` con un const así TypeScript lo trata como
+            // non-null dentro del bloque condicional — sin `!` colgando.
+            const diploma =
+              e.diploma && e.diploma.status === 'ACTIVE' ? e.diploma : null;
 
             return (
               <li key={e.id} className={styles.item}>
@@ -158,19 +161,19 @@ export default async function MyCoursesPage() {
                   </div>
                 </dl>
 
-                {hasDiploma ? (
+                {diploma ? (
                   <div className={styles.diploma}>
                     <div className={styles.diplomaInfo}>
                       <span className={styles.diplomaEyebrow}>Diploma emitido</span>
-                      <span className={styles.diplomaCode}>{e.diploma!.code}</span>
+                      <span className={styles.diplomaCode}>{diploma.code}</span>
                       <span className={styles.diplomaIssued}>
-                        Emitido el {formatDate(e.diploma!.issuedAt, 'short')}
+                        Emitido el {formatDate(diploma.issuedAt, 'short')}
                       </span>
                     </div>
                     <div className={styles.diplomaActions}>
-                      {e.diploma!.pdfKey ? (
+                      {diploma.pdfKey ? (
                         <a
-                          href={`/api/diplomas/${e.diploma!.code}/download`}
+                          href={`/api/diplomas/${diploma.code}/download`}
                           className={styles.diplomaButton}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -179,7 +182,7 @@ export default async function MyCoursesPage() {
                         </a>
                       ) : null}
                       <Link
-                        href={`/verify/${e.diploma!.code}`}
+                        href={`/verify/${diploma.code}`}
                         className={styles.diplomaSecondary}
                       >
                         Verificación pública
