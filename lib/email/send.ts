@@ -1,4 +1,5 @@
 import { render } from '@react-email/components';
+import { env } from '@/lib/env';
 import { sendEmail, type SendResult } from './client';
 import { WelcomeEmail, welcomeEmailText } from './templates/WelcomeEmail';
 import {
@@ -26,6 +27,18 @@ import {
   CancelationRefundEmail,
   cancelationRefundEmailText,
 } from './templates/CancelationRefundEmail';
+import {
+  CourseReminderEmail,
+  courseReminderEmailText,
+} from './templates/CourseReminderEmail';
+import {
+  DiplomaFailedEmail,
+  diplomaFailedEmailText,
+} from './templates/DiplomaFailedEmail';
+import {
+  PaymentReceiptEmail,
+  paymentReceiptEmailText,
+} from './templates/PaymentReceiptEmail';
 
 /**
  * API de alto nivel para enviar emails transaccionales de SES.
@@ -244,6 +257,103 @@ export async function sendCancelationRefundEmail(
   return sendEmail({
     to: args.to,
     subject: `Cancelación procesada — ${args.courseTitle}`,
+    html,
+    text,
+  });
+}
+
+// ============================================================
+// Recordatorios y cierre de curso (Fase 7)
+// ============================================================
+
+type CourseReminderArgs = {
+  to: string;
+  name: string;
+  courseTitle: string;
+  startsAt: Date;
+  venueName: string | null;
+  venueAddress: string | null;
+};
+
+export async function sendCourseReminderEmail(args: CourseReminderArgs): Promise<SendResult> {
+  const url = appUrl();
+  const props = {
+    name: args.name,
+    courseTitle: args.courseTitle,
+    startsAt: args.startsAt,
+    venueName: args.venueName,
+    venueAddress: args.venueAddress,
+    myCoursesUrl: `${url}/my-courses`,
+  };
+  const html = await render(CourseReminderEmail(props));
+  const text = courseReminderEmailText(props);
+  return sendEmail({
+    to: args.to,
+    subject: `Tu curso "${args.courseTitle}" empieza en 48 h`,
+    html,
+    text,
+  });
+}
+
+type DiplomaFailedArgs = {
+  to: string;
+  name: string;
+  courseTitle: string;
+  reason: 'attendance' | 'evaluation' | 'both';
+  finalGrade: number | null;
+  attendancePercentage: number | null;
+};
+
+export async function sendDiplomaFailedEmail(args: DiplomaFailedArgs): Promise<SendResult> {
+  const url = appUrl();
+  const props = {
+    name: args.name,
+    courseTitle: args.courseTitle,
+    reason: args.reason,
+    finalGrade: args.finalGrade,
+    attendancePercentage: args.attendancePercentage,
+    catalogUrl: `${url}/courses`,
+  };
+  const html = await render(DiplomaFailedEmail(props));
+  const text = diplomaFailedEmailText(props);
+  return sendEmail({
+    to: args.to,
+    subject: `Cierre del curso ${args.courseTitle}`,
+    html,
+    text,
+  });
+}
+
+type PaymentReceiptArgs = {
+  to: string;
+  name: string;
+  courseTitle: string;
+  amount: number;
+  currency: string;
+  paidAt: Date;
+  enrollmentId: string;
+  employerName: string | null;
+  employerRut: string | null;
+};
+
+export async function sendPaymentReceiptEmail(args: PaymentReceiptArgs): Promise<SendResult> {
+  const url = appUrl();
+  // Datos formales de SES (los lee de env para que admin pueda actualizar
+  // la razón social / RUT sin tocar código). Defaults sensatos para
+  // entornos pre-launch.
+  const payeeName = env.SES_LEGAL_NAME ?? 'SecuritasEtSalus SpA';
+  const payeeRut = env.SES_LEGAL_RUT ?? null;
+  const props = {
+    ...args,
+    myBillingUrl: `${url}/billing`,
+    payeeName,
+    payeeRut,
+  };
+  const html = await render(PaymentReceiptEmail(props));
+  const text = paymentReceiptEmailText(props);
+  return sendEmail({
+    to: args.to,
+    subject: `Recibo de pago — ${args.courseTitle}`,
     html,
     text,
   });

@@ -276,7 +276,7 @@ describe('saveEvaluationsAction', () => {
       mocks.auth.mockResolvedValue(adminUser);
       mocks.courseFindUnique.mockResolvedValue(courseFixture);
       mocks.enrollmentFindMany.mockResolvedValue([
-        { id: 'e1', _count: { attendances: 4 } },
+        { id: 'e1', status: 'CONFIRMED', user: { name: 'Carla', email: 'c@x.cl' }, _count: { attendances: 4 } },
       ]);
       wireTransactionCallback();
 
@@ -294,7 +294,7 @@ describe('saveEvaluationsAction', () => {
       mocks.auth.mockResolvedValue(sessionUser);
       mocks.courseFindUnique.mockResolvedValue(courseFixture);
       mocks.enrollmentFindMany.mockResolvedValue([
-        { id: 'e1', _count: { attendances: 4 } },
+        { id: 'e1', status: 'CONFIRMED', user: { name: 'Carla', email: 'c@x.cl' }, _count: { attendances: 4 } },
       ]);
       wireTransactionCallback();
 
@@ -334,7 +334,7 @@ describe('saveEvaluationsAction', () => {
       mocks.auth.mockResolvedValue(sessionUser);
       mocks.courseFindUnique.mockResolvedValue(courseFixture);
       mocks.enrollmentFindMany.mockResolvedValue([
-        { id: 'e1', _count: { attendances: 4 } },
+        { id: 'e1', status: 'CONFIRMED', user: { name: 'Carla', email: 'c@x.cl' }, _count: { attendances: 4 } },
       ]);
       wireTransactionCallback();
 
@@ -365,7 +365,7 @@ describe('saveEvaluationsAction', () => {
       mocks.auth.mockResolvedValue(sessionUser);
       mocks.courseFindUnique.mockResolvedValue(courseFixture);
       mocks.enrollmentFindMany.mockResolvedValue([
-        { id: 'e1', _count: { attendances: 4 } },
+        { id: 'e1', status: 'CONFIRMED', user: { name: 'Carla', email: 'c@x.cl' }, _count: { attendances: 4 } },
       ]);
       wireTransactionCallback();
 
@@ -393,7 +393,7 @@ describe('saveEvaluationsAction', () => {
         evaluatesAttitude: false,
       });
       mocks.enrollmentFindMany.mockResolvedValue([
-        { id: 'e1', _count: { attendances: 4 } },
+        { id: 'e1', status: 'CONFIRMED', user: { name: 'Carla', email: 'c@x.cl' }, _count: { attendances: 4 } },
       ]);
       wireTransactionCallback();
 
@@ -420,7 +420,7 @@ describe('saveEvaluationsAction', () => {
       mocks.courseFindUnique.mockResolvedValue(courseFixture);
       // Solo e1 es del curso. e-fake no aparece en validEnrollments.
       mocks.enrollmentFindMany.mockResolvedValue([
-        { id: 'e1', _count: { attendances: 4 } },
+        { id: 'e1', status: 'CONFIRMED', user: { name: 'Carla', email: 'c@x.cl' }, _count: { attendances: 4 } },
       ]);
       wireTransactionCallback();
 
@@ -458,7 +458,7 @@ describe('saveEvaluationsAction', () => {
       mocks.auth.mockResolvedValue(sessionUser);
       mocks.courseFindUnique.mockResolvedValue(courseFixture);
       mocks.enrollmentFindMany.mockResolvedValue([
-        { id: 'e1', _count: { attendances: 4 } },
+        { id: 'e1', status: 'CONFIRMED', user: { name: 'Carla', email: 'c@x.cl' }, _count: { attendances: 4 } },
       ]);
       mocks.transaction.mockRejectedValue(new Error('DB out'));
 

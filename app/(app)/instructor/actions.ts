@@ -8,6 +8,7 @@ import { attendanceMarkSchema } from '@/lib/validations/attendance';
 import { evaluationBatchSchema } from '@/lib/validations/evaluation';
 import { computeEligibility } from '@/lib/diploma/eligibility';
 import { issueDiplomasForCourse } from '@/lib/diploma/issue';
+import { sendDiplomaFailedEmail } from '@/lib/email/send';
 
 const ATTENDANCE_THRESHOLD = 0.75; // 75% de asistencia mínima — requisito SENCE.
 
@@ -194,6 +195,7 @@ export async function saveEvaluationsAction(input: {
     where: { id: parsed.data.courseId },
     select: {
       id: true,
+      title: true,
       instructorId: true,
       evaluatesAttitude: true,
       evaluationPassingGrade: true,
@@ -228,12 +230,23 @@ export async function saveEvaluationsAction(input: {
     },
     include: {
       _count: { select: { attendances: { where: { attended: true } } } },
+      user: { select: { name: true, email: true } },
     },
   });
   const enrollmentMap = new Map(validEnrollments.map((e) => [e.id, e]));
 
   const totalSessions = course._count.sessions;
   let passedCount = 0;
+  // Acumulamos los enrollments que pasan a FAILED en esta tanda para
+  // disparar `DiplomaFailedEmail` después de la transacción (si está
+  // dentro, un fallo de Resend abortaría el commit).
+  const failedToNotify: Array<{
+    email: string;
+    name: string;
+    reason: 'attendance' | 'evaluation' | 'both';
+    finalGrade: number | null;
+    attendancePercentage: number | null;
+  }> = [];
 
   try {
     await db.$transaction(async (tx) => {
@@ -292,6 +305,21 @@ export async function saveEvaluationsAction(input: {
         // Actualizamos Enrollment solo cuando hay decisión definitiva
         // (passed != null). Si passed=null, dejamos el status tal cual.
         if (passed !== null) {
+          // Solo notificamos a alumnos que pasan AHORA a FAILED — no a
+          // los que ya estaban FAILED (re-evaluación silenciosa). Para
+          // saberlo, miramos el status actual del enrollment.
+          if (passed === false && enrollment.status !== 'FAILED' && failedReason) {
+            failedToNotify.push({
+              email: enrollment.user.email,
+              name: enrollment.user.name,
+              reason: failedReason as 'attendance' | 'evaluation' | 'both',
+              finalGrade,
+              attendancePercentage:
+                totalSessions === 0
+                  ? null
+                  : Math.round((enrollment._count.attendances / totalSessions) * 100),
+            });
+          }
           await tx.enrollment.update({
             where: { id: entry.enrollmentId },
             data: {
@@ -303,6 +331,28 @@ export async function saveEvaluationsAction(input: {
         }
       }
     });
+
+    // Emails best-effort POR FUERA de la transacción — un fallo de
+    // Resend nunca debe revertir las evaluaciones guardadas.
+    if (failedToNotify.length > 0) {
+      await Promise.all(
+        failedToNotify.map((target) =>
+          sendDiplomaFailedEmail({
+            to: target.email,
+            name: target.name,
+            courseTitle: course.title,
+            reason: target.reason,
+            finalGrade: target.finalGrade,
+            attendancePercentage: target.attendancePercentage,
+          }).catch((err) => {
+            logger.error('diploma failed email failed (best-effort)', err, {
+              tags: { feature: 'evaluations', action: 'failed-email' },
+              email: target.email,
+            });
+          }),
+        ),
+      );
+    }
 
     revalidatePath(`/instructor/courses/${course.id}`);
     revalidatePath(`/instructor/courses/${course.id}/evaluations`);

@@ -242,6 +242,11 @@ model CourseSession {
   endsAt        DateTime
   location      String?      // Si es distinta de la sede principal del curso
 
+  // El cron de course-reminders sella esta fecha cuando manda el aviso
+  // de "tu curso empieza en 48h" para evitar enviarlo dos veces. Solo
+  // aplica a la primera sesión de cada curso.
+  reminderSentAt DateTime?
+
   attendances   Attendance[]
 
   @@unique([courseId, sessionNumber])

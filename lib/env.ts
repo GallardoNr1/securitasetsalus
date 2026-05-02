@@ -60,6 +60,13 @@ const envSchema = z.object({
   // dev local.
   KV_REST_API_URL: z.url().optional(),
   KV_REST_API_TOKEN: z.string().optional(),
+
+  // Datos legales de SES para los recibos de pago. Son opcionales
+  // (defaults sensatos en `lib/email/templates/PaymentReceiptEmail`)
+  // pero conviene rellenarlos en prod para que los recibos lleven el
+  // RUT real de la SpA — necesario para SENCE.
+  SES_LEGAL_NAME: z.string().optional(),
+  SES_LEGAL_RUT: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

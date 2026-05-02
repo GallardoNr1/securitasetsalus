@@ -11,7 +11,7 @@
 | 4 | Inscripción pagada con Stripe + SENCE + refunds | ✅ [Cerrada 2026-05-02](phases/phase-4-done.md) (modo test) |
 | 5 | Asistencia, evaluación y emisión de diplomas | ⬜ Pendiente |
 | 6 | Verificación pública de diplomas + integración con Clavero | ⬜ Pendiente |
-| 7 | Emails transaccionales | ⬜ Pendiente |
+| 7 | Emails transaccionales | ✅ [Cerrada 2026-05-02](phases/phase-7-done.md) (sin `PendingEvaluation` — espera evals G19) |
 | 8 | Material de curso (post-pago) | ⬜ Pendiente |
 | 9 | Tests, observabilidad y lanzamiento | ⬜ Pendiente |
 | — | Rediseño visual v3 | ✅ [Cerrado 2026-04-30](phases/redesign-v3-done.md) |

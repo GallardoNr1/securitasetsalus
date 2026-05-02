@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import type Stripe from 'stripe';
 import { db } from '@/lib/db';
-import { sendEnrollmentConfirmationEmail } from '@/lib/email/send';
+import {
+  sendEnrollmentConfirmationEmail,
+  sendPaymentReceiptEmail,
+} from '@/lib/email/send';
 import { logger } from '@/lib/logger';
 import { parseWebhookEvent } from '@/lib/stripe';
 
@@ -92,6 +95,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       id: true,
       userId: true,
       status: true,
+      employerName: true,
+      employerRut: true,
       user: { select: { name: true, email: true } },
       course: { select: { title: true, slug: true, currency: true } },
     },
@@ -135,20 +140,42 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     });
   });
 
-  // Email de confirmación — best effort.
-  await sendEnrollmentConfirmationEmail({
-    to: enrollment.user.email,
-    name: enrollment.user.name,
-    courseTitle: enrollment.course.title,
-    courseSlug: enrollment.course.slug,
-    amount,
-    currency,
-  }).catch((err) => {
-    logger.error('enrollment confirmation email failed (best-effort)', err, {
-      tags: { feature: 'enrollment', action: 'confirmation-email' },
+  // Emails best-effort (los dos en paralelo). El recibo formal es un
+  // segundo email distinto del confirmation porque tiene otra
+  // intención: el confirmation es UX (genial, ya estás dentro), el
+  // recibo es contable (datos formales SES, RUT empleador si aplica).
+  const paidAt = new Date();
+  await Promise.all([
+    sendEnrollmentConfirmationEmail({
+      to: enrollment.user.email,
+      name: enrollment.user.name,
+      courseTitle: enrollment.course.title,
+      courseSlug: enrollment.course.slug,
+      amount,
+      currency,
+    }).catch((err) => {
+      logger.error('enrollment confirmation email failed (best-effort)', err, {
+        tags: { feature: 'enrollment', action: 'confirmation-email' },
+        enrollmentId: enrollment.id,
+      });
+    }),
+    sendPaymentReceiptEmail({
+      to: enrollment.user.email,
+      name: enrollment.user.name,
+      courseTitle: enrollment.course.title,
+      amount,
+      currency,
+      paidAt,
       enrollmentId: enrollment.id,
-    });
-  });
+      employerName: enrollment.employerName,
+      employerRut: enrollment.employerRut,
+    }).catch((err) => {
+      logger.error('payment receipt email failed (best-effort)', err, {
+        tags: { feature: 'enrollment', action: 'receipt-email' },
+        enrollmentId: enrollment.id,
+      });
+    }),
+  ]);
 }
 
 async function handleChargeRefunded(charge: Stripe.Charge) {

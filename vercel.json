@@ -5,6 +5,10 @@
     {
       "path": "/api/cron/enrollments-cleanup",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/course-reminders",
+      "schedule": "0 * * * *"
     }
   ]
 }
