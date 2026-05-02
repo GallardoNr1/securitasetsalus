@@ -140,20 +140,32 @@ arrancar con mensaje claro de Zod.
 
 **Severidad**: info · **Esfuerzo estimado**: 4-6 h · **Riesgo**: none (sólo añade)
 
-**Estado**: parcialmente cerrado.
+**Estado**: mayormente cerrado.
 
 - ✅ **Eligibility** (`lib/diploma/eligibility.test.ts`): 13 tests.
   Commit `36827ac`.
-- ⬜ **Verify endpoint** (`app/api/diplomas/[code]/verify/route.ts`):
-  pendiente. Necesita mock de Prisma (`vitest-mock-extended` o similar)
-  y casos para 400/404/410/200/429.
-- ⬜ **Server actions** (`app/(app)/instructor/actions.ts`,
-  `app/(app)/admin/users/actions.ts`): pendiente. Necesita mock de
-  `auth()` + Prisma.
-- ⬜ **Queries** (`lib/queries/*.ts`): pendiente.
+- ✅ **Verify endpoint** (`app/api/diplomas/[code]/verify/route.test.ts`):
+  14 tests cubriendo formato del código (5), rate limit (3),
+  lookup BD 200/404/410 (3), CORS y normalización (3).
+- ✅ **markAttendanceAction** (`app/(app)/instructor/actions.test.ts`):
+  7 tests — autorización (3), validación (2), happy path con filtro
+  defensivo (1), fallo de transacción (1).
+- ✅ **suspendUserAction + reactivateUserAction**
+  (`app/(app)/admin/users/actions.test.ts`): 11 tests — autorización (2),
+  safeguards (4: self, not-found, last-admin, last-admin-OK), happy path
+  con trim/truncate de motivo (2), reactivar (3).
+- ⬜ **saveEvaluationsAction** + **issueDiplomasForCourseAction**:
+  pendientes. La lógica núcleo (computeEligibility) ya tiene tests; lo
+  que falta son los wrappers con auth + Prisma.
+- ⬜ **Queries** (`lib/queries/*.ts`): pendiente. Bajo riesgo (queries
+  típicas de Prisma) — mejor cubrirlas con integration tests contra
+  base de datos real cuando se monte ese harness.
 
-Cobertura total: 5 archivos test antes → 6 ahora (53 → 66 unit tests).
+**Cobertura**: 4 archivos test antes → 9 ahora (53 → **98 unit tests**).
 Suite E2E Playwright sigue cubriendo el happy path completo.
+
+`test/setup.ts` ahora inyecta `NEXT_PUBLIC_APP_URL` por defecto para
+que los módulos que cargan `lib/env.ts` no fallen en el harness.
 
 ---
 
@@ -162,7 +174,7 @@ Suite E2E Playwright sigue cubriendo el happy path completo.
 Última revisión: 2026-05-02.
 
 - Items abiertos: 0
-- Items parciales: 1 (item 9 — coverage)
+- Items parciales: 1 (item 9 — falta saveEvaluationsAction wrapper + queries)
 - Items cerrados: 8
 
 Cuando cierres un item: marca el checkbox, añade `Cerrado: <commit-hash>`
