@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { findDiplomaByCodePublic } from '@/lib/queries/diplomas';
+import { limitVerifyDiploma } from '@/lib/ratelimit';
+import { logger } from '@/lib/logger';
 
 /**
  * Verificación pública del diploma — endpoint JSON sin autenticación.
@@ -18,8 +20,9 @@ import { findDiplomaByCodePublic } from '@/lib/queries/diplomas';
  * CORS: abierto (`*`) porque el caso de uso es justo este — terceros
  * consumiendo desde dominios que no controlamos.
  *
- * Rate limit: por ahora confiamos en las protecciones por defecto de Vercel.
- * Si vemos abuso, añadir upstash/ratelimit por IP.
+ * Rate limit: 30 req/min por IP vía Upstash sliding window
+ * (`lib/ratelimit.ts`). Si Upstash no está configurado, degrada a no-op
+ * con un debug log para no romper dev local.
  */
 
 const CORS_HEADERS = {
@@ -34,9 +37,35 @@ export async function OPTIONS() {
 }
 
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ code: string }> },
 ) {
+  // Rate limit por IP. En Vercel `x-forwarded-for` lleva la IP del cliente
+  // (la última IP del chain — Vercel inyecta una sola). En local
+  // probablemente sea undefined → usamos un placeholder estable.
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const limit = await limitVerifyDiploma(ip);
+  if (!limit.success) {
+    logger.warn('verify endpoint rate-limited', {
+      ip,
+      remaining: limit.remaining,
+      reset: limit.reset,
+    });
+    const retryAfterSec = Math.max(1, Math.ceil((limit.reset - Date.now()) / 1000));
+    return jsonResponse(
+      { error: 'rate_limited', retryAfter: retryAfterSec },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(retryAfterSec),
+          'X-RateLimit-Limit': String(limit.limit),
+          'X-RateLimit-Remaining': '0',
+          'X-RateLimit-Reset': String(limit.reset),
+        },
+      },
+    );
+  }
+
   const { code } = await params;
 
   // Normalizamos: aceptamos códigos en minúsculas o con espacios accidentales.
