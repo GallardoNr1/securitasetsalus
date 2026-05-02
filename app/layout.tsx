@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Fraunces, Inter, JetBrains_Mono } from 'next/font/google';
+import { env } from '@/lib/env';
 import '@/design-system/index.scss';
 
 const fraunces = Fraunces({
@@ -24,7 +25,7 @@ const jetbrainsMono = JetBrains_Mono({
   display: 'swap',
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+const siteUrl = env.NEXT_PUBLIC_APP_URL;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -53,16 +54,60 @@ export const metadata: Metadata = {
     title: 'SecuritasEtSalus — Escuela de cerrajería profesional',
     description:
       'Cursos presenciales de cerrajería y seguridad con diplomas verificables. Formación rigurosa para profesionales en Latinoamérica.',
+    images: [
+      {
+        url: `${siteUrl}/brand/logo-seal.png`,
+        width: 1200,
+        height: 1200,
+        alt: 'Sello SecuritasEtSalus',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'SecuritasEtSalus — Escuela de cerrajería profesional',
     description:
       'Cursos presenciales de cerrajería y seguridad con diplomas verificables.',
+    images: [`${siteUrl}/brand/logo-seal.png`],
   },
   robots: {
     index: true,
     follow: true,
+  },
+  // Iconos del sitio. logo-mark.png es la C/sello pequeño, optimizado
+  // para favicon y app icons.
+  icons: {
+    icon: '/brand/logo-mark.png',
+    apple: '/brand/logo-mark.png',
+  },
+};
+
+/**
+ * JSON-LD Organization schema — ayuda a buscadores a entender que SES
+ * es una organización educativa con cursos publicados. Se inyecta en
+ * el `<head>` de toda la app vía `<script type="application/ld+json">`.
+ */
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'EducationalOrganization',
+  name: 'SecuritasEtSalus',
+  alternateName: 'SES',
+  url: siteUrl,
+  logo: `${siteUrl}/brand/logo-seal.png`,
+  description:
+    'Escuela de formación profesional en cerrajería y seguridad para Latinoamérica. Cursos presenciales con diplomas verificables.',
+  sameAs: [
+    // Cuando haya redes sociales, añadirlas aquí.
+  ],
+  address: {
+    '@type': 'PostalAddress',
+    addressCountry: 'CL',
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer support',
+    email: 'hola@securitasetsalus.cl',
+    availableLanguage: ['Spanish'],
   },
 };
 
@@ -76,7 +121,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const fontClasses = [fraunces.variable, inter.variable, jetbrainsMono.variable].join(' ');
   return (
     <html lang="es" className={fontClasses}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <script
+          type="application/ld+json"
+          // JSON-LD inline es la forma estándar de inyectar structured
+          // data; el contenido es JSON serializado, no HTML del usuario.
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+      </body>
     </html>
   );
 }
