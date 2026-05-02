@@ -1,0 +1,157 @@
+@use '../../../../../design-system/tokens/colors' as *;
+@use '../../../../../design-system/tokens/typography' as *;
+@use '../../../../../design-system/tokens/spacing-shadows' as *;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.error {
+  padding: $space-3 $space-4;
+  background: $color-danger-light;
+  color: $color-danger-dark;
+  border: 1px solid rgba($color-danger, 0.3);
+  border-radius: $r-md;
+  font-family: $f-body;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+// --- Estados informativos ---
+.warning {
+  padding: $space-3 $space-4;
+  background: $a-100;
+  color: $p-900;
+  border: 1px solid rgba(216, 200, 151, 0.6);
+  border-left: 3px solid $a-400;
+  border-radius: $r-md;
+  font-family: $f-body;
+  font-size: 13.5px;
+  line-height: 1.55;
+  margin: 0 0 $space-2;
+}
+
+// --- Botones / links ---
+.disabledButton {
+  width: 100%;
+  padding: 14px 22px;
+  border-radius: $r-full;
+  background: $n-200;
+  color: $n-500;
+  border: none;
+  font-family: $f-body;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: not-allowed;
+}
+
+.primaryLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  width: 100%;
+  padding: 14px 22px;
+  background: $p-700;
+  color: $n-0;
+  border-radius: $r-full;
+  text-decoration: none;
+  font-family: $f-body;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background $duration-fast $ease-default;
+
+  &:hover {
+    background: $p-800;
+  }
+}
+
+.secondaryLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 22px;
+  background: transparent;
+  color: $p-700;
+  border: 1px solid $p-700;
+  border-radius: $r-full;
+  text-decoration: none;
+  font-family: $f-body;
+  font-size: 13px;
+  font-weight: 600;
+
+  &:hover {
+    background: $p-50;
+  }
+}
+
+.note {
+  font-family: $f-body;
+  font-size: 12.5px;
+  color: $n-600;
+  line-height: 1.55;
+  margin: $space-2 0 0;
+
+  a {
+    color: $p-700;
+    font-weight: 600;
+  }
+}
+
+// --- Toggle SENCE ---
+.senceToggle {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: $space-3 $space-4;
+  background: $n-50;
+  border: 1px solid $n-200;
+  border-radius: $r-md;
+  cursor: pointer;
+  transition: border-color $duration-fast $ease-default;
+
+  &:hover {
+    border-color: $p-300;
+  }
+
+  input[type='checkbox'] {
+    margin-top: 4px;
+    accent-color: $p-700;
+    cursor: pointer;
+  }
+
+  span {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: $f-body;
+    font-size: 13.5px;
+    color: $n-900;
+    line-height: 1.45;
+
+    strong {
+      font-weight: 600;
+    }
+  }
+}
+
+.senceHint {
+  font-size: 12px !important;
+  color: $n-600 !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+}
+
+// --- Bloque de campos SENCE ---
+.senceFields {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-3;
+  background: $n-50;
+  border: 1px solid $n-200;
+  border-radius: $r-md;
+}

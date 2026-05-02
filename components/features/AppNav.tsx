@@ -21,6 +21,7 @@ const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { href: '/admin', label: 'Panel', matchPrefixes: ['/admin'] },
     { href: '/admin/users', label: 'Usuarios', matchPrefixes: ['/admin/users'] },
     { href: '/admin/courses', label: 'Cursos', matchPrefixes: ['/admin/courses'] },
+    { href: '/admin/payments', label: 'Pagos', matchPrefixes: ['/admin/payments'] },
   ],
   INSTRUCTOR: [
     { href: '/instructor', label: 'Panel', matchPrefixes: ['/instructor'] },
@@ -30,6 +31,7 @@ const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { href: '/dashboard', label: 'Mi panel', matchPrefixes: ['/dashboard'] },
     { href: '/my-courses', label: 'Mis cursos', matchPrefixes: ['/my-courses'] },
     { href: '/my-diplomas', label: 'Mis diplomas', matchPrefixes: ['/my-diplomas'] },
+    { href: '/billing', label: 'Mis pagos', matchPrefixes: ['/billing'] },
   ],
 };
 

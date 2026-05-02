@@ -1,0 +1,395 @@
+@use '../../../../design-system/tokens/colors' as *;
+@use '../../../../design-system/tokens/typography' as *;
+@use '../../../../design-system/tokens/spacing-shadows' as *;
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+.pageHeader {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding-bottom: $space-3;
+}
+
+.pageEyebrow {
+  font-family: $f-body;
+  font-size: 11px;
+  color: $p-700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.pageTitle {
+  font-family: $f-display;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  color: $n-900;
+  margin: 0;
+}
+
+.pageTitleItalic {
+  font-style: italic;
+  color: $p-700;
+  font-weight: 500;
+}
+
+.pageLead {
+  font-family: $f-body;
+  font-size: 15px;
+  color: $n-600;
+  max-width: 60ch;
+  margin: $space-2 0 0;
+  line-height: 1.55;
+}
+
+// --- Sections ---
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: $space-3;
+  border-bottom: 1px solid $n-200;
+  margin-bottom: $space-4;
+}
+
+.sectionEyebrow {
+  font-family: $f-body;
+  font-size: 11px;
+  color: $p-700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.sectionTitle {
+  font-family: $f-display;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  color: $n-900;
+  margin: 0;
+}
+
+.sectionLead {
+  font-family: $f-body;
+  font-size: 13.5px;
+  color: $n-600;
+  margin: 4px 0 0;
+  line-height: 1.55;
+}
+
+// --- SENCE pendientes ---
+.senceSection {
+  background: $a-100;
+  border: 1px solid rgba(216, 200, 151, 0.5);
+  border-left: 4px solid $a-400;
+  border-radius: $r-2xl;
+  padding: $space-6;
+
+  .sectionHeader {
+    border-bottom-color: rgba(216, 200, 151, 0.5);
+  }
+}
+
+.senceList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: $space-4;
+  grid-template-columns: 1fr;
+
+  @include responsive-md {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.senceItem {
+  margin: 0;
+}
+
+.senceCard {
+  background: $n-0;
+  border: 1px solid $n-200;
+  border-radius: $r-md;
+  padding: $space-4;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.senceCardHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.senceCourseTitle {
+  font-family: $f-display;
+  font-size: 16px;
+  font-weight: 600;
+  color: $p-700;
+  letter-spacing: -0.01em;
+}
+
+.senceMeta {
+  margin: 0;
+  display: grid;
+  gap: $space-2;
+  grid-template-columns: 1fr;
+
+  @include responsive-sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.senceMetaRow {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  dt {
+    font-family: $f-body;
+    font-size: 10.5px;
+    color: $n-500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  dd {
+    font-family: $f-body;
+    font-size: 13.5px;
+    color: $n-900;
+    margin: 0;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+}
+
+.mono {
+  font-family: $f-mono !important;
+  letter-spacing: 0.02em;
+}
+
+.senceActions {
+  display: flex;
+  gap: $space-2;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.senceRejectTrigger {
+  background: transparent;
+  border: 1px solid $color-danger;
+  color: $color-danger;
+  padding: 8px 14px;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background $duration-fast $ease-default,
+    color $duration-fast $ease-default;
+
+  &:hover:not(:disabled) {
+    background: $color-danger;
+    color: $n-0;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.senceRejectInline {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.senceRejectTextarea {
+  width: 100%;
+  font-family: $f-body;
+  font-size: 13px;
+  padding: 8px 10px;
+  border: 1px solid rgba($color-danger, 0.3);
+  border-radius: $r-sm;
+  background: $n-0;
+  resize: vertical;
+  min-height: 50px;
+
+  &:focus {
+    outline: none;
+    border-color: $color-danger;
+    box-shadow: 0 0 0 2px rgba($color-danger, 0.18);
+  }
+}
+
+.senceRejectActions {
+  display: flex;
+  gap: $space-2;
+  justify-content: flex-end;
+}
+
+.senceCancel {
+  background: transparent;
+  border: none;
+  color: $n-600;
+  padding: 6px 12px;
+  font-family: $f-body;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.senceConfirmReject {
+  background: $color-danger;
+  color: $n-0;
+  border: none;
+  padding: 6px 14px;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.senceError {
+  font-family: $f-body;
+  font-size: 12px;
+  color: $color-danger-dark;
+  margin: 0;
+}
+
+// --- Tabla de pagos ---
+.tableSection {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.filterBar {
+  display: flex;
+  gap: $space-2;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: $space-3;
+}
+
+.filterSearch {
+  flex: 1;
+  min-width: 200px;
+  font-family: $f-body;
+  font-size: 13.5px;
+  padding: 8px 12px;
+  border: 1px solid $n-300;
+  border-radius: $r-md;
+  background: $n-0;
+
+  &:focus {
+    outline: none;
+    border-color: $p-700;
+    box-shadow: 0 0 0 2px rgba(44, 95, 74, 0.18);
+  }
+}
+
+.filterSelect {
+  font-family: $f-body;
+  font-size: 13.5px;
+  padding: 8px 12px;
+  border: 1px solid $n-300;
+  border-radius: $r-md;
+  background: $n-0;
+
+  &:focus {
+    outline: none;
+    border-color: $p-700;
+  }
+}
+
+.filterButton {
+  background: $p-700;
+  color: $n-0;
+  border: none;
+  padding: 8px 18px;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: $p-800;
+  }
+}
+
+.filterClear {
+  font-family: $f-body;
+  font-size: 12.5px;
+  color: $n-600;
+  text-decoration: none;
+  padding: 6px 10px;
+
+  &:hover {
+    color: $p-700;
+    text-decoration: underline;
+  }
+}
+
+.userName {
+  font-weight: 600;
+  color: $n-900;
+}
+
+.userEmail {
+  font-size: 11.5px;
+  color: $n-500;
+  font-family: $f-mono;
+}
+
+.courseLink {
+  color: $n-900;
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    color: $p-700;
+  }
+}
+
+.senceTag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  background: $a-100;
+  color: $p-900;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.refundedHint {
+  font-family: $f-body;
+  font-size: 11px;
+  color: $color-danger;
+  font-weight: 500;
+  margin-top: 2px;
+}

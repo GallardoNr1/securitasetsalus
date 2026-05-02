@@ -1,0 +1,354 @@
+@use '../../../design-system/tokens/colors' as *;
+@use '../../../design-system/tokens/typography' as *;
+@use '../../../design-system/tokens/spacing-shadows' as *;
+
+// ============================================================
+// /billing — histórico del alumno + landing pages success/cancelled
+// ============================================================
+
+.page {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+.pageHeader {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding-bottom: $space-3;
+}
+
+.pageEyebrow {
+  font-family: $f-body;
+  font-size: 11px;
+  color: $p-700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.pageTitle {
+  font-family: $f-display;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  color: $n-900;
+  margin: 0;
+}
+
+.pageTitleItalic {
+  font-style: italic;
+  color: $p-700;
+  font-weight: 500;
+}
+
+.pageLead {
+  font-family: $f-body;
+  font-size: 15px;
+  color: $n-600;
+  max-width: 60ch;
+  margin: $space-2 0 0;
+  line-height: 1.55;
+}
+
+// --- Empty state ---
+.emptyState {
+  padding: 64px 32px;
+  text-align: center;
+  background: $n-0;
+  border: 1px dashed $n-300;
+  border-radius: $r-2xl;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-3;
+
+  h2 {
+    font-family: $f-display;
+    font-size: 22px;
+    color: $n-900;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    font-family: $f-body;
+    font-size: 14px;
+    color: $n-600;
+    margin: 0 0 $space-2;
+    line-height: 1.55;
+  }
+}
+
+.emptyCta {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 22px;
+  background: $p-700;
+  color: $n-0;
+  border-radius: $r-full;
+  text-decoration: none;
+  font-family: $f-body;
+  font-size: 13.5px;
+  font-weight: 600;
+
+  &:hover {
+    background: $p-800;
+  }
+}
+
+// --- Tabla extra ---
+.courseLink {
+  font-weight: 600;
+  color: $n-900;
+  text-decoration: none;
+
+  &:hover {
+    color: $p-700;
+  }
+}
+
+.senceTag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  background: $a-100;
+  color: $p-900;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.refundedHint {
+  font-family: $f-body;
+  font-size: 11.5px;
+  color: $color-danger;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.noActions {
+  color: $n-400;
+  font-size: 13px;
+}
+
+// --- Cancel inline UI ---
+.cancelTrigger {
+  background: transparent;
+  border: 1px solid $n-300;
+  color: $n-700;
+  padding: 6px 14px;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color $duration-fast $ease-default,
+    color $duration-fast $ease-default;
+
+  &:hover {
+    border-color: $color-danger;
+    color: $color-danger;
+  }
+}
+
+.cancelInline {
+  background: $color-danger-light;
+  border: 1px solid rgba($color-danger, 0.25);
+  border-radius: $r-md;
+  padding: $space-3;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  text-align: left;
+}
+
+.cancelInlineQuestion {
+  font-family: $f-body;
+  font-size: 13px;
+  color: $color-danger-dark;
+  margin: 0;
+  line-height: 1.45;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.cancelInlineTextarea {
+  width: 100%;
+  font-family: $f-body;
+  font-size: 13px;
+  padding: 8px 10px;
+  border: 1px solid rgba($color-danger, 0.3);
+  border-radius: $r-sm;
+  background: $n-0;
+  resize: vertical;
+  min-height: 50px;
+
+  &:focus {
+    outline: none;
+    border-color: $color-danger;
+    box-shadow: 0 0 0 2px rgba($color-danger, 0.18);
+  }
+}
+
+.cancelInlineError {
+  font-family: $f-body;
+  font-size: 12px;
+  color: $color-danger-dark;
+  margin: 0;
+}
+
+.cancelInlineActions {
+  display: flex;
+  gap: $space-2;
+  justify-content: flex-end;
+}
+
+.cancelInlineCancel {
+  background: transparent;
+  border: none;
+  color: $n-600;
+  padding: 6px 12px;
+  font-family: $f-body;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.cancelInlineConfirm {
+  background: $color-danger;
+  color: $n-0;
+  border: none;
+  padding: 6px 14px;
+  border-radius: $r-full;
+  font-family: $f-body;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background $duration-fast $ease-default;
+
+  &:hover:not(:disabled) {
+    background: $color-danger-dark;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// ============================================================
+// Landing pages success / cancelled (compartida)
+// ============================================================
+.successPage {
+  min-height: calc(100vh - 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-section-sm $space-page-gutter;
+}
+
+.successCard {
+  max-width: 520px;
+  background: $n-0;
+  border: 1px solid $n-200;
+  border-radius: $r-2xl;
+  padding: $space-8;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-3;
+  box-shadow: 0 12px 32px rgba(26, 38, 34, 0.06);
+}
+
+.cancelledCard {
+  background: $n-50;
+  border-color: $n-300;
+}
+
+.successIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: $p-700;
+  color: $n-0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $space-2;
+}
+
+.cancelledIcon {
+  background: $n-700;
+}
+
+.eyebrow {
+  font-family: $f-body;
+  font-size: 11px;
+  color: $p-700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.title {
+  font-family: $f-display;
+  font-size: clamp(28px, 4vw, 36px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  color: $n-900;
+  margin: 0;
+}
+
+.titleItalic {
+  font-style: italic;
+  color: $p-700;
+  font-weight: 500;
+}
+
+.lead {
+  font-family: $f-body;
+  font-size: 15px;
+  color: $n-600;
+  margin: 0;
+  line-height: 1.55;
+  max-width: 56ch;
+}
+
+.successActions {
+  display: flex;
+  gap: $space-3;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: $space-3;
+}
+
+.secondaryLink {
+  font-family: $f-body;
+  font-size: 13px;
+  color: $n-700;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 12px 18px;
+
+  &:hover {
+    color: $p-700;
+    text-decoration: underline;
+  }
+}

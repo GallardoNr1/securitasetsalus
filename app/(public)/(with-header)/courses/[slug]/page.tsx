@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Avatar } from '@/components/ui/Avatar';
+import { auth } from '@/lib/auth';
+import { db } from '@/lib/db';
 import { getPublishedCourseBySlug, listPublishedCourses } from '@/lib/queries/courses';
 import {
   CLAVERO_SKILL_LABELS,
@@ -11,6 +13,7 @@ import {
 } from '@/lib/clavero-skills';
 import { formatDate, formatDateRange, formatPrice } from '@/lib/format';
 import { getSubdivisionName } from '@/lib/regions';
+import { EnrollPanel } from './EnrollPanel';
 import styles from './page.module.scss';
 
 type Props = {
@@ -37,7 +40,15 @@ export default async function CoursePage({ params }: Props) {
   const course = await getPublishedCourseBySlug(slug);
   if (!course) notFound();
 
-  const seatsLeft = course.capacity - course._count.enrollments;
+  // El conteo del schema cuenta TODOS los enrollments. Para cupos hay
+  // que excluir cancelados: solo activos consumen cupo.
+  const activeEnrollments = await db.enrollment.count({
+    where: {
+      courseId: course.id,
+      status: { in: ['PENDING_PAYMENT', 'PENDING_SENCE_APPROVAL', 'CONFIRMED', 'COMPLETED'] },
+    },
+  });
+  const seatsLeft = Math.max(0, course.capacity - activeEnrollments);
   const subdivisionName = getSubdivisionName(course.subdivision);
   const firstSession = course.sessions[0];
   const lastSession = course.sessions[course.sessions.length - 1];
@@ -48,6 +59,21 @@ export default async function CoursePage({ params }: Props) {
       )
     : null;
   const isFull = seatsLeft === 0;
+
+  // Estado del usuario para el EnrollPanel (decide qué CTA mostrar).
+  const session = await auth();
+  const isLogged = Boolean(session?.user);
+  const emailVerified =
+    isLogged && session
+      ? Boolean(
+          (
+            await db.user.findUnique({
+              where: { id: session.user.id },
+              select: { emailVerifiedAt: true },
+            })
+          )?.emailVerifiedAt,
+        )
+      : false;
   const isLow = seatsLeft > 0 && seatsLeft <= 3;
 
   return (
@@ -222,28 +248,13 @@ export default async function CoursePage({ params }: Props) {
                 </div>
               </dl>
 
-              {isFull ? (
-                <button type="button" className={styles.cardCtaDisabled} disabled>
-                  Curso lleno
-                </button>
-              ) : (
-                <Link href="/login" className={styles.cardCta}>
-                  Inscribirme y pagar
-                  <svg
-                    viewBox="0 0 24 24"
-                    width={14}
-                    height={14}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={1.6}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden
-                  >
-                    <path d="M5 12h14M13 5l7 7-7 7" />
-                  </svg>
-                </Link>
-              )}
+              <EnrollPanel
+                courseSlug={course.slug}
+                isLogged={isLogged}
+                isFull={isFull}
+                emailVerified={emailVerified}
+                senceEligible={course.senceEligible}
+              />
 
               <p className={styles.cardNote}>
                 Necesitas una cuenta verificada para inscribirte. El pago se procesa

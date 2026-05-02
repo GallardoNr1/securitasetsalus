@@ -19,6 +19,7 @@ type Route = string;
 // Reglas de acceso por prefijo de ruta. Un array vacío en `roles` significa
 // "cualquier usuario autenticado". Si una ruta no aparece aquí, es pública.
 const routeRules: Array<{ prefix: string; roles: Role[] }> = [
+  // /admin/payments y /admin/users solo SUPER_ADMIN — caen bajo /admin.
   { prefix: '/admin', roles: ['SUPER_ADMIN'] },
   { prefix: '/instructor', roles: ['INSTRUCTOR', 'SUPER_ADMIN'] },
   { prefix: '/dashboard', roles: ['STUDENT', 'SUPER_ADMIN'] },
