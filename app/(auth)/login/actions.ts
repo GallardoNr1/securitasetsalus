@@ -1,14 +1,31 @@
 'use server';
 
+import { headers } from 'next/headers';
 import { AuthError } from 'next-auth';
 import type { Role } from '@prisma/client';
 import { signIn } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { logger } from '@/lib/logger';
+import { limitLogin } from '@/lib/ratelimit';
 import { loginSchema, magicLinkSchema } from '@/lib/validations/auth';
 
 export type LoginActionResult =
   | { ok: true; role: Role }
-  | { ok: false; error: 'invalid' | 'email-not-verified' | 'unknown'; message: string };
+  | {
+      ok: false;
+      error:
+        | 'invalid'
+        | 'email-not-verified'
+        | 'account-suspended'
+        | 'rate-limited'
+        | 'unknown';
+      message: string;
+    };
+
+async function clientIp(): Promise<string> {
+  const h = await headers();
+  return h.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+}
 
 export async function loginAction(formData: FormData): Promise<LoginActionResult> {
   const parsed = loginSchema.safeParse({
@@ -21,6 +38,19 @@ export async function loginAction(formData: FormData): Promise<LoginActionResult
       ok: false,
       error: 'invalid',
       message: 'Revisa el email y la contraseña.',
+    };
+  }
+
+  // Rate limit: 5 intentos/min por (IP, email). Bloquea brute force
+  // de contraseñas y limita el daño si una IP rota emails.
+  const ip = await clientIp();
+  const rl = await limitLogin(ip, parsed.data.email);
+  if (!rl.success) {
+    logger.warn('login rate-limited', { ip, email: parsed.data.email });
+    return {
+      ok: false,
+      error: 'rate-limited',
+      message: 'Demasiados intentos. Espera un momento antes de volver a intentarlo.',
     };
   }
 
@@ -48,13 +78,21 @@ export async function loginAction(formData: FormData): Promise<LoginActionResult
     return { ok: true, role: user.role };
   } catch (err) {
     if (err instanceof AuthError) {
-      // Distingue email-not-verified (lanzado por authorize en lib/auth.ts).
-      if (err.cause?.err && (err.cause.err as { code?: string }).code === 'email-not-verified') {
+      const code = (err.cause?.err as { code?: string } | undefined)?.code;
+      if (code === 'email-not-verified') {
         return {
           ok: false,
           error: 'email-not-verified',
           message:
             'Tu correo aún no está verificado. Revisa tu bandeja o pide un nuevo enlace de verificación.',
+        };
+      }
+      if (code === 'account-suspended') {
+        return {
+          ok: false,
+          error: 'account-suspended',
+          message:
+            'Tu cuenta está suspendida. Contacta a soporte si crees que es un error.',
         };
       }
       return {
@@ -73,12 +111,25 @@ export async function loginAction(formData: FormData): Promise<LoginActionResult
 
 export type MagicLinkActionResult =
   | { ok: true; email: string }
-  | { ok: false; error: 'invalid' | 'unknown'; message: string };
+  | { ok: false; error: 'invalid' | 'rate-limited' | 'unknown'; message: string };
 
 export async function magicLinkAction(formData: FormData): Promise<MagicLinkActionResult> {
   const parsed = magicLinkSchema.safeParse({ email: formData.get('email') });
   if (!parsed.success) {
     return { ok: false, error: 'invalid', message: 'Introduce un correo válido.' };
+  }
+
+  // Mismo bucket que login: si alguien spamea magic links a un usuario,
+  // que comparta cuota con sus intentos de password.
+  const ip = await clientIp();
+  const rl = await limitLogin(ip, parsed.data.email);
+  if (!rl.success) {
+    logger.warn('magic-link rate-limited', { ip, email: parsed.data.email });
+    return {
+      ok: false,
+      error: 'rate-limited',
+      message: 'Demasiadas peticiones. Espera un momento antes de pedir otro enlace.',
+    };
   }
 
   try {

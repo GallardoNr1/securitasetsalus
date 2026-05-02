@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import { logger } from '@/lib/logger';
 
 /**
  * Cliente de Stripe con graceful fallback.
@@ -47,7 +48,9 @@ export function parseWebhookEvent(
   try {
     return getStripe().webhooks.constructEvent(payload, signature, webhookSecret);
   } catch (error) {
-    console.error('[stripe webhook] firma inválida o malformada', error);
+    logger.error('stripe webhook: firma inválida o malformada', error, {
+      tags: { feature: 'webhook', step: 'verify-signature' },
+    });
     return null;
   }
 }

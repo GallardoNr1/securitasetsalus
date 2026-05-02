@@ -1,16 +1,38 @@
 'use server';
 
+import { headers } from 'next/headers';
 import { db } from '@/lib/db';
+import { logger } from '@/lib/logger';
 import { hashPassword } from '@/lib/password';
+import { limitSignup } from '@/lib/ratelimit';
 import { registerSchema } from '@/lib/validations/auth';
 import { createEmailVerificationToken, EMAIL_VERIFICATION_EXPIRY_MINUTES } from '@/lib/tokens';
 import { sendEmailVerificationEmail } from '@/lib/email/send';
 
 export type RegisterActionResult =
   | { ok: true; email: string }
-  | { ok: false; error: 'invalid' | 'email-taken' | 'unknown'; message: string; fieldErrors?: Record<string, string> };
+  | {
+      ok: false;
+      error: 'invalid' | 'email-taken' | 'rate-limited' | 'unknown';
+      message: string;
+      fieldErrors?: Record<string, string>;
+    };
 
 export async function registerAction(formData: FormData): Promise<RegisterActionResult> {
+  // Rate limit ANTES de parsear: aunque parsing es barato, esto
+  // bloquea bots que envían payloads vacíos a saco para enumerar.
+  const h = await headers();
+  const ip = h.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const rl = await limitSignup(ip);
+  if (!rl.success) {
+    logger.warn('signup rate-limited', { ip });
+    return {
+      ok: false,
+      error: 'rate-limited',
+      message: 'Demasiados registros desde tu red. Espera una hora antes de intentarlo.',
+    };
+  }
+
   const parsed = registerSchema.safeParse({
     name: formData.get('name'),
     email: formData.get('email'),

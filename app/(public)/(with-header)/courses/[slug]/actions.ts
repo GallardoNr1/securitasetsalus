@@ -5,6 +5,7 @@ import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { logger } from '@/lib/logger';
 import { createCheckoutSession } from '@/lib/payments/checkout';
+import { limitEnrollment } from '@/lib/ratelimit';
 import { isStripeAvailable } from '@/lib/stripe';
 import { enrollInputSchema, type EnrollInput } from '@/lib/validations/enrollments';
 
@@ -58,6 +59,7 @@ export type EnrollActionResult =
         | 'already-enrolled'
         | 'course-full'
         | 'sence-requires-rut'
+        | 'rate-limited'
         | 'unknown';
       message: string;
       fieldErrors?: Record<string, string>;
@@ -67,6 +69,20 @@ export async function enrollAction(input: EnrollInput): Promise<EnrollActionResu
   const session = await auth();
   if (!session?.user) {
     return { ok: false, error: 'unauthorized', message: 'Inicia sesión para inscribirte.' };
+  }
+
+  // Rate limit por usuario: 5 inscripciones/h. Bloquea creación masiva
+  // de Enrollments PENDING_PAYMENT que ocuparían cupo y forzarían al
+  // cron de cleanup a trabajar de más.
+  const rl = await limitEnrollment(session.user.id);
+  if (!rl.success) {
+    logger.warn('enrollAction rate-limited', { userId: session.user.id });
+    return {
+      ok: false,
+      error: 'rate-limited',
+      message:
+        'Has hecho demasiados intentos de inscripción. Espera un momento e inténtalo de nuevo.',
+    };
   }
 
   const parsed = enrollInputSchema.safeParse(input);
