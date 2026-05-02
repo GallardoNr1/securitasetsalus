@@ -32,11 +32,12 @@ enum CourseStatus {
 }
 
 enum EnrollmentStatus {
-  PENDING_PAYMENT  // Creada pero el pago aún no se confirmó
-  CONFIRMED        // Pagada — el alumno ya está inscrito al curso
-  CANCELLED        // Cancelada por el alumno o por SES
-  COMPLETED        // El curso terminó y el alumno aprobó (genera diploma)
-  FAILED           // El curso terminó y el alumno no cumple requisitos
+  PENDING_PAYMENT          // Creada pero el pago aún no se confirmó
+  PENDING_SENCE_APPROVAL   // Solicitó franquicia SENCE — admin debe aprobar antes de pagar
+  CONFIRMED                // Pagada (o aprobada SENCE) — el alumno ya está inscrito
+  CANCELLED                // Cancelada por el alumno o por SES (libera cupo)
+  COMPLETED                // El curso terminó y el alumno aprobó (genera diploma)
+  FAILED                   // El curso terminó y el alumno no cumple requisitos
 }
 
 enum DiplomaStatus {
@@ -261,6 +262,8 @@ model Enrollment {
   status           EnrollmentStatus @default(PENDING_PAYMENT)
   enrolledAt       DateTime         @default(now())
   paidAt           DateTime?
+  cancelledAt      DateTime?        // Si status=CANCELLED, cuándo se canceló
+  cancelReason     String?          // Motivo de la cancelación (alumno o admin)
   finalGrade       Float?           // Nota final si el curso tiene evaluación
   failedReason     String?          // 'attendance' | 'evaluation' | 'both' (si status=FAILED)
 
@@ -269,6 +272,7 @@ model Enrollment {
   employerRut      String?          // RUT del empleador si se aplicó franquicia
   employerName     String?
   employerHrEmail  String?
+  senceRejectionReason String?      // Si admin rechazó la solicitud SENCE
 
   attendances      Attendance[]
   payments         Payment[]

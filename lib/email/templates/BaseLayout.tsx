@@ -12,6 +12,9 @@ const COLORS = {
   surface: '#fafaf7',        // fondo cálido (color-bg-page)
   white: '#ffffff',
   hairline: '#d6d2c5',       // bordes
+  danger: '#a64242',         // rojo aviso (color-danger)
+  dangerLight: '#FBEDE9',    // fondo aviso (color-danger-light)
+  dangerDark: '#5a2424',     // texto sobre aviso (color-danger-dark)
 };
 
 const baseStyle = {

@@ -10,6 +10,22 @@ import {
   DiplomaIssuedEmail,
   diplomaIssuedEmailText,
 } from './templates/DiplomaIssuedEmail';
+import {
+  EnrollmentConfirmationEmail,
+  enrollmentConfirmationEmailText,
+} from './templates/EnrollmentConfirmationEmail';
+import {
+  EnrollmentSenceApprovedEmail,
+  enrollmentSenceApprovedEmailText,
+} from './templates/EnrollmentSenceApprovedEmail';
+import {
+  EnrollmentSenceRejectedEmail,
+  enrollmentSenceRejectedEmailText,
+} from './templates/EnrollmentSenceRejectedEmail';
+import {
+  CancelationRefundEmail,
+  cancelationRefundEmailText,
+} from './templates/CancelationRefundEmail';
 
 /**
  * API de alto nivel para enviar emails transaccionales de SES.
@@ -110,6 +126,124 @@ export async function sendDiplomaIssuedEmail(args: DiplomaIssuedArgs): Promise<S
   return sendEmail({
     to: args.to,
     subject: `Tu diploma de "${args.courseTitle}" está listo`,
+    html,
+    text,
+  });
+}
+
+// ============================================================
+// Pagos / inscripciones (Fase 4)
+// ============================================================
+
+type EnrollmentConfirmationArgs = {
+  to: string;
+  name: string;
+  courseTitle: string;
+  courseSlug: string;
+  amount: number;
+  currency: string;
+};
+
+export async function sendEnrollmentConfirmationEmail(
+  args: EnrollmentConfirmationArgs,
+): Promise<SendResult> {
+  const url = appUrl();
+  const props = {
+    name: args.name,
+    courseTitle: args.courseTitle,
+    amount: args.amount,
+    currency: args.currency,
+    myCoursesUrl: `${url}/my-courses`,
+  };
+  const html = await render(EnrollmentConfirmationEmail(props));
+  const text = enrollmentConfirmationEmailText(props);
+  return sendEmail({
+    to: args.to,
+    subject: `Inscripción confirmada — ${args.courseTitle}`,
+    html,
+    text,
+  });
+}
+
+type EnrollmentSenceApprovedArgs = {
+  to: string;
+  name: string;
+  courseTitle: string;
+};
+
+export async function sendEnrollmentSenceApprovedEmail(
+  args: EnrollmentSenceApprovedArgs,
+): Promise<SendResult> {
+  const url = appUrl();
+  const props = {
+    name: args.name,
+    courseTitle: args.courseTitle,
+    myCoursesUrl: `${url}/my-courses`,
+  };
+  const html = await render(EnrollmentSenceApprovedEmail(props));
+  const text = enrollmentSenceApprovedEmailText(props);
+  return sendEmail({
+    to: args.to,
+    subject: `Solicitud SENCE aprobada — ${args.courseTitle}`,
+    html,
+    text,
+  });
+}
+
+type EnrollmentSenceRejectedArgs = {
+  to: string;
+  name: string;
+  courseTitle: string;
+  courseSlug: string;
+  reason: string;
+};
+
+export async function sendEnrollmentSenceRejectedEmail(
+  args: EnrollmentSenceRejectedArgs,
+): Promise<SendResult> {
+  const url = appUrl();
+  const props = {
+    name: args.name,
+    courseTitle: args.courseTitle,
+    reason: args.reason,
+    enrollAgainUrl: `${url}/courses/${args.courseSlug}`,
+  };
+  const html = await render(EnrollmentSenceRejectedEmail(props));
+  const text = enrollmentSenceRejectedEmailText(props);
+  return sendEmail({
+    to: args.to,
+    subject: `Solicitud SENCE no aprobada — ${args.courseTitle}`,
+    html,
+    text,
+  });
+}
+
+type CancelationRefundArgs = {
+  to: string;
+  name: string;
+  courseTitle: string;
+  refundAmount: number;
+  currency: string;
+  tier: string;
+  percentage: number;
+};
+
+export async function sendCancelationRefundEmail(
+  args: CancelationRefundArgs,
+): Promise<SendResult> {
+  const props = {
+    name: args.name,
+    courseTitle: args.courseTitle,
+    refundAmount: args.refundAmount,
+    currency: args.currency,
+    tier: args.tier,
+    percentage: args.percentage,
+  };
+  const html = await render(CancelationRefundEmail(props));
+  const text = cancelationRefundEmailText(props);
+  return sendEmail({
+    to: args.to,
+    subject: `Cancelación procesada — ${args.courseTitle}`,
     html,
     text,
   });
