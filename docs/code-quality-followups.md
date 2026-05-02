@@ -154,14 +154,19 @@ arrancar con mensaje claro de Zod.
   (`app/(app)/admin/users/actions.test.ts`): 11 tests — autorización (2),
   safeguards (4: self, not-found, last-admin, last-admin-OK), happy path
   con trim/truncate de motivo (2), reactivar (3).
-- ⬜ **saveEvaluationsAction** + **issueDiplomasForCourseAction**:
-  pendientes. La lógica núcleo (computeEligibility) ya tiene tests; lo
-  que falta son los wrappers con auth + Prisma.
+- ✅ **saveEvaluationsAction** + **issueDiplomasAction**
+  (`app/(app)/instructor/actions.test.ts`): 17 tests adicionales sobre
+  `saveEvaluationsAction` (autorización 4, persistencia 5: aprueba,
+  reprueba, pendiente sin actualizar Enrollment, ignora attitude
+  cuando evaluatesAttitude=false, descarta enrollments ajenos al curso;
+  errores 2: schema invalid, transacción falla) y
+  `issueDiplomasAction` (5 tests: auth, course-not-found, forbidden,
+  happy path con resumen, error captura).
 - ⬜ **Queries** (`lib/queries/*.ts`): pendiente. Bajo riesgo (queries
   típicas de Prisma) — mejor cubrirlas con integration tests contra
   base de datos real cuando se monte ese harness.
 
-**Cobertura**: 4 archivos test antes → 9 ahora (53 → **98 unit tests**).
+**Cobertura**: 4 archivos test antes → 9 ahora (53 → **115 unit tests**).
 Suite E2E Playwright sigue cubriendo el happy path completo.
 
 `test/setup.ts` ahora inyecta `NEXT_PUBLIC_APP_URL` por defecto para

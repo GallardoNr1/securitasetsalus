@@ -394,7 +394,11 @@ export async function issueDiplomasAction(courseId: string): Promise<IssueDiplom
       ...result,
     };
   } catch (err) {
-    console.error('[diplomas issue]', err);
+    logger.error('issue diplomas action failed', err, {
+      tags: { feature: 'diploma-issue', action: 'batch' },
+      courseId: course.id,
+      userId: session.user.id,
+    });
     return {
       ok: false,
       error: 'unknown',
