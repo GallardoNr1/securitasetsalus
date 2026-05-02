@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { logger } from '@/lib/logger';
 import { hashPassword, verifyPassword } from '@/lib/password';
 import {
   deleteObject,
@@ -198,7 +199,10 @@ export async function uploadAvatarAction(formData: FormData): Promise<AvatarActi
       } catch (err) {
         // Si el viejo objeto ya no existe (limpieza manual, etc.), no
         // bloqueamos la actualización del avatar nuevo.
-        console.warn('[avatar] no se pudo borrar la key anterior', err);
+        logger.warn('avatar: no se pudo borrar la key anterior', {
+          previousKey: existing.avatarKey,
+          err,
+        });
       }
     }
 
@@ -206,7 +210,10 @@ export async function uploadAvatarAction(formData: FormData): Promise<AvatarActi
     revalidatePath('/');
     return { ok: true, message: 'Foto de perfil actualizada.' };
   } catch (err) {
-    console.error('[avatar upload]', err);
+    logger.error('avatar upload failed', err, {
+      tags: { feature: 'avatar', action: 'upload' },
+      userId: session.user.id,
+    });
     return { ok: false, formError: 'unknown' };
   }
 }
@@ -234,7 +241,10 @@ export async function deleteAvatarAction(): Promise<AvatarActionResult> {
       try {
         await deleteObject('avatars', user.avatarKey);
       } catch (err) {
-        console.warn('[avatar] no se pudo borrar de R2', err);
+        logger.warn('avatar delete: R2 delete failed (best-effort)', {
+          key: user.avatarKey,
+          err,
+        });
       }
     }
 
@@ -247,7 +257,10 @@ export async function deleteAvatarAction(): Promise<AvatarActionResult> {
     revalidatePath('/');
     return { ok: true, message: 'Foto de perfil eliminada.' };
   } catch (err) {
-    console.error('[avatar delete]', err);
+    logger.error('avatar delete failed', err, {
+      tags: { feature: 'avatar', action: 'delete' },
+      userId: session.user.id,
+    });
     return { ok: false, formError: 'unknown' };
   }
 }

@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { logger } from '@/lib/logger';
 
 /**
  * Cliente de Resend con graceful fallback.
@@ -52,7 +53,10 @@ export type SendResult =
  */
 export async function sendEmail(args: SendArgs): Promise<SendResult> {
   if (!isEmailAvailable()) {
-    console.info(`[email skipped] → ${args.to} (${args.subject})`);
+    logger.debug('email skipped (no RESEND_API_KEY)', {
+      to: args.to,
+      subject: args.subject,
+    });
     return { ok: true, skipped: true };
   }
 
@@ -68,13 +72,21 @@ export async function sendEmail(args: SendArgs): Promise<SendResult> {
     });
 
     if (result.error) {
-      console.error('[email failed]', result.error);
+      logger.error('email send failed (Resend rejected)', result.error, {
+        tags: { feature: 'email' },
+        to: args.to,
+        subject: args.subject,
+      });
       return { ok: false, error: result.error.message };
     }
     return { ok: true, id: result.data?.id ?? 'unknown' };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Error desconocido al enviar email.';
-    console.error('[email exception]', error);
+    logger.error('email send threw', error, {
+      tags: { feature: 'email' },
+      to: args.to,
+      subject: args.subject,
+    });
     return { ok: false, error: message };
   }
 }

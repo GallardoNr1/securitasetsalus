@@ -4,6 +4,7 @@ import Resend from 'next-auth/providers/resend';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { authConfig } from '@/auth.config';
 import { db } from '@/lib/db';
+import { logger } from '@/lib/logger';
 import { verifyPassword } from '@/lib/password';
 import { loginSchema } from '@/lib/validations/auth';
 import { renderMagicLinkEmail, magicLinkEmailText } from '@/lib/email/templates/MagicLinkEmail';
@@ -125,9 +126,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const text = magicLinkEmailText({ url });
 
         // Si la API key no está configurada (entorno sin Resend), logueamos
-        // y devolvemos OK silencioso. Útil para desarrollo a ciegas.
+        // a debug y devolvemos OK silencioso. Útil para desarrollo a ciegas.
+        // No log the URL en info/warn — un magic link en logs de Vercel
+        // sería un token vivo expuesto.
         if (!provider.apiKey) {
-          console.info(`[magic-link skipped] → ${email} (URL: ${url})`);
+          logger.debug('magic-link skipped (no RESEND_API_KEY)', { email, url });
           return;
         }
 

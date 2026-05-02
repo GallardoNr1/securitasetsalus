@@ -3,8 +3,10 @@
 import { revalidatePath } from 'next/cache';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { logger } from '@/lib/logger';
 import { attendanceMarkSchema } from '@/lib/validations/attendance';
 import { evaluationBatchSchema } from '@/lib/validations/evaluation';
+import { computeEligibility } from '@/lib/diploma/eligibility';
 import { issueDiplomasForCourse } from '@/lib/diploma/issue';
 
 const ATTENDANCE_THRESHOLD = 0.75; // 75% de asistencia mínima — requisito SENCE.
@@ -122,7 +124,12 @@ export async function markAttendanceAction(input: {
       markedCount: acceptedEntries.length,
     };
   } catch (err) {
-    console.error('[attendance mark]', err);
+    logger.error('attendance mark failed', err, {
+      tags: { feature: 'attendance', action: 'mark' },
+      sessionId: courseSession.id,
+      courseId: courseSession.courseId,
+      userId: session.user.id,
+    });
     return {
       ok: false,
       error: 'unknown',
@@ -234,49 +241,25 @@ export async function saveEvaluationsAction(input: {
         const enrollment = enrollmentMap.get(entry.enrollmentId);
         if (!enrollment) continue;
 
-        // Calcular finalGrade promediando solo las dimensiones rellenadas
-        // y activas para este curso.
-        const dimensions: Array<number | null> = [
-          entry.technicalScore,
-          entry.knowledgeScore,
-          course.evaluatesAttitude ? entry.attitudeScore : null,
-          entry.participationScore,
-        ];
-        const filledDimensions = dimensions.filter((d): d is number => d !== null);
+        // Toda la lógica de cálculo (promedio, asistencia, passed,
+        // failedReason) vive en `computeEligibility` — función pura
+        // testada en `lib/diploma/eligibility.test.ts`.
+        const result = computeEligibility({
+          scores: {
+            technical: entry.technicalScore,
+            knowledge: entry.knowledgeScore,
+            attitude: entry.attitudeScore,
+            participation: entry.participationScore,
+          },
+          evaluatesAttitude: course.evaluatesAttitude,
+          attendedSessions: enrollment._count.attendances,
+          totalSessions,
+          passingGrade: course.evaluationPassingGrade,
+          attendanceThreshold: ATTENDANCE_THRESHOLD,
+        });
 
-        const finalGrade =
-          filledDimensions.length === 0
-            ? null
-            : Number(
-                (
-                  filledDimensions.reduce((sum, n) => sum + n, 0) / filledDimensions.length
-                ).toFixed(2),
-              );
-
-        // passed solo se decide cuando todas las dimensiones activas están
-        // rellenadas (decisión definitiva del instructor) Y la asistencia
-        // alcanza el umbral SENCE.
-        const requiredDimensions = course.evaluatesAttitude ? 4 : 3;
-        const allFilled = filledDimensions.length === requiredDimensions;
-        const attendanceRatio =
-          totalSessions === 0 ? 1 : enrollment._count.attendances / totalSessions;
-        const meetsAttendance = attendanceRatio >= ATTENDANCE_THRESHOLD;
-
-        const passed: boolean | null =
-          finalGrade === null || !allFilled
-            ? null
-            : finalGrade >= course.evaluationPassingGrade && meetsAttendance;
-
+        const { finalGrade, passed, failedReason } = result;
         if (passed === true) passedCount++;
-
-        // Determinar failedReason si suspendió.
-        let failedReason: string | null = null;
-        if (passed === false) {
-          const lowGrade = finalGrade !== null && finalGrade < course.evaluationPassingGrade;
-          if (lowGrade && !meetsAttendance) failedReason = 'both';
-          else if (lowGrade) failedReason = 'evaluation';
-          else failedReason = 'attendance';
-        }
 
         await tx.evaluation.upsert({
           where: { enrollmentId: entry.enrollmentId },
@@ -331,7 +314,12 @@ export async function saveEvaluationsAction(input: {
       passedCount,
     };
   } catch (err) {
-    console.error('[evaluations save]', err);
+    logger.error('evaluations save failed', err, {
+      tags: { feature: 'evaluations', action: 'save' },
+      courseId: course.id,
+      userId: session.user.id,
+      entriesCount: parsed.data.entries.length,
+    });
     return {
       ok: false,
       error: 'unknown',

@@ -1,4 +1,7 @@
+import pLimit from 'p-limit';
 import { db } from '@/lib/db';
+import { env } from '@/lib/env';
+import { logger } from '@/lib/logger';
 import { uploadBuffer, r2Keys, isBucketConfigured } from '@/lib/r2';
 import { sendDiplomaIssuedEmail } from '@/lib/email/send';
 import { generateDiplomaCode } from './code';
@@ -23,8 +26,6 @@ import { renderDiplomaPdf } from './pdf';
 type IssueResult =
   | { ok: true; diploma: { id: string; code: string }; alreadyExisted: boolean }
   | { ok: false; reason: 'enrollment-not-found' | 'not-eligible' | 'pdf-generation-failed' };
-
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://securitasetsalus.cl';
 
 export async function issueDiplomaForEnrollment(enrollmentId: string): Promise<IssueResult> {
   const enrollment = await db.enrollment.findUnique({
@@ -80,7 +81,7 @@ export async function issueDiplomaForEnrollment(enrollmentId: string): Promise<I
   let pdfKey: string | null = null;
   if (isBucketConfigured('diplomas')) {
     try {
-      const verifyUrl = `${APP_URL}/verify/${code}`;
+      const verifyUrl = `${env.NEXT_PUBLIC_APP_URL}/verify/${code}`;
       const pdfBuffer = await renderDiplomaPdf({
         studentName: enrollment.user.name ?? enrollment.user.email,
         courseTitle: enrollment.course.title,
@@ -95,7 +96,10 @@ export async function issueDiplomaForEnrollment(enrollmentId: string): Promise<I
       pdfKey = r2Keys.diplomaPdf(enrollment.user.id, code);
       await uploadBuffer('diplomas', pdfKey, pdfBuffer, 'application/pdf');
     } catch (err) {
-      console.error('[diploma issue] generación de PDF falló', err);
+      logger.error('diploma issue: generación de PDF falló', err, {
+        tags: { feature: 'diploma-issue', step: 'pdf-render' },
+        enrollmentId,
+      });
       return { ok: false, reason: 'pdf-generation-failed' };
     }
   }
@@ -122,7 +126,11 @@ export async function issueDiplomaForEnrollment(enrollmentId: string): Promise<I
       diplomaCode: code,
     });
   } catch (err) {
-    console.warn('[diploma issue] email no enviado', err);
+    logger.error('diploma issue: email DiplomaIssued no enviado (best-effort)', err, {
+      tags: { feature: 'diploma-issue', step: 'email' },
+      enrollmentId,
+      diplomaCode: code,
+    });
   }
 
   return { ok: true, diploma, alreadyExisted: false };
@@ -131,6 +139,10 @@ export async function issueDiplomaForEnrollment(enrollmentId: string): Promise<I
 /**
  * Emite diplomas de todos los enrollments del curso que cumplan los
  * requisitos. Devuelve resumen con counters.
+ *
+ * Paraleliza con concurrencia 5 (Resend tiene rate limit de 10 req/s
+ * en plan gratuito, R2 sin límite notable, render PDF es CPU local).
+ * Para 12 alumnos: ~12s en serie → ~3s en paralelo.
  */
 export async function issueDiplomasForCourse(courseId: string): Promise<{
   issued: number;
@@ -147,13 +159,17 @@ export async function issueDiplomasForCourse(courseId: string): Promise<{
     select: { id: true },
   });
 
+  const limit = pLimit(5);
+  const results = await Promise.all(
+    enrollments.map((e) => limit(() => issueDiplomaForEnrollment(e.id))),
+  );
+
   let issued = 0;
   let alreadyHad = 0;
   let notEligible = 0;
   let failed = 0;
 
-  for (const e of enrollments) {
-    const r = await issueDiplomaForEnrollment(e.id);
+  for (const r of results) {
     if (r.ok) {
       if (r.alreadyExisted) alreadyHad++;
       else issued++;

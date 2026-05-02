@@ -13,8 +13,11 @@ import { z } from 'zod';
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 
-  // App
-  NEXT_PUBLIC_APP_URL: z.url().optional(),
+  // App. Obligatoria para que server actions sepan a qué dominio
+  // generar URLs absolutas (verificación pública del diploma, magic link,
+  // links en emails). Si falta, fallar al arrancar es preferible a tener
+  // diplomas en staging con QRs apuntando a producción.
+  NEXT_PUBLIC_APP_URL: z.url(),
 
   // Base de datos (Fase 2+)
   DATABASE_URL: z.url().optional(),
@@ -49,6 +52,12 @@ const envSchema = z.object({
   // Protege endpoints de cron (recordatorios de curso). Vercel inyecta
   // `Authorization: Bearer <CRON_SECRET>` cuando dispara el schedule.
   CRON_SECRET: z.string().min(16).optional(),
+
+  // Upstash Redis para rate limiting del endpoint público de verify
+  // (`/api/diplomas/[code]/verify`). Si faltan, el rate limit se
+  // degrada a no-op con un debug log — esto evita romper dev local.
+  UPSTASH_REDIS_REST_URL: z.url().optional(),
+  UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

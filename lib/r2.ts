@@ -31,13 +31,23 @@ function getClient(): S3Client {
   }
   if (cachedClient) return cachedClient;
 
+  // `isR2Available()` ya garantizó que estas tres existen, pero validamos
+  // explícitamente porque TypeScript no puede inferirlo (y porque el `!`
+  // implícito enmascara errores oscuros si una env desaparece en runtime).
+  const accountId = process.env.R2_ACCOUNT_ID;
+  const accessKeyId = process.env.R2_ACCESS_KEY_ID;
+  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
+  if (!accountId || !accessKeyId || !secretAccessKey) {
+    throw new Error(
+      'R2 inconsistente: isR2Available() pasó pero falta alguna credencial. ' +
+        'Revisa R2_ACCOUNT_ID / R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY en Vercel.',
+    );
+  }
+
   cachedClient = new S3Client({
     region: 'auto',
-    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-    credentials: {
-      accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
-    },
+    endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+    credentials: { accessKeyId, secretAccessKey },
   });
   return cachedClient;
 }
