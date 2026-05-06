@@ -89,6 +89,42 @@ export default function PrivacyPage() {
             para las obligaciones legales aplicables (mínimo 6 años para datos contables).
           </p>
         </section>
+
+        <section>
+          <h2>8. Cookies</h2>
+          <p>
+            SecuritasEtSalus solo usa cookies <strong>estrictamente necesarias</strong> para
+            que la plataforma funcione. No utilizamos cookies de analítica, de seguimiento
+            publicitario ni de redes sociales. Por eso no encontrarás un diálogo de
+            configuración con interruptores: no hay nada opcional que configurar.
+          </p>
+          <p>Las cookies que sí usamos son:</p>
+          <ul>
+            <li>
+              <strong>Sesión de autenticación</strong> — cookie HTTP-only emitida por
+              NextAuth cuando inicias sesión. Mantiene tu cuenta abierta entre páginas y
+              caduca cuando cierras sesión o expira el token (30 días). Sin esta cookie no
+              podrías acceder a tu panel.
+            </li>
+            <li>
+              <strong>Stripe Checkout</strong> — cuando vas a pagar un curso, Stripe
+              gestiona el formulario en su propio dominio (<code>checkout.stripe.com</code>)
+              y usa sus cookies de seguridad y prevención de fraude. SecuritasEtSalus no
+              tiene acceso a esas cookies.
+            </li>
+            <li>
+              <strong>Preferencias mínimas</strong> — tu navegador puede guardar en{' '}
+              <code>localStorage</code> el dismiss del aviso de cookies (para no volver a
+              mostrarlo) y notas de revisión interna en algunos documentos. No es una cookie
+              estrictamente, pero la mencionamos por transparencia.
+            </li>
+          </ul>
+          <p>
+            Si en el futuro añadimos analítica o publicidad, esta sección se actualizará y
+            verás el banner pedirte consentimiento explícito antes de activar cualquier
+            cookie no esencial.
+          </p>
+        </section>
       </article>
     </main>
   );

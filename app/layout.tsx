@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Fraunces, Inter, JetBrains_Mono } from 'next/font/google';
+import { CookieBanner } from '@/components/features/CookieBanner';
 import { env } from '@/lib/env';
 import '@/design-system/index.scss';
 
@@ -123,6 +124,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es" className={fontClasses}>
       <body>
         {children}
+        <CookieBanner />
         <script
           type="application/ld+json"
           // JSON-LD inline es la forma estándar de inyectar structured
